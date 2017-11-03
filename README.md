@@ -345,7 +345,7 @@ void touch_callback(touch_callback_arg_t * p_arg)
 
 # Next Steps #
 - [Give us feedback](https://docs.google.com/forms/d/e/1FAIpQLSc7yQtvK7MIOfIOQXw0DhHXMhZgAtjF1icO-gAiFlkGMjN0dg/viewform?usp=sf_link)
-- The steps followed in this application note should be applicable to other kits such as the DK-S7G2, PK-S5D9, AE-CAP1-S3A7, AE-CAP1-S124, etc. 
+- The steps followed in this application note should be applicable to other kits such as the SK-S7G2, PK-S5D9, AE-CAP1-S3A7, AE-CAP1-S124, etc. 
 
 # Appendix #
 
@@ -385,7 +385,7 @@ Acquire the software tools from the Synergy Gallery then follow the steps below.
 TIP: If the console is disabled, the background is grey in color.
 
 ## References ##
-CTSU Hardware Design Manual - https://www.renesas.com/
-Synergy Gallery - https://synergygallery.renesas.com
-DK-S124 Schematic - https://www.renesas.com/software/D6000220.html
-Renesas Electronics - https://www.renesas.com
+- CTSU Hardware Design Manual - https://www.renesas.com/
+- Synergy Gallery - https://synergygallery.renesas.com
+- DK-S124 Schematic - https://www.renesas.com/software/D6000220.html
+- Renesas Electronics - https://www.renesas.com
