@@ -343,7 +343,8 @@ Replace the code in `${ProjName}\src\hal_entry` with snippet below.
 - Touch the sensors on the DK-S124 and observe the binary changing values.
 
 # Next Steps #
-The steps followed in this application note should be applicable to other kits such as the DK-S7G2, PK-S5D9, AE-CAP1-S3A7, AE-CAP1-S124, etc. 
+- [Give us feedback](https://docs.google.com/forms/d/e/1FAIpQLSc7yQtvK7MIOfIOQXw0DhHXMhZgAtjF1icO-gAiFlkGMjN0dg/viewform?usp=sf_link)
+- The steps followed in this application note should be applicable to other kits such as the DK-S7G2, PK-S5D9, AE-CAP1-S3A7, AE-CAP1-S124, etc. 
 
 # Appendix #
 
@@ -352,7 +353,7 @@ Acquire the software tools from the Synergy Gallery then follow the steps below.
 
 1. Install the e2studio Integrate Solution Development Environment. Note the installation path.
 2. Install the Synergy Software Package v1.3.0; or later versions. You may have to provide the installation path from step 1.
-3. Copy the downloaded CTSU and TOUCH v2.00 pack files to the `internal\projectgen\arm\Packs` folder in e2studio.
+3. Copy the downloaded **Renesas.r_ctsu_v2.1.3.0.pack** and Renesas.r_touch_v2.1.3.0.pack pack files to the `internal\projectgen\arm\Packs` folder in e2studio.
 
 ## Creating a New Synergy C Project ##
 1. Start e2studio and specify a Workspace Location. Select **OK**.
@@ -373,4 +374,5 @@ Acquire the software tools from the Synergy Gallery then follow the steps below.
 
 ## References ##
 Synergy Gallery - https://synergygallery.renesas.com
-DK-S124 Schematic - 
+DK-S124 Schematic - https://www.renesas.com/software/D6000220.html
+Renesas Electronics - https://www.renesas.com
