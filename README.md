@@ -18,11 +18,11 @@ proximity) to a touch sensor occurs.
 ## Equipment ##
 The following harwdare and software is needed to work with this application note. Installation procedure for the software items below is available in the appendix 
 and must be completed prior to evaluating further sections.
-- DK-S124 (with USB Cable)
-- e2studio ISDE (5.4.0.018+)
-- Synergy Software Package v1.3.0+
-- [Renesas.r_ctsu_v2.1.3.0.pack](http://www.google.com)
-- [Renesas.r_touch_v2.1.3.0.pack](http://www.google.com)
+- [DK-S124](https://www.renesas.com/products/software-tools/boards-and-kits/renesas-synergy-kits/renesas-synergy-dk-s124.html)
+- [e2studio ISDE v5.4.0.018+](https://synergygallery.renesas.com)
+- [Synergy Software Package v1.3.0+](https://synergygallery.renesas.com)
+- [Renesas.r_ctsu_v2.1.3.0.pack](./deploy/Renesas.r_ctsu_v2.1.3.0.pack)
+- [Renesas.r_touch_v2.1.3.0.pack](./deploy/Renesas.r_touch_v2.1.3.0.pack)
 
 # DK-S124 #
 The S124 Development Kit (DK-S124) allows users to evaluate the Synergy S124 Microcontroller and develop their own applications. One of the features
@@ -54,12 +54,15 @@ To setup the CTSU pins:
 3. Browse to the CTSU using *Pins (tab) > Pin Selection Column > Peripherals > Input: CTSU > CTSU*
 4. When working with your own project, you have to setup the TS pins. If the DK-S124 was selected as the BSP, the pins used should be pre-configured.
 
-[Example pins setup for DK-S124](./images/PIN_DKS124.PNG)
+![Example pins setup for DK-S124](./images/PIN_DKS124.PNG)
 
 ## CTSU V2 HAL Driver ##
 The CTSU HAL Driver allows users to operate the peripheral. It should be introduced into a project using the following procedure:
 1. Select the Threads tab in the SSP Configurator and select the HAL/Common under the Threads column.
-2. Select Add Stacks for the HAL/Common stacks and use *Driver > Input > CTSU V2 HAL Driver on r_ctsu* to add the driver onto the stack.
+2. Select New Stacks for the HAL/Common stacks and use *Driver > Input > CTSU V2 HAL Driver on r_ctsu* to add the driver onto the stack.
+	
+	![Selecting the Version 2 CTSU HAL Driver](./images/CTSU_Stacks.PNG)
+	
 3. Select the instance g_ctsu0 in the HAL/Common stacks column and use the Properties tab view to modify the following properties from default value to the values shown below:
 	- **Write/Read/End Interrupt Priority**: 2 (Do not select priority of 0 for the CTSU).
 	- **PCLKB Divisor**: 1 (A higher value should be used when PCLKB frequencies higher than 32MHz are used).
@@ -75,7 +78,6 @@ The CTSU HAL Driver allows users to operate the peripheral. It should be introdu
 		+ TS30
 		+ TS31
 
-![Selecting the Version 2 CTSU HAL Driver](./images/CTSU_Stacks.PNG)
 
 The fully configured driver is as shown below:
 
@@ -88,12 +90,12 @@ The sensors are fairly low capacitance and can be driven with a 4MHz frequency.
 The sub-sections below illustrate how to add and configure each sensor.
 
 ### Adding a sensor ###
-1. Use the HAL/Common Stacks Add Stack > Driver > Input > Capacitive Touch Sensor on r_ctsu_v2 to add a sensor.
+1. Use the HAL/Common Stacks New Stack > Driver > Input > Capacitive Touch Sensor on r_ctsu_v2 to add a sensor.
+
+	![Adding a Capacitive Touch Sensor](./images/CTSI_Configurator.PNG)
+
 2. Right click on the dependency Add CTSU HAL driver and select Use > g_ctsu0 CTSU V2 HAL Driver on r_ctsu. This will pick the settings we made in the previous sub section.
 3. Select the Receive Channel. 
-
-
-![Adding a Capacitive Touch Sensor](./images/CTSI_Configurator.PNG)
 
 Note: ensure that the sensors follow the exact index order shown below
 	- Index 0: TS02
@@ -106,12 +108,12 @@ Note: ensure that the sensors follow the exact index order shown below
 
 ### Configuring sensor frequency ###
 Setup the CTSU SFRs for each Capacitive Touch Sensor with the settings below to generate a 4MHz waveform from each TS pin. 
-- CTSUSSDIV - 0x0
-- CTSUSNUM  - 0x7
-- CTSUICOG  - 0x1
-- CTSUSDPA  - 0x2
-- CTSURICOA - 0x5F
-- CTSUSO	- 0x1
+- **CTSUSSDIV** - 0x0
+- **CTSUSNUM**  - 0x7
+- **CTSUICOG**  - 0x1
+- **CTSUSDPA**  - 0x2
+- **CTSURICOA** - 0x5F
+- **CTSUSO**	- 0x1
 
 ![A Configured CTSU Sensor](./images/CTSI_SFRs_4MHz.png)
 
@@ -280,10 +282,10 @@ The sections below outline steps to get a functional touch detection system.
 	
 ## Configure TOUCH DETECTION PARAMETERS ## 
 Use the SSP Configurator to change the parameters for each Capacitive Touch Sensor previously configured in the HAL/Common stack.
-- Touch Threshold  : 2000  (This is the difference in sensor count from the baseline average, beyond which a sensor is assumed to be touched).
-- Touch Hysteresis : 100   (The sensor counter must fall below the threshold by the value in this field to trigger a release from touch).
-- Delay-To-Touch   : 3     (The sensor counter must remain above the threshold for the amount specified in this field consecutively before the sensor is assumed touched )
-- Delay-To-Touch   : 3     (The sensor counter must remain below the `(threshold - hystersis)` value for the amount specified in this field consecutively before the sensor is assumed released )
+- **Touch Threshold**  : 2000  (This is the difference in sensor count from the baseline average, beyond which a sensor is assumed to be touched).
+- **Touch Hysteresis** : 100   (The sensor counter must fall below the threshold by the value in this field to trigger a release from touch).
+- **Delay-To-Touch**   : 3     (The sensor counter must remain above the threshold for the amount specified in this field consecutively before the sensor is assumed touched )
+- **Delay-To-Touch**   : 3     (The sensor counter must remain below the `(threshold - hystersis)` value for the amount specified in this field consecutively before the sensor is assumed released )
 
 ## Calibrating the TOUCH V2 Driver ##
 Replace the code in `${ProjName}\src\hal_entry` with snippet below.
@@ -340,17 +342,35 @@ Replace the code in `${ProjName}\src\hal_entry` with snippet below.
 - Add `g_touch0_binary` to the Expressions tab and enable Real-time Refresh.
 - Touch the sensors on the DK-S124 and observe the binary changing values.
 
+# Next Steps #
+The steps followed in this application note should be applicable to other kits such as the DK-S7G2, PK-S5D9, AE-CAP1-S3A7, AE-CAP1-S124, etc. 
+
 # Appendix #
 
-## Installation ##
-From the Synergy Gallery:
+## PC Tools Installation ##
+Acquire the software tools from the Synergy Gallery then follow the steps below.
 
 1. Install the e2studio Integrate Solution Development Environment. Note the installation path.
 2. Install the Synergy Software Package v1.3.0; or later versions. You may have to provide the installation path from step 1.
 3. Copy the downloaded CTSU and TOUCH v2.00 pack files to the `internal\projectgen\arm\Packs` folder in e2studio.
 
 ## Creating a New Synergy C Project ##
+1. Start e2studio and specify a Workspace Location. Select **OK**.
+2. (Optional) Select **Go to Workbench**.
+3. Select *File > New > Synergy C Project*.
+4. Specify the project name and License File. Select **Next**.
+	
+	![Project Configuration](./images/E2_NewProject.PNG)
+
+5. Select the applicable options and select **Next**.
+
+	![Project Configuration](./images/E2_NewDevice.PNG)
+
+6. Select the Template for the project (as required by this document) and select **Finish**.
+	
+	![Project Configuration](./images/E2_NewTemplate.PNG)
+
 
 ## References ##
-Synergy Gallery
-DK-S124 Schematic
+Synergy Gallery - https://synergygallery.renesas.com
+DK-S124 Schematic - 
