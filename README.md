@@ -373,8 +373,8 @@ Acquire the software tools from the Synergy Gallery then follow the steps below.
 	![Project Configuration](./images/E2_NewTemplate.PNG)
 
 ## Enabling the Virtual Debug Console ##
-1. Build, and Download the binary using the Debugger in e2studio.
-2. Select the Console Tab and Click the downward facing arrow next to the *Open Console* button.
+1. Build, and Download the binary to the microcontroller using the Debugger in e2studio.
+2. Select the Console Tab and Click the downward facing arrow next to the *Open Console* button. Select Renesas Virtual Debug Console.
 	
 	![Virtual Debug Console Enable Button](./images/E2_VirtualDebugConsole.PNG)
 
