@@ -52,7 +52,7 @@ To setup the CTSU pins:
 1. Open the SSP Configuration Perspective in e2studio using the menu *Window > Perspective > Other Perspectives > Other*
 2. Open configuration.xml by double clicking on it in the Project Explorer.
 3. Browse to the CTSU using *Pins (tab) > Pin Selection Column > Peripherals > Input: CTSU > CTSU*
-4. When working with your own project, you have to setup the TS pins. If the DK-S124 was selected as the BSP, the pins used should be pre-configured.
+4. When working with a custom project, setup the TS pins as needed by the system (refer hardware schematic). If the DK-S124 was selected as the BSP, the pins used should be pre-configured.
 
 ![Example pins setup for DK-S124](./images/PIN_DKS124.PNG)
 
