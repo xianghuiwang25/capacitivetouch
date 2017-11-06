@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="userpacksettings">
+	<item value="1.1" key="userpacksettings_version"/>
+	<section name="packtype_user_components">
+		<item value="1" key="componentsindex"/>
+		<section name="component0">
+			<item value="Renesas##Custom_HAL_Drivers##all##r_ctsu_v2####1.3.0" key="componentkey"/>
+			<item value="" key="CONDITON_PARENT_PACK"/>
+			<item value="all" key="Cgroup"/>
+			<item value="" key="Cvariant"/>
+			<item value="" key="description"/>
+			<item value="Renesas" key="Cvendor"/>
+			<item value="" key="Capiversion"/>
+			<item value="Custom_HAL_Drivers" key="Cclass"/>
+			<item value="true" key="isusercreated"/>
+			<item value="" key="condition"/>
+			<item value="1.3.0" key="Cversion"/>
+			<item value="13" key="componentfilesindex"/>
+			<item value="r_ctsu_v2" key="Csub"/>
+			<section name="componentfile12">
+				<item value="" key="condition"/>
+				<item value="" key="CONDITON_PARENT_PACK"/>
+				<item value="" key="select"/>
+				<item value="" key="src"/>
+				<item value="synergy/r_ctsu_v2/inc/driver/instances" key="name"/>
+				<item value="include" key="category"/>
+				<item value="" key="attr"/>
+				<item value="" key="version"/>
+			</section>
+			<section name="componentfile11">
+				<item value="" key="condition"/>
+				<item value="" key="CONDITON_PARENT_PACK"/>
+				<item value="" key="select"/>
+				<item value="" key="src"/>
+				<item value="synergy/r_ctsu_v2/inc/driver/api" key="name"/>
+				<item value="include" key="category"/>
+				<item value="" key="attr"/>
+				<item value="" key="version"/>
+			</section>
+			<section name="componentfile10">
+				<item value="" key="condition"/>
+				<item value="" key="CONDITON_PARENT_PACK"/>
+				<item value="" key="select"/>
+				<item value="" key="src"/>
+				<item value="synergy/r_ctsu_v2/tools/ctsu_sfr_calculator.py" key="name"/>
+				<item value="other" key="category"/>
+				<item value="" key="attr"/>
+				<item value="1.0.0" key="version"/>
+				<item value="C:/Users/onkar.raut/Documents/2017H1/Firmware/whirlpool-synergy-safety-touch/dev_ctsu_sspv1p3p0/synergy/r_ctsu_v2/tools/ctsu_sfr_calculator.py" key="ORIGINAL_FILE_SOURCE"/>
+			</section>
+			<section name="componentfile9">
+				<item value="" key="condition"/>
+				<item value="" key="CONDITON_PARENT_PACK"/>
+				<item value="" key="select"/>
+				<item value="" key="src"/>
+				<item value="synergy/r_ctsu_v2/tools/ctsu_config.py" key="name"/>
+				<item value="other" key="category"/>
+				<item value="" key="attr"/>
+				<item value="1.0.0" key="version"/>
+				<item value="C:/Users/onkar.raut/Documents/2017H1/Firmware/whirlpool-synergy-safety-touch/dev_ctsu_sspv1p3p0/synergy/r_ctsu_v2/tools/ctsu_config.py" key="ORIGINAL_FILE_SOURCE"/>
+			</section>
+			<section name="componentfile4">
+				<item value="" key="condition"/>
+				<item value="" key="CONDITON_PARENT_PACK"/>
+				<item value="" key="select"/>
+				<item value="" key="src"/>
+				<item value="synergy/r_ctsu_v2/src/driver/r_ctsu/deps/ctsu_hw_power.c" key="name"/>
+				<item value="source" key="category"/>
+				<item value="" key="attr"/>
+				<item value="1.0.0" key="version"/>
+				<item value="C:/Users/onkar.raut/Documents/2017H1/Firmware/whirlpool-synergy-safety-touch/dev_ctsu_sspv1p3p0/synergy/r_ctsu_v2/src/driver/r_ctsu/deps/ctsu_hw_power.c" key="ORIGINAL_FILE_SOURCE"/>
+			</section>
+			<section name="componentfile3">
+				<item value="" key="condition"/>
+				<item value="" key="CONDITON_PARENT_PACK"/>
+				<item value="" key="select"/>
+				<item value="" key="src"/>
+				<item value="synergy/r_ctsu_v2/src/driver/r_ctsu/deps/README.md" key="name"/>
+				<item value="other" key="category"/>
+				<item value="" key="attr"/>
+				<item value="1.0.0" key="version"/>
+				<item value="C:/Users/onkar.raut/Documents/2017H1/Firmware/whirlpool-synergy-safety-touch/dev_ctsu_sspv1p3p0/synergy/r_ctsu_v2/src/driver/r_ctsu/deps/README.md" key="ORIGINAL_FILE_SOURCE"/>
+			</section>
+			<section name="componentfile2">
+				<item value="" key="condition"/>
+				<item value="" key="CONDITON_PARENT_PACK"/>
+				<item value="" key="select"/>
+				<item value="" key="src"/>
+				<item value="synergy/r_ctsu_v2/inc/driver/instances/r_ctsu.h" key="name"/>
+				<item value="source" key="category"/>
+				<item value="" key="attr"/>
+				<item value="1.0.0" key="version"/>
+				<item value="C:/Users/onkar.raut/Documents/2017H1/Firmware/whirlpool-synergy-safety-touch/dev_ctsu_sspv1p3p0/synergy/r_ctsu_v2/inc/driver/instances/r_ctsu.h" key="ORIGINAL_FILE_SOURCE"/>
+			</section>
+			<section name="componentfile1">
+				<item value="" key="condition"/>
+				<item value="" key="CONDITON_PARENT_PACK"/>
+				<item value="" key="select"/>
+				<item value="" key="src"/>
+				<item value="synergy/r_ctsu_v2/inc/driver/api/r_ctsu_api.h" key="name"/>
+				<item value="source" key="category"/>
+				<item value="" key="attr"/>
+				<item value="1.0.0" key="version"/>
+				<item value="C:/Users/onkar.raut/Documents/2017H1/Firmware/whirlpool-synergy-safety-touch/dev_ctsu_sspv1p3p0/synergy/r_ctsu_v2/inc/driver/api/r_ctsu_api.h" key="ORIGINAL_FILE_SOURCE"/>
+			</section>
+			<section name="componentfile8">
+				<item value="" key="condition"/>
+				<item value="" key="CONDITON_PARENT_PACK"/>
+				<item value="" key="select"/>
+				<item value="" key="src"/>
+				<item value="synergy/r_ctsu_v2/src/driver/r_ctsu/r_ctsu_synergy.c" key="name"/>
+				<item value="source" key="category"/>
+				<item value="" key="attr"/>
+				<item value="1.0.0" key="version"/>
+				<item value="C:/Users/onkar.raut/Documents/2017H1/Firmware/whirlpool-synergy-safety-touch/dev_ctsu_sspv1p3p0/synergy/r_ctsu_v2/src/driver/r_ctsu/r_ctsu_synergy.c" key="ORIGINAL_FILE_SOURCE"/>
+			</section>
+			<section name="componentfile7">
+				<item value="" key="condition"/>
+				<item value="" key="CONDITON_PARENT_PACK"/>
+				<item value="" key="select"/>
+				<item value="" key="src"/>
+				<item value="synergy/r_ctsu_v2/src/driver/r_ctsu/r_ctsu_private.h" key="name"/>
+				<item value="source" key="category"/>
+				<item value="" key="attr"/>
+				<item value="1.0.0" key="version"/>
+				<item value="C:/Users/onkar.raut/Documents/2017H1/Firmware/whirlpool-synergy-safety-touch/dev_ctsu_sspv1p3p0/synergy/r_ctsu_v2/src/driver/r_ctsu/r_ctsu_private.h" key="ORIGINAL_FILE_SOURCE"/>
+			</section>
+			<section name="componentfile6">
+				<item value="" key="condition"/>
+				<item value="" key="CONDITON_PARENT_PACK"/>
+				<item value="" key="select"/>
+				<item value="" key="src"/>
+				<item value="synergy/r_ctsu_v2/src/driver/r_ctsu/hw/r_ctsu_sfr_access_synergy.h" key="name"/>
+				<item value="source" key="category"/>
+				<item value="" key="attr"/>
+				<item value="1.0.0" key="version"/>
+				<item value="C:/Users/onkar.raut/Documents/2017H1/Firmware/whirlpool-synergy-safety-touch/dev_ctsu_sspv1p3p0/synergy/r_ctsu_v2/src/driver/r_ctsu/hw/r_ctsu_sfr_access_synergy.h" key="ORIGINAL_FILE_SOURCE"/>
+			</section>
+			<section name="componentfile5">
+				<item value="" key="condition"/>
+				<item value="" key="CONDITON_PARENT_PACK"/>
+				<item value="" key="select"/>
+				<item value="" key="src"/>
+				<item value="synergy/r_ctsu_v2/src/driver/r_ctsu/deps/r_ctsu_sfr_access_synergy.c" key="name"/>
+				<item value="source" key="category"/>
+				<item value="" key="attr"/>
+				<item value="1.0.0" key="version"/>
+				<item value="C:/Users/onkar.raut/Documents/2017H1/Firmware/whirlpool-synergy-safety-touch/dev_ctsu_sspv1p3p0/synergy/r_ctsu_v2/src/driver/r_ctsu/deps/r_ctsu_sfr_access_synergy.c" key="ORIGINAL_FILE_SOURCE"/>
+			</section>
+			<section name="componentfile0">
+				<item value="" key="condition"/>
+				<item value="" key="CONDITON_PARENT_PACK"/>
+				<item value="" key="select"/>
+				<item value="" key="src"/>
+				<item value="synergy/r_ctsu_v2/doc/CTSU_User_Manual.html" key="name"/>
+				<item value="other" key="category"/>
+				<item value="" key="attr"/>
+				<item value="1.0.0" key="version"/>
+				<item value="C:/Users/onkar.raut/Documents/2017H1/Firmware/whirlpool-synergy-safety-touch/dev_ctsu_sspv1p3p0/synergy/r_ctsu_v2/doc/CTSU_User_Manual.html" key="ORIGINAL_FILE_SOURCE"/>
+			</section>
+		</section>
+	</section>
+	<section name="packtype_bsp">
+		<item value="SRCTEMPLATE_LEAVE" key="forcetemplate"/>
+		<item value="" key="bspboardnamesolid"/>
+		<item value="board." key="bspboardid"/>
+		<item value="" key="bspboardname"/>
+	</section>
+	<section name="packdetails">
+		<item value="" key="packlicenseinfo"/>
+		<item value="r_ctsu_v2" key="packname"/>
+		<item value="" key="packurl"/>
+		<item value="1.3.0" key="packversion"/>
+		<item value="0" key="packtype"/>
+		<item value="HAL Driver to operate Capacitive Touch Sensing Unit" key="packdescription"/>
+		<item value="onkar.raut@renesas.com" key="packcontact"/>
+		<item value="Renesas" key="packvendor"/>
+		<item value="C:\Users\onkar.raut\Documents\2017H1\Firmware\whirlpool-synergy-safety-touch\r_ctsu_pack_file" key="packlocation"/>
+	</section>
+	<section name="packtype_bsp_components">
+		<item value="1" key="componentsindex"/>
+		<section name="component0">
+			<item value="false" key="isusercreated"/>
+			<item value="Renesas##BSP##Board######1.3.0" key="componentkey"/>
+			<item value="" key="condition"/>
+			<item value="" key="CONDITON_PARENT_PACK"/>
+			<item value="1.3.0" key="Cversion"/>
+			<item value="Board" key="Cgroup"/>
+			<item value="" key="Cvariant"/>
+			<item value="" key="description"/>
+			<item value="Renesas" key="Cvendor"/>
+			<item value="" key="Csub"/>
+			<item value="" key="Capiversion"/>
+			<item value="BSP" key="Cclass"/>
+		</section>
+	</section>
+	<section name="packtype_user">
+		<list key="usercomponentids">
+			<item value="Renesas##Custom_HAL_Drivers##all##r_ctsu_v2####1.3.0"/>
+		</list>
+		<list key="usercomponentthreadids_Renesas##Custom_HAL_Drivers##all##r_ctsu_v2####1.3.0">
+		</list>
+	</section>
+	<section name="conditions">
+		<item value="0" key="conditionsindex"/>
+		<list key="conditions">
+			<item value="Renesas.Synergy.1.3.0.pack|Only_CM0_and_GCC"/>
+			<item value="Renesas.Synergy.1.3.0.pack|Only_CM4_and_GCC"/>
+		</list>
+	</section>
+</section>
