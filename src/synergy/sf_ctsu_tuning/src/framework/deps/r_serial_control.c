@@ -41,14 +41,13 @@
 #include "sf_ctsu_tuning_cfg.h"
 #include "sf_ctsu_tuning.h"
 
-#if (SF_CTSU_TUNING_CFG_PARAM_CHECK==0)
+#if (2 == BSP_CFG_ASSERT)
 /** @note Use assertion on the Renesas Virtual Console.
  * Instructions: (Alt+Shift+Q, C) >
  *      (Button)Display Selected Console >
  *          Renesas Virtual Console >
  *              (Button) Pin Console.
  */
-#define NDEBUG
 #include <assert.h>
 #endif
 
@@ -97,16 +96,14 @@
 #define SLIDER_NUMBER       (0)
 #define WHEEL_NUMBER        (0)
 
-#if (SF_CTSU_TUNING_CFG_PARAM_CHECK==0)
-#define ASSERT(test)    assert(test)
-#elif (SF_CTSU_TUNING_CFG_PARAM_CHECK==1)
-#define ASSERT(test)    SSP_ASSERT(test)
+#if (2 == BSP_CFG_ASSERT)
+#define ASSERT(test)	assert(test)
 #else
-#define ASSERT(test)    if((test)==false)return CTSU_ERR_INVALID_PARAM;
+#define ASSERT(test)
 #endif
 
 #if !defined(MCU_MODEL)
-#define MCU_MODEL   (MCU_MODEL_R5F5xxxxxxxx)
+#define MCU_MODEL	(MCU_MODEL_R5F5xxxxxxxx)
 #endif
 
 /* Main loop cycle */
@@ -603,17 +600,17 @@ typedef struct
 /** Immediate raw data readings from the CTSU registers CTSUSC(sensor count) and CTSURC(Reference count) in self-capacitance mode. */
 typedef struct st_ctsu_channel_measurement_self
 {
-    uint16_t    sen_cnt;        ///< Sensor ICO count
-    uint16_t    ref_cnt;        ///< Reference ICO count
+	uint16_t	sen_cnt;		///< Sensor ICO count
+	uint16_t	ref_cnt;		///< Reference ICO count
 } ctsu_channel_data_self_t;
 
 /** Immediate raw data readings from the CTSU registers CTSUSC(sensor count) and CTSURC(Reference count) in mutual-capacitance mode. */
 typedef struct st_ctsu_channel_measurement_mutual
 {
-    uint16_t sen_cnt_1;         ///< Sensor ICO count (primary measurement)
-    uint16_t ref_cnt_1;         ///< Reference ICO count (primary measurement)
-    uint16_t sen_cnt_2;         ///< Sensor ICO count (secondary measurement)
-    uint16_t ref_cnt_2;         ///< Reference ICO count (secondary measurement)
+	uint16_t sen_cnt_1;			///< Sensor ICO count (primary measurement)
+	uint16_t ref_cnt_1;			///< Reference ICO count (primary measurement)
+	uint16_t sen_cnt_2;			///< Sensor ICO count (secondary measurement)
+	uint16_t ref_cnt_2;			///< Reference ICO count (secondary measurement)
 } ctsu_channel_data_mutual_t;
 
 /* Flag define */
@@ -781,7 +778,7 @@ wheel_info_t     g_wheelInfo[WHEEL_NUMBER];
 * Private global variables and functions
 ***********************************************************************************************************************/
 #ifdef WORKBENCH_COMMAND_USE
-com_data_rd_t com_data;    /* Received data buffer */
+com_data_rd_t com_data = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};    /* Received data buffer */
 com_data_tx_t rsp_cmd;    /* Transmit data buffer */
 monitor_command_t monitor_command;    /* Monitor commands buffer */
 BOOL        serial_transmit_ready;
@@ -806,13 +803,13 @@ key_info_t              g_key_info[METHOD_NUM];
 //key_user_param_t        g_key_user_parameter[METHOD_NUM];
 touch_group_param_t     g_touch_key_group[METHOD_NUM];
 //touch_result_t          g_touch_all_result[METHOD_NUM];
-volatile uint8_t       g_ctsu_soft_mode;                                        /* CTSU operating mode flag                  */
-volatile ctsu_status_t           g_ctsu_status[METHOD_NUM];                     /* CTSU measurement status flag */
+volatile uint8_t       g_ctsu_soft_mode;                   						/* CTSU operating mode flag                  */
+volatile ctsu_status_t           g_ctsu_status[METHOD_NUM];                  	/* CTSU measurement status flag */
 uint8_t comm_command = 0;
 
 ctsu_ctrl_t* ctsu_handle_id[METHOD_NUM];
 
-ctsu_cfg_t const * all_ctsu_configs[METHOD_NUM];
+ctsu_cfg_t* all_ctsu_configs[METHOD_NUM];
 
 static uint8_t g_burst_mode = 0;
 
@@ -868,11 +865,11 @@ int SerialCommandInitial(ctsu_instance_t * p_ctsu, const uint8_t itr)
 
     ctsu_mode_t mode = ((p_cfg->p_ctsu_settings->ctsucr1.byte & 0xC0) >> 6);
 
-    if (CTSU_MODE_SELF_CAPACITANCE == mode)
+    if(mode==CTSU_MODE_SELF_CAPACITANCE)
     {
         g_method_info[itr].type=METHOD_TYPE_SLFCP;
     }
-    else if (CTSU_MODE_MUTUAL_CAPACITANCE == mode)
+    else if(mode==CTSU_MODE_MUTUAL_CAPACITANCE)
     {
         g_method_info[itr].type=METHOD_TYPE_MTLCP;
     }
@@ -882,8 +879,8 @@ int SerialCommandInitial(ctsu_instance_t * p_ctsu, const uint8_t itr)
     }
 
 
-    uint8_t tx_count = 0;
-    uint8_t rx_count = 0;
+    uint16_t tx_count = 0;
+    uint16_t rx_count = 0;
     uint16_t index_rx;
     uint16_t index_tx;
 
@@ -924,23 +921,23 @@ int SerialCommandInitial(ctsu_instance_t * p_ctsu, const uint8_t itr)
         return 0;
     }
 
-    if (METHOD_TYPE_SLFCP == g_method_info[itr].type)
+    if(g_method_info[itr].type==METHOD_TYPE_SLFCP)
     {
         for( ch_num = 0; ch_num < SELFCAP_SENSOR_MAX; ch_num++)
         {
             g_key_info[itr].sensor_index[ch_num] = 0xff;
             if((ch_en & ((uint64_t)1<<ch_num))==((uint64_t)1<<ch_num))
             {
-                g_key_info[itr].ena_num++;
+                g_key_info[itr].ena_num += 1;
                 g_key_info[itr].sensor_index[ch_num] = rx_count;
-                rx_count++;
+                rx_count += 1;
             }
         }
 
         g_key_info[itr].key_max_group = (SELFCAP_SENSOR_MAX >> 4) + 1;
         g_method_info[itr].enable = SELFCAP_SENSOR_MAX;
     }
-    else if (METHOD_TYPE_MTLCP == g_method_info[itr].type)
+    else if(g_method_info[itr].type==METHOD_TYPE_MTLCP)
     {
         if(0 == ch_tx)
         {
@@ -950,18 +947,18 @@ int SerialCommandInitial(ctsu_instance_t * p_ctsu, const uint8_t itr)
         {
             if(((ch_en & ((uint64_t)1<<ch_num))==((uint64_t)1<<ch_num)) && ((ch_tx & ((uint64_t)1<<ch_num))==0))
             {
-                rx_count++;
+                rx_count += 1;
             }
         }
         for( ch_num = 0, tx_count = 0; ch_num < MAX_TS; ch_num++)
         {
             if((ch_tx & ((uint64_t)1<<ch_num))==((uint64_t)1<<ch_num))
             {
-                tx_count++;
+                tx_count += 1;
             }
         }
 
-        g_key_info[itr].ena_num = (uint8_t)(rx_count*tx_count);
+        g_key_info[itr].ena_num = rx_count*tx_count;
         g_key_info[itr].key_num = 0;
         g_method_info[itr].enable = g_key_info[itr].ena_num;
 
@@ -969,14 +966,10 @@ int SerialCommandInitial(ctsu_instance_t * p_ctsu, const uint8_t itr)
         {
             for(index_tx = 0; index_tx < tx_count; index_tx++)
             {
-                g_key_info[itr].sensor_index[(index_rx*tx_count)+index_tx] = (uint8_t)((index_rx*tx_count)+index_tx);
-                g_key_info[itr].key_num++;
+                g_key_info[itr].sensor_index[index_rx*tx_count+index_tx] = index_rx*tx_count+index_tx;
+                g_key_info[itr].key_num += 1;
             }
         }
-    }
-    else
-    {
-        ;
     }
 
     all_ctsu_configs[itr] = p_cfg;
@@ -1059,7 +1052,7 @@ uint8_t    GetReplayMessage(uint8_t * value, uint16_t * length)
         size    = (uint8_t)(rsp_cmd.fmt.size + HEAD_SIZE);
         if (rsp_cmd.fmt.main & 0x20)
         {
-            size = (uint16_t)(size + 256);
+            size += 256;
             *length = size;
         }
         for (i = 0; i < size; i++)
@@ -1091,22 +1084,22 @@ static uint8_t GetMeasureSensorCounter(uint16_t channel, uint16_t * value)
     result = CMD_RESULT_FAILURE;
     if (channel < g_method_info[g_access_method].enable)
     {
-        if (0 == g_method_info[g_access_method].type)
+        if (g_method_info[g_access_method].type == 0)
         {
-            index = g_key_info[g_access_method].sensor_index[channel];
-            if (0xff != index)
+        	index = g_key_info[g_access_method].sensor_index[channel];
+            if ( index != 0xff)
             {
-                ctsu_channel_data_self_t* pvalues = (ctsu_channel_data_self_t*)all_ctsu_configs[g_access_method]->p_sensor_data;
-                *value = pvalues[index].sen_cnt;
+            	ctsu_channel_data_self_t* result = (ctsu_channel_data_self_t*)all_ctsu_configs[g_access_method]->p_sensor_data;
+                *value = result[index].sen_cnt;
             }
         }
         else
         {
-            index = g_key_info[g_access_method].sensor_index[channel];
-            if (0xff != g_key_info[g_access_method].sensor_index[channel])
+        	index = g_key_info[g_access_method].sensor_index[channel];
+            if (g_key_info[g_access_method].sensor_index[channel] != 0xff)
             {
-                ctsu_channel_data_mutual_t* pvalues = (ctsu_channel_data_mutual_t*)all_ctsu_configs[g_access_method]->p_sensor_data;
-                *value = (uint16_t)(pvalues[index].sen_cnt_2 - pvalues[index].sen_cnt_1);
+            	ctsu_channel_data_mutual_t* result = (ctsu_channel_data_mutual_t*)all_ctsu_configs[g_access_method]->p_sensor_data;
+                *value = (result[index].sen_cnt_2 - result[index].sen_cnt_1);
             }
         }
         result = CMD_RESULT_SUCCESS;
@@ -1131,15 +1124,15 @@ static uint8_t GetMeasureReferenceValue(uint16_t channel, uint16_t * value)
     result = CMD_RESULT_FAILURE;
     if (channel < g_method_info[g_access_method].enable)
     {
-        if (0 == g_method_info[g_access_method].type)
+        if (g_method_info[g_access_method].type == 0)
         {
             index = g_key_info[g_access_method].sensor_index[channel];
-            if (0xff != index)
+            if ( index != 0xff)
             {
-                ctsu_channel_data_self_t* pvalues = (ctsu_channel_data_self_t*)all_ctsu_configs[g_access_method]->p_sensor_data;
-                if (NULL != pvalues)
+                ctsu_channel_data_self_t* filtered_values = (ctsu_channel_data_self_t*)all_ctsu_configs[g_access_method]->p_sensor_data;
+                if(filtered_values!=NULL)
                 {
-                    *value = pvalues[index].ref_cnt;
+                    *value = filtered_values[index].ref_cnt;
                     result = CMD_RESULT_SUCCESS;
                 }
             }
@@ -1147,12 +1140,12 @@ static uint8_t GetMeasureReferenceValue(uint16_t channel, uint16_t * value)
         else
         {
             index = g_key_info[g_access_method].sensor_index[channel];
-            if (0xff != index)
+            if ( index != 0xff)
             {
-                ctsu_channel_data_mutual_t* pvalues = (ctsu_channel_data_mutual_t*)all_ctsu_configs[g_access_method]->p_sensor_data;
-                if (NULL != pvalues)
+                ctsu_channel_data_mutual_t* filtered_values = (ctsu_channel_data_mutual_t*)all_ctsu_configs[g_access_method]->p_sensor_data;
+                if(filtered_values!=NULL)
                 {
-                    *value = (uint16_t)(pvalues[index].ref_cnt_2 - pvalues[index].ref_cnt_1);
+                    *value = filtered_values[index].ref_cnt_2 - filtered_values[index].ref_cnt_1;
                     result = CMD_RESULT_SUCCESS;
                 }
 
@@ -1160,7 +1153,7 @@ static uint8_t GetMeasureReferenceValue(uint16_t channel, uint16_t * value)
             }
         }
     }
-
+    /* XXX Dummy ReferenceValue provided by this layer. */
     result = CMD_RESULT_SUCCESS;
     ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
@@ -1183,30 +1176,30 @@ static uint8_t GetMeasureReferenceCounter(uint16_t channel, uint16_t * value)
     result = CMD_RESULT_FAILURE;
     if (channel < g_method_info[g_access_method].enable)
     {
-        if (0 == g_method_info[g_access_method].type)
+        if (g_method_info[g_access_method].type == 0)
         {
-            index = g_key_info[g_access_method].sensor_index[channel];
-            if (0xff != index)
+        	index = g_key_info[g_access_method].sensor_index[channel];
+            if ( index != 0xff)
             {
-                ctsu_channel_data_self_t* pvalues = (ctsu_channel_data_self_t*)all_ctsu_configs[g_access_method]->p_sensor_data;
-                if (NULL != pvalues)
-                {
-                    *value = pvalues[index].ref_cnt;
-                    result = CMD_RESULT_SUCCESS;
-                }
+            	ctsu_channel_data_self_t* filtered_values = (ctsu_channel_data_self_t*)all_ctsu_configs[g_access_method]->p_sensor_data;
+            	if(filtered_values!=NULL)
+            	{
+            		*value = filtered_values[index].ref_cnt;
+            		result = CMD_RESULT_SUCCESS;
+            	}
             }
         }
         else
         {
-            index = g_key_info[g_access_method].sensor_index[channel];
-            if (0xff != index)
+        	index = g_key_info[g_access_method].sensor_index[channel];
+            if ( index != 0xff)
             {
-                ctsu_channel_data_mutual_t* pvalues = (ctsu_channel_data_mutual_t*)all_ctsu_configs[g_access_method]->p_sensor_data;
-                if (NULL != pvalues)
-                {
-                    *value = (uint16_t)(pvalues[index].ref_cnt_2 - pvalues[index].ref_cnt_1);
-                    result = CMD_RESULT_SUCCESS;
-                }
+            	ctsu_channel_data_mutual_t* filtered_values = (ctsu_channel_data_mutual_t*)all_ctsu_configs[g_access_method]->p_sensor_data;
+            	if(filtered_values!=NULL)
+            	{
+            		*value = filtered_values[index].ref_cnt_2 - filtered_values[index].ref_cnt_1;
+            		result = CMD_RESULT_SUCCESS;
+            	}
 
                 result = CMD_RESULT_SUCCESS;
             }
@@ -1226,8 +1219,6 @@ static uint8_t GetMeasureReferenceCounter(uint16_t channel, uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t GetMeasureSliderPosition(uint16_t channel, uint16_t * value)
 {
-    SSP_PARAMETER_NOT_USED(channel);
-    SSP_PARAMETER_NOT_USED(value);
     uint8_t result;
 
     result = CMD_RESULT_FAILURE;
@@ -1253,8 +1244,6 @@ static uint8_t GetMeasureSliderPosition(uint16_t channel, uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t GetMeasureWheelPosition(uint16_t channel, uint16_t * value)
 {
-    SSP_PARAMETER_NOT_USED(channel);
-    SSP_PARAMETER_NOT_USED(value);
     uint8_t result;
 
     result = CMD_RESULT_FAILURE;
@@ -1280,12 +1269,10 @@ static uint8_t GetMeasureWheelPosition(uint16_t channel, uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t GetMeasureTouchResult(uint16_t channel, uint16_t * value)
 {
-    SSP_PARAMETER_NOT_USED(channel);
-    SSP_PARAMETER_NOT_USED(value);
     uint8_t result;
     uint8_t ch_num, index;
-    (void) index;           //Compiler warning disable
-    (void) ch_num;          //Compiler warning disable
+    (void) index;			//Compiler warning disable
+    (void) ch_num;			//Compiler warning disable
     *value = 0;
     /* XXX Touch Result Available in Touch layer driver. */
     result = CMD_RESULT_SUCCESS;
@@ -1309,15 +1296,15 @@ static uint8_t GetMeasurePrimarySensorCounter(uint16_t channel, uint16_t * value
     result = CMD_RESULT_FAILURE;
     if (channel < g_method_info[g_access_method].enable)
     {
-        if (0 != g_method_info[g_access_method].type)
+        if (g_method_info[g_access_method].type != 0)
         {
-            ctsu_channel_data_mutual_t* pvalues = (ctsu_channel_data_mutual_t*)all_ctsu_configs[g_access_method]->p_sensor_data;
-            *value = pvalues[channel].sen_cnt_1;
+        	ctsu_channel_data_mutual_t* filtered_values = (ctsu_channel_data_mutual_t*)all_ctsu_configs[g_access_method]->p_sensor_data;
+        	*value = filtered_values[channel].sen_cnt_1;
         }
         else
         {
-            ctsu_channel_data_self_t* pvalues = (ctsu_channel_data_self_t*)all_ctsu_configs[g_access_method]->p_sensor_data;
-            *value = pvalues[channel].sen_cnt;
+            ctsu_channel_data_self_t* filtered_values = (ctsu_channel_data_self_t*)all_ctsu_configs[g_access_method]->p_sensor_data;
+            *value = filtered_values[channel].sen_cnt;
         }
         result = CMD_RESULT_SUCCESS;
     }
@@ -1342,10 +1329,10 @@ static uint8_t GetMeasureSecondarySensorCounter(uint16_t channel, uint16_t * val
     result = CMD_RESULT_FAILURE;
     if (channel < g_method_info[g_access_method].enable)
     {
-        if (0 != g_method_info[g_access_method].type)
+        if (g_method_info[g_access_method].type != 0)
         {
-            ctsu_channel_data_mutual_t* pvalues = (ctsu_channel_data_mutual_t*)all_ctsu_configs[g_access_method]->p_sensor_data;
-            *value = pvalues[channel].sen_cnt_2;
+        	ctsu_channel_data_mutual_t* filtered_values = (ctsu_channel_data_mutual_t*)all_ctsu_configs[g_access_method]->p_sensor_data;
+        	*value = filtered_values[channel].sen_cnt_2;
         }
         result = CMD_RESULT_SUCCESS;
     }
@@ -1369,15 +1356,15 @@ static uint8_t GetMeasurePrimaryReferenceCounter(uint16_t channel, uint16_t * va
     result = CMD_RESULT_FAILURE;
     if (channel < g_method_info[g_access_method].enable)
     {
-        if (0 != g_method_info[g_access_method].type)
+        if (g_method_info[g_access_method].type != 0)
         {
-            ctsu_channel_data_mutual_t* pvalues = (ctsu_channel_data_mutual_t*)all_ctsu_configs[g_access_method]->p_sensor_data;
-            *value = pvalues[channel].ref_cnt_1;
+        	ctsu_channel_data_mutual_t* filtered_values = (ctsu_channel_data_mutual_t*)all_ctsu_configs[g_access_method]->p_sensor_data;
+        	*value = filtered_values[channel].ref_cnt_1;
         }
         else
         {
-            ctsu_channel_data_self_t* pvalues = (ctsu_channel_data_self_t*)all_ctsu_configs[g_access_method]->p_sensor_data;
-            *value = pvalues[channel].ref_cnt;
+            ctsu_channel_data_self_t* filtered_values = (ctsu_channel_data_self_t*)all_ctsu_configs[g_access_method]->p_sensor_data;
+            *value = filtered_values[channel].ref_cnt;
         }
         result = CMD_RESULT_SUCCESS;
     }
@@ -1400,10 +1387,10 @@ static uint8_t GetMeasureSecondaryReferenceCounter(uint16_t channel, uint16_t * 
     result = CMD_RESULT_FAILURE;
     if (channel < g_method_info[g_access_method].enable)
     {
-        if (0 != g_method_info[g_access_method].type)
+        if (g_method_info[g_access_method].type != 0)
         {
-            ctsu_channel_data_mutual_t* pval = (ctsu_channel_data_mutual_t*)all_ctsu_configs[g_access_method]->p_sensor_data;
-            *value = pval[channel].ref_cnt_2;
+        	ctsu_channel_data_mutual_t* filtered_values = (ctsu_channel_data_mutual_t*)all_ctsu_configs[g_access_method]->p_sensor_data;
+        	*value = filtered_values[channel].ref_cnt_2;
         }
         result = CMD_RESULT_SUCCESS;
     }
@@ -1419,9 +1406,8 @@ static uint8_t GetMeasureSecondaryReferenceCounter(uint16_t channel, uint16_t * 
 ***********************************************************************************************************************/
 static uint8_t GetParameterTouchFuncMode(uint16_t * value)
 {
-    SSP_PARAMETER_NOT_USED(value);
-    uint8_t result = CMD_RESULT_FAILURE;
-    ASSERT(result!=CMD_RESULT_FAILURE);
+	uint8_t result = CMD_RESULT_FAILURE;
+	ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
 }
 
@@ -1434,10 +1420,9 @@ static uint8_t GetParameterTouchFuncMode(uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t SetParameterTouchFuncMode(uint16_t value)
 {
-    SSP_PARAMETER_NOT_USED(value);
-    /* Drift correction      */
-    uint8_t result = CMD_RESULT_FAILURE;
-    ASSERT(result!=CMD_RESULT_FAILURE);
+	/* Drift correction      */
+	uint8_t result = CMD_RESULT_FAILURE;
+	ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
 }
 
@@ -1450,9 +1435,8 @@ static uint8_t SetParameterTouchFuncMode(uint16_t value)
 ***********************************************************************************************************************/
 static uint8_t GetParameterDriftInterval(uint16_t * value)
 {
-    SSP_PARAMETER_NOT_USED(value);
-    uint8_t result = CMD_RESULT_FAILURE;
-    ASSERT(result!=CMD_RESULT_FAILURE);
+	uint8_t result = CMD_RESULT_FAILURE;
+	ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
 }
 
@@ -1465,9 +1449,8 @@ static uint8_t GetParameterDriftInterval(uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t SetParameterDriftInterval(uint16_t value)
 {
-    SSP_PARAMETER_NOT_USED(value);
-    uint8_t result = CMD_RESULT_FAILURE;
-    ASSERT(result!=CMD_RESULT_FAILURE);
+	uint8_t result = CMD_RESULT_FAILURE;
+	ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
 }
 
@@ -1480,9 +1463,8 @@ static uint8_t SetParameterDriftInterval(uint16_t value)
 ***********************************************************************************************************************/
 static uint8_t GetParameterMsa(uint16_t * value)
 {
-    SSP_PARAMETER_NOT_USED(value);
-    uint8_t result = CMD_RESULT_FAILURE;
-    ASSERT(result!=CMD_RESULT_FAILURE);
+	uint8_t result = CMD_RESULT_FAILURE;
+	ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
 }
 
@@ -1495,9 +1477,8 @@ static uint8_t GetParameterMsa(uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t SetParameterMsa(uint16_t value)
 {
-    SSP_PARAMETER_NOT_USED(value);
-    uint8_t result = CMD_RESULT_FAILURE;
-    ASSERT(result!=CMD_RESULT_FAILURE);
+	uint8_t result = CMD_RESULT_FAILURE;
+	ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
 }
 
@@ -1510,9 +1491,8 @@ static uint8_t SetParameterMsa(uint16_t value)
 ***********************************************************************************************************************/
 static uint8_t GetParameterAcdToTouch(uint16_t * value)
 {
-    SSP_PARAMETER_NOT_USED(value);
-    uint8_t result = CMD_RESULT_FAILURE;
-    ASSERT(result!=CMD_RESULT_FAILURE);
+	uint8_t result = CMD_RESULT_FAILURE;
+	ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
 }
 
@@ -1525,9 +1505,8 @@ static uint8_t GetParameterAcdToTouch(uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t SetParameterAcdToTouch(uint16_t value)
 {
-    SSP_PARAMETER_NOT_USED(value);
-    uint8_t result = CMD_RESULT_FAILURE;
-    ASSERT(result!=CMD_RESULT_FAILURE);
+	uint8_t result = CMD_RESULT_FAILURE;
+	ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
 }
 
@@ -1540,9 +1519,8 @@ static uint8_t SetParameterAcdToTouch(uint16_t value)
 ***********************************************************************************************************************/
 static uint8_t GetParameterAcdToNoTouch(uint16_t * value)
 {
-    SSP_PARAMETER_NOT_USED(value);
-    uint8_t result = CMD_RESULT_FAILURE;
-    ASSERT(result!=CMD_RESULT_FAILURE);
+	uint8_t result = CMD_RESULT_FAILURE;
+	ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
 }
 
@@ -1555,9 +1533,8 @@ static uint8_t GetParameterAcdToNoTouch(uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t SetParameterAcdToNoTouch(uint16_t value)
 {
-    SSP_PARAMETER_NOT_USED(value);
-    uint8_t result = CMD_RESULT_FAILURE;
-    ASSERT(result!=CMD_RESULT_FAILURE);
+	uint8_t result = CMD_RESULT_FAILURE;
+	ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
 }
 
@@ -1573,15 +1550,15 @@ static uint8_t GetParameterThreshold(uint16_t channel, uint16_t * value)
 {
     uint8_t result;
     uint8_t index;
-    (void) index;           //Compiler warning disable
+    (void) index;			//Compiler warning disable
     *value = 0;
     result = CMD_RESULT_FAILURE;
     if (channel < g_method_info[g_access_method].enable)
     {
-        /* XXX Threshold Available in Touch layer driver. */
+    	/* XXX Threshold Available in Touch layer driver. */
     }
     result = CMD_RESULT_SUCCESS;
-    ASSERT(result!=CMD_RESULT_FAILURE);
+	ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
 }
 
@@ -1595,15 +1572,16 @@ static uint8_t GetParameterThreshold(uint16_t channel, uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t SetParameterThreshold(uint16_t channel, uint16_t value)
 {
-    SSP_PARAMETER_NOT_USED(value);
     uint8_t result;
+    uint8_t index;
+    (void) index;			//Compiler warning disable
     result = CMD_RESULT_FAILURE;
     if (channel < g_method_info[g_access_method].enable)
     {
-        /* XXX Threshold Available in Touch layer driver. */
+    	/* XXX Threshold Available in Touch layer driver. */
     }
     result = CMD_RESULT_SUCCESS;
-    ASSERT(result!=CMD_RESULT_FAILURE);
+	ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
 }
 
@@ -1622,10 +1600,10 @@ static uint8_t GetParameterHysteresis(uint16_t channel, uint16_t * value)
     result = CMD_RESULT_FAILURE;
     if (channel < g_method_info[g_access_method].enable)
     {
-        /* XXX Hysteresis Available in Touch layer driver. */
+    	/* XXX Hysteresis Available in Touch layer driver. */
     }
     result = CMD_RESULT_SUCCESS;
-    ASSERT(result!=CMD_RESULT_FAILURE);
+	ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
 }
 
@@ -1639,7 +1617,6 @@ static uint8_t GetParameterHysteresis(uint16_t channel, uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t SetParameterHysteresis(uint16_t channel, uint16_t value)
 {
-    SSP_PARAMETER_NOT_USED(value);
     uint8_t result;
     result = CMD_RESULT_FAILURE;
     if (channel < g_method_info[g_access_method].enable)
@@ -1647,7 +1624,7 @@ static uint8_t SetParameterHysteresis(uint16_t channel, uint16_t value)
         /* XXX Hysteresis Available in Touch layer driver. */
     }
     result = CMD_RESULT_SUCCESS;
-    ASSERT(result!=CMD_RESULT_FAILURE);
+	ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
 }
 
@@ -1679,9 +1656,6 @@ static uint8_t GetParameterSliderNumber(uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t    GetParameterSliderSensor(uint8_t channel, uint8_t no, uint16_t * value)
 {
-    SSP_PARAMETER_NOT_USED(no);
-    SSP_PARAMETER_NOT_USED(channel);
-    SSP_PARAMETER_NOT_USED(value);
     uint8_t    result;
 
     result    = CMD_RESULT_FAILURE;
@@ -1692,7 +1666,7 @@ static uint8_t    GetParameterSliderSensor(uint8_t channel, uint8_t no, uint16_t
         *value = g_sliderInfo[channel].ts[no];
     }
 #endif  // SLIDER_USE
-    ASSERT(result!=CMD_RESULT_FAILURE);
+	ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
 }
 
@@ -1706,9 +1680,7 @@ static uint8_t    GetParameterSliderSensor(uint8_t channel, uint8_t no, uint16_t
 ***********************************************************************************************************************/
 static uint8_t GetParameterSliderSensorNumber(uint16_t channel, uint16_t * value)
 {
-    SSP_PARAMETER_NOT_USED(channel);
-    SSP_PARAMETER_NOT_USED(value);
-    uint8_t result;
+    uint16_t result;
 
     result = CMD_RESULT_FAILURE;
 #ifdef SLIDER_USE
@@ -1718,7 +1690,7 @@ static uint8_t GetParameterSliderSensorNumber(uint16_t channel, uint16_t * value
         result  = CMD_RESULT_SUCCESS;
     }
 #endif  // SLIDER_USE
-    ASSERT(result!=CMD_RESULT_FAILURE);
+	ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
 }
 
@@ -1732,8 +1704,6 @@ static uint8_t GetParameterSliderSensorNumber(uint16_t channel, uint16_t * value
 ***********************************************************************************************************************/
 static uint8_t GetParameterSliderResolution(uint16_t channel, uint16_t * value)
 {
-    SSP_PARAMETER_NOT_USED(channel);
-    SSP_PARAMETER_NOT_USED(value);
     uint8_t result;
 
     result = CMD_RESULT_FAILURE;
@@ -1744,7 +1714,7 @@ static uint8_t GetParameterSliderResolution(uint16_t channel, uint16_t * value)
         result  = CMD_RESULT_SUCCESS;
     }
 #endif  // SLIDER_USE
-    ASSERT(result!=CMD_RESULT_FAILURE);
+	ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
 }
 
@@ -1758,8 +1728,6 @@ static uint8_t GetParameterSliderResolution(uint16_t channel, uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t SetParameterSliderResolution(uint16_t channel, uint16_t value)
 {
-    SSP_PARAMETER_NOT_USED(channel);
-    SSP_PARAMETER_NOT_USED(value);
     uint8_t result;
 
     result = CMD_RESULT_FAILURE;
@@ -1770,7 +1738,7 @@ static uint8_t SetParameterSliderResolution(uint16_t channel, uint16_t value)
         result = CMD_RESULT_SUCCESS;
     }
 #endif  // SLIDER_USE
-    ASSERT(result!=CMD_RESULT_FAILURE);
+	ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
 }
 
@@ -1784,8 +1752,6 @@ static uint8_t SetParameterSliderResolution(uint16_t channel, uint16_t value)
 ***********************************************************************************************************************/
 static uint8_t GetParameterSliderThreshold(uint16_t channel, uint16_t * value)
 {
-    SSP_PARAMETER_NOT_USED(channel);
-    SSP_PARAMETER_NOT_USED(value);
     uint8_t result;
 
     result = CMD_RESULT_FAILURE;
@@ -1796,7 +1762,7 @@ static uint8_t GetParameterSliderThreshold(uint16_t channel, uint16_t * value)
         result  = CMD_RESULT_SUCCESS;
     }
 #endif  // SLIDER_USE
-    ASSERT(result!=CMD_RESULT_FAILURE);
+	ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
 }
 
@@ -1810,8 +1776,6 @@ static uint8_t GetParameterSliderThreshold(uint16_t channel, uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t SetParameterSliderThreshold(uint16_t channel, uint16_t value)
 {
-    SSP_PARAMETER_NOT_USED(channel);
-    SSP_PARAMETER_NOT_USED(value);
     uint8_t result;
 
     result = CMD_RESULT_FAILURE;
@@ -1822,7 +1786,7 @@ static uint8_t SetParameterSliderThreshold(uint16_t channel, uint16_t value)
         result = CMD_RESULT_SUCCESS;
     }
 #endif  // SLIDER_USE
-    ASSERT(result!=CMD_RESULT_FAILURE);
+	ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
 }
 
@@ -1853,9 +1817,6 @@ static uint8_t GetParameterWheelNumber(uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t    GetParameterWheelSensor(uint8_t channel, uint8_t no, uint16_t * value)
 {
-    SSP_PARAMETER_NOT_USED(channel);
-    SSP_PARAMETER_NOT_USED(no);
-    SSP_PARAMETER_NOT_USED(value);
     uint8_t    result;
 
     result    = CMD_RESULT_FAILURE;
@@ -1866,7 +1827,7 @@ static uint8_t    GetParameterWheelSensor(uint8_t channel, uint8_t no, uint16_t 
         *value = g_wheelInfo[channel].ts[no];
     }
 #endif    // WHEEL_USE
-    ASSERT(result!=CMD_RESULT_FAILURE);
+	ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
 }
 
@@ -1880,9 +1841,7 @@ static uint8_t    GetParameterWheelSensor(uint8_t channel, uint8_t no, uint16_t 
 ***********************************************************************************************************************/
 static uint8_t GetParameterWheelSensorNumber(uint16_t channel, uint16_t * value)
 {
-    SSP_PARAMETER_NOT_USED(channel);
-    SSP_PARAMETER_NOT_USED(value);
-    uint8_t result;
+    uint16_t result;
 
     result = CMD_RESULT_FAILURE;
 #ifdef  WHEEL_USE
@@ -1892,7 +1851,7 @@ static uint8_t GetParameterWheelSensorNumber(uint16_t channel, uint16_t * value)
         result  = CMD_RESULT_SUCCESS;
     }
 #endif  // WHEEL_USE
-    ASSERT(result!=CMD_RESULT_FAILURE);
+	ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
 }
 
@@ -1906,8 +1865,6 @@ static uint8_t GetParameterWheelSensorNumber(uint16_t channel, uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t GetParameterWheelResolution(uint16_t channel, uint16_t * value)
 {
-    SSP_PARAMETER_NOT_USED(channel);
-    SSP_PARAMETER_NOT_USED(value);
     uint8_t result;
 
     result = CMD_RESULT_FAILURE;
@@ -1918,7 +1875,7 @@ static uint8_t GetParameterWheelResolution(uint16_t channel, uint16_t * value)
         result  = CMD_RESULT_SUCCESS;
     }
 #endif  // WHEEL_USE
-    ASSERT(result!=CMD_RESULT_FAILURE);
+	ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
 }
 
@@ -1932,8 +1889,6 @@ static uint8_t GetParameterWheelResolution(uint16_t channel, uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t SetParameterWheelResolution(uint16_t channel, uint16_t value)
 {
-    SSP_PARAMETER_NOT_USED(channel);
-    SSP_PARAMETER_NOT_USED(value);
     uint8_t result;
 
     result = CMD_RESULT_FAILURE;
@@ -1944,7 +1899,7 @@ static uint8_t SetParameterWheelResolution(uint16_t channel, uint16_t value)
         result = CMD_RESULT_SUCCESS;
     }
 #endif  // WHEEL_USE
-    ASSERT(result!=CMD_RESULT_FAILURE);
+	ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
 }
 
@@ -1958,8 +1913,6 @@ static uint8_t SetParameterWheelResolution(uint16_t channel, uint16_t value)
 ***********************************************************************************************************************/
 static uint8_t GetParameterWheelThreshold(uint16_t channel, uint16_t * value)
 {
-    SSP_PARAMETER_NOT_USED(channel);
-    SSP_PARAMETER_NOT_USED(value);
     uint8_t result;
 
     result = CMD_RESULT_FAILURE;
@@ -1970,7 +1923,7 @@ static uint8_t GetParameterWheelThreshold(uint16_t channel, uint16_t * value)
         result  = CMD_RESULT_SUCCESS;
     }
 #endif  // WHEEL_USE
-    ASSERT(result!=CMD_RESULT_FAILURE);
+	ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
 }
 
@@ -1984,8 +1937,6 @@ static uint8_t GetParameterWheelThreshold(uint16_t channel, uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t SetParameterWheelThreshold(uint16_t channel, uint16_t value)
 {
-    SSP_PARAMETER_NOT_USED(channel);
-    SSP_PARAMETER_NOT_USED(value);
     uint8_t result;
 
     result = CMD_RESULT_FAILURE;
@@ -1996,7 +1947,7 @@ static uint8_t SetParameterWheelThreshold(uint16_t channel, uint16_t value)
         result = CMD_RESULT_SUCCESS;
     }
 #endif  // WHEEL_USE
-    ASSERT(result!=CMD_RESULT_FAILURE);
+	ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
 }
 
@@ -2010,8 +1961,6 @@ static uint8_t SetParameterWheelThreshold(uint16_t channel, uint16_t value)
 ***********************************************************************************************************************/
 static uint8_t GetParameterKeyEnableControl(uint16_t channel, uint16_t * value)
 {
-    SSP_PARAMETER_NOT_USED(channel);
-    SSP_PARAMETER_NOT_USED(value);
     uint8_t result;
 
     result = CMD_RESULT_FAILURE;
@@ -2020,7 +1969,7 @@ static uint8_t GetParameterKeyEnableControl(uint16_t channel, uint16_t * value)
         *value = g_touch_key_group[g_access_method].group[channel];
         result = CMD_RESULT_SUCCESS;
     }
-    ASSERT(result!=CMD_RESULT_FAILURE);
+	ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
 }
 
@@ -2047,10 +1996,10 @@ static uint8_t GetParameterTouchKeyNumber(uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t GetRegisterCTSUCR0(uint16_t * value)
 {
-    ctsu_control_arg_t control_arg;
-    control_arg.cmd = CTSU_CMD_GET_CTSUCR0;
-    control_arg.p_context = value;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	ctsu_control_arg_t control_arg;
+	control_arg.cmd = CTSU_CMD_GET_CTSUCR0;
+	control_arg.p_context = value;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
     return CMD_RESULT_SUCCESS;
 }
 
@@ -2063,11 +2012,11 @@ static uint8_t GetRegisterCTSUCR0(uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t SetRegisterCTSUCR0(uint16_t value)
 {
-    ctsu_control_arg_t control_arg;
-    all_ctsu_configs[g_access_method]->p_ctsu_settings->ctsucr0.byte = (uint8_t)(value & 0xFF);
-    control_arg.cmd = CTSU_CMD_SET_CTSUCR0;
-    control_arg.p_context = &all_ctsu_configs[g_access_method]->p_ctsu_settings->ctsucr0.byte;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	ctsu_control_arg_t control_arg;
+	all_ctsu_configs[g_access_method]->p_ctsu_settings->ctsucr0.byte = value;
+	control_arg.cmd = CTSU_CMD_SET_CTSUCR0;
+	control_arg.p_context = &all_ctsu_configs[g_access_method]->p_ctsu_settings->ctsucr0.byte;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
     return CMD_RESULT_SUCCESS;
 }
 
@@ -2080,10 +2029,10 @@ static uint8_t SetRegisterCTSUCR0(uint16_t value)
 ***********************************************************************************************************************/
 static uint8_t GetRegisterCTSUCR1(uint16_t * value)
 {
-    ctsu_control_arg_t control_arg;
-    control_arg.cmd = CTSU_CMD_GET_CTSUCR1;
-    control_arg.p_context = value;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	ctsu_control_arg_t control_arg;
+	control_arg.cmd = CTSU_CMD_GET_CTSUCR1;
+	control_arg.p_context = value;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
     return CMD_RESULT_SUCCESS;
 }
 
@@ -2096,11 +2045,11 @@ static uint8_t GetRegisterCTSUCR1(uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t SetRegisterCTSUCR1(uint16_t value)
 {
-    ctsu_control_arg_t control_arg;
-    all_ctsu_configs[g_access_method]->p_ctsu_settings->ctsucr1.byte  = (uint8_t)(value & 0xFF);
-    control_arg.cmd = CTSU_CMD_SET_CTSUCR1;
-    control_arg.p_context = &all_ctsu_configs[g_access_method]->p_ctsu_settings->ctsucr1.byte;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	ctsu_control_arg_t control_arg;
+	all_ctsu_configs[g_access_method]->p_ctsu_settings->ctsucr1.byte  = (value & 0xFF);
+	control_arg.cmd = CTSU_CMD_SET_CTSUCR1;
+	control_arg.p_context = &all_ctsu_configs[g_access_method]->p_ctsu_settings->ctsucr1.byte;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
     return CMD_RESULT_SUCCESS;
 }
 
@@ -2113,10 +2062,10 @@ static uint8_t SetRegisterCTSUCR1(uint16_t value)
 ***********************************************************************************************************************/
 static uint8_t GetRegisterCTSUSDPRS(uint16_t * value)
 {
-    ctsu_control_arg_t control_arg;
-    control_arg.cmd = CTSU_CMD_GET_CTSUSDPRS;
-    control_arg.p_context = value;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	ctsu_control_arg_t control_arg;
+	control_arg.cmd = CTSU_CMD_GET_CTSUSDPRS;
+	control_arg.p_context = value;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
     return CMD_RESULT_SUCCESS;
 }
 
@@ -2129,12 +2078,12 @@ static uint8_t GetRegisterCTSUSDPRS(uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t SetRegisterCTSUSDPRS(uint16_t value)
 {
-    ctsu_control_arg_t control_arg;
-    all_ctsu_configs[g_access_method]->p_ctsu_settings->ctsusdprs.byte  = (uint8_t)(value & 0xFF);
-    control_arg.cmd = CTSU_CMD_SET_CTSUSDPRS;
-    control_arg.p_context = &all_ctsu_configs[g_access_method]->p_ctsu_settings->ctsusdprs.byte;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
-    return CMD_RESULT_SUCCESS;
+	ctsu_control_arg_t control_arg;
+	all_ctsu_configs[g_access_method]->p_ctsu_settings->ctsusdprs.byte  = (value & 0xFF);
+	control_arg.cmd = CTSU_CMD_SET_CTSUSDPRS;
+	control_arg.p_context = &all_ctsu_configs[g_access_method]->p_ctsu_settings->ctsusdprs.byte;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	return CMD_RESULT_SUCCESS;
 }
 
 /***********************************************************************************************************************
@@ -2146,10 +2095,10 @@ static uint8_t SetRegisterCTSUSDPRS(uint16_t value)
 ***********************************************************************************************************************/
 static uint8_t GetRegisterCTSUSST(uint16_t * value)
 {
-    ctsu_control_arg_t control_arg;
-    control_arg.cmd = CTSU_CMD_GET_CTSUSST;
-    control_arg.p_context = value;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	ctsu_control_arg_t control_arg;
+	control_arg.cmd = CTSU_CMD_GET_CTSUSST;
+	control_arg.p_context = value;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
     return CMD_RESULT_SUCCESS;
 }
 
@@ -2162,11 +2111,11 @@ static uint8_t GetRegisterCTSUSST(uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t SetRegisterCTSUSST(uint16_t value)
 {
-    ctsu_control_arg_t control_arg;
-    all_ctsu_configs[g_access_method]->p_ctsu_settings->ctsusst.byte = (uint8_t)(value & 0xFF);
-    control_arg.cmd = CTSU_CMD_SET_CTSUSST;
-    control_arg.p_context = &all_ctsu_configs[g_access_method]->p_ctsu_settings->ctsusst.byte;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	ctsu_control_arg_t control_arg;
+	all_ctsu_configs[g_access_method]->p_ctsu_settings->ctsusst.byte = (value & 0xFF);
+	control_arg.cmd = CTSU_CMD_SET_CTSUSST;
+	control_arg.p_context = &all_ctsu_configs[g_access_method]->p_ctsu_settings->ctsusst.byte;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
     return CMD_RESULT_SUCCESS;
 }
 
@@ -2179,9 +2128,8 @@ static uint8_t SetRegisterCTSUSST(uint16_t value)
 ***********************************************************************************************************************/
 static uint8_t GetRegisterCTSUMCH0(uint16_t * value)
 {
-    SSP_PARAMETER_NOT_USED(value);
-    uint8_t result = CMD_RESULT_FAILURE;
-    ASSERT(result!=CMD_RESULT_FAILURE);
+	uint8_t result = CMD_RESULT_FAILURE;
+	ASSERT(result!=CMD_RESULT_FAILURE);
     return CMD_RESULT_FAILURE;
 }
 
@@ -2194,9 +2142,8 @@ static uint8_t GetRegisterCTSUMCH0(uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t SetRegisterCTSUMCH0(uint16_t value)
 {
-    SSP_PARAMETER_NOT_USED(value);
-    uint8_t result = CMD_RESULT_FAILURE;
-    ASSERT(result!=CMD_RESULT_FAILURE);
+	uint8_t result = CMD_RESULT_FAILURE;
+	ASSERT(result!=CMD_RESULT_FAILURE);
     return CMD_RESULT_FAILURE;
 }
 
@@ -2209,9 +2156,8 @@ static uint8_t SetRegisterCTSUMCH0(uint16_t value)
 ***********************************************************************************************************************/
 static uint8_t GetRegisterCTSUMCH1(uint16_t * value)
 {
-    SSP_PARAMETER_NOT_USED(value);
-    uint8_t result = CMD_RESULT_FAILURE;
-    ASSERT(result!=CMD_RESULT_FAILURE);
+	uint8_t result = CMD_RESULT_FAILURE;
+	ASSERT(result!=CMD_RESULT_FAILURE);
     return CMD_RESULT_FAILURE;
 }
 
@@ -2224,14 +2170,13 @@ static uint8_t GetRegisterCTSUMCH1(uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t SetRegisterCTSUMCH1(uint16_t value)
 {
-    SSP_PARAMETER_NOT_USED(value);
-    uint8_t result = CMD_RESULT_FAILURE;
-    ASSERT(result!=CMD_RESULT_FAILURE);
+	uint8_t result = CMD_RESULT_FAILURE;
+	ASSERT(result!=CMD_RESULT_FAILURE);
     return CMD_RESULT_FAILURE;
 }
 typedef union ctsuchx_access{
-    uint64_t bit_64;
-    uint8_t bit_8[5];
+	uint64_t bit_64;
+	uint8_t bit_8[5];
 }ctsuchx_t;
 /***********************************************************************************************************************
 * Function Name: GetRegisterCTSUCHAC0
@@ -2242,13 +2187,13 @@ typedef union ctsuchx_access{
 ***********************************************************************************************************************/
 static uint8_t GetRegisterCTSUCHAC0(uint16_t * value)
 {
-    ctsu_control_arg_t control_arg;
-    control_arg.cmd = CTSU_CMD_GET_CTSUCHAC;
-    ctsuchx_t cmd_ret_val;
-    cmd_ret_val.bit_64 = 0;
-    control_arg.p_context = &cmd_ret_val;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
-    *value = (uint16_t)(cmd_ret_val.bit_8[0]);
+	ctsu_control_arg_t control_arg;
+	control_arg.cmd = CTSU_CMD_GET_CTSUCHAC;
+	ctsuchx_t cmd_ret_val;
+	cmd_ret_val.bit_64 = 0;
+	control_arg.p_context = &cmd_ret_val;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	*value = (uint16_t)(cmd_ret_val.bit_8[0]);
     return CMD_RESULT_SUCCESS;
 }
 
@@ -2261,15 +2206,15 @@ static uint8_t GetRegisterCTSUCHAC0(uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t SetRegisterCTSUCHAC0(uint16_t value)
 {
-    ctsu_control_arg_t control_arg;
-    control_arg.cmd = CTSU_CMD_GET_CTSUCHAC;
-    ctsuchx_t cmd_ret_val;
-    cmd_ret_val.bit_64 = 0;
-    control_arg.p_context = &cmd_ret_val;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
-    cmd_ret_val.bit_8[0] = (uint8_t)(value & 0xFF);
-    control_arg.cmd = CTSU_CMD_SET_CTSUCHAC;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	ctsu_control_arg_t control_arg;
+	control_arg.cmd = CTSU_CMD_GET_CTSUCHAC;
+	ctsuchx_t cmd_ret_val;
+	cmd_ret_val.bit_64 = 0;
+	control_arg.p_context = &cmd_ret_val;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	cmd_ret_val.bit_8[0] = (value & 0xFF);
+	control_arg.cmd = CTSU_CMD_SET_CTSUCHAC;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
     return CMD_RESULT_SUCCESS;
 }
 
@@ -2282,12 +2227,12 @@ static uint8_t SetRegisterCTSUCHAC0(uint16_t value)
 ***********************************************************************************************************************/
 static uint8_t GetRegisterCTSUCHAC1(uint16_t * value)
 {
-    ctsu_control_arg_t control_arg;
-    control_arg.cmd = CTSU_CMD_GET_CTSUCHAC;
-    ctsuchx_t cmd_ret_val;
-    control_arg.p_context = &cmd_ret_val;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
-    *value = (uint16_t)(cmd_ret_val.bit_8[1]);
+	ctsu_control_arg_t control_arg;
+	control_arg.cmd = CTSU_CMD_GET_CTSUCHAC;
+	ctsuchx_t cmd_ret_val;
+	control_arg.p_context = &cmd_ret_val;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	*value = (uint16_t)(cmd_ret_val.bit_8[1]);
     return CMD_RESULT_SUCCESS;
 }
 
@@ -2300,15 +2245,15 @@ static uint8_t GetRegisterCTSUCHAC1(uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t SetRegisterCTSUCHAC1(uint16_t value)
 {
-    ctsu_control_arg_t control_arg;
-    control_arg.cmd = CTSU_CMD_GET_CTSUCHAC;
-    ctsuchx_t cmd_ret_val;
-    cmd_ret_val.bit_64 = 0;
-    control_arg.p_context = &cmd_ret_val;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
-    cmd_ret_val.bit_8[1] = (uint8_t)(value & 0xFF);
-    control_arg.cmd = CTSU_CMD_SET_CTSUCHAC;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	ctsu_control_arg_t control_arg;
+	control_arg.cmd = CTSU_CMD_GET_CTSUCHAC;
+	ctsuchx_t cmd_ret_val;
+	cmd_ret_val.bit_64 = 0;
+	control_arg.p_context = &cmd_ret_val;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	cmd_ret_val.bit_8[1] = (value & 0xFF);
+	control_arg.cmd = CTSU_CMD_SET_CTSUCHAC;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
     return CMD_RESULT_SUCCESS;
 }
 
@@ -2321,15 +2266,15 @@ static uint8_t SetRegisterCTSUCHAC1(uint16_t value)
 ***********************************************************************************************************************/
 static uint8_t GetRegisterCTSUCHAC2(uint16_t * value)
 {
-    ctsu_control_arg_t control_arg;
+	ctsu_control_arg_t control_arg;
 #if !defined(BSP_MCU_RX113)
-    control_arg.cmd = CTSU_CMD_GET_CTSUCHAC;
-    ctsuchx_t cmd_ret_val;
-    control_arg.p_context = &cmd_ret_val;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
-    *value = (uint16_t)(cmd_ret_val.bit_8[2]);
+	control_arg.cmd = CTSU_CMD_GET_CTSUCHAC;
+	ctsuchx_t cmd_ret_val;
+	control_arg.p_context = &cmd_ret_val;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	*value = (uint16_t)(cmd_ret_val.bit_8[2]);
 #else
-    *value = 0;
+	*value = 0;
 #endif
     return CMD_RESULT_SUCCESS;
 }
@@ -2343,19 +2288,19 @@ static uint8_t GetRegisterCTSUCHAC2(uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t SetRegisterCTSUCHAC2(uint16_t value)
 {
-    ctsu_control_arg_t control_arg;
+	ctsu_control_arg_t control_arg;
 #if !defined(BSP_MCU_RX113)
-    control_arg.cmd = CTSU_CMD_GET_CTSUCHAC;
-    ctsuchx_t cmd_ret_val;
-    cmd_ret_val.bit_64 = 0;
-    control_arg.p_context = &cmd_ret_val;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
-    cmd_ret_val.bit_8[2] = (uint8_t)(value & 0xFF);
-    control_arg.cmd = CTSU_CMD_SET_CTSUCHAC;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	control_arg.cmd = CTSU_CMD_GET_CTSUCHAC;
+	ctsuchx_t cmd_ret_val;
+	cmd_ret_val.bit_64 = 0;
+	control_arg.p_context = &cmd_ret_val;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	cmd_ret_val.bit_8[2] = (value & 0xFF);
+	control_arg.cmd = CTSU_CMD_SET_CTSUCHAC;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
     return CMD_RESULT_SUCCESS;
 #else
-    return CMD_RESULT_SUCCESS;
+	return CMD_RESULT_SUCCESS;
 #endif
 }
 
@@ -2368,17 +2313,17 @@ static uint8_t SetRegisterCTSUCHAC2(uint16_t value)
 ***********************************************************************************************************************/
 static uint8_t GetRegisterCTSUCHAC3(uint16_t * value)
 {
-    ctsu_control_arg_t control_arg;
+	ctsu_control_arg_t control_arg;
 #if !defined(BSP_MCU_RX113)
-    control_arg.cmd = CTSU_CMD_GET_CTSUCHAC;
-    ctsuchx_t cmd_ret_val;
-    control_arg.p_context = &cmd_ret_val;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
-    *value = (uint16_t)(cmd_ret_val.bit_8[3]);
+	control_arg.cmd = CTSU_CMD_GET_CTSUCHAC;
+	ctsuchx_t cmd_ret_val;
+	control_arg.p_context = &cmd_ret_val;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	*value = (uint16_t)(cmd_ret_val.bit_8[3]);
 #else
     *value = 0;
 #endif
-    return CMD_RESULT_SUCCESS;;
+	return CMD_RESULT_SUCCESS;;
 }
 
 /***********************************************************************************************************************
@@ -2390,16 +2335,16 @@ static uint8_t GetRegisterCTSUCHAC3(uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t SetRegisterCTSUCHAC3(uint16_t value)
 {
-    ctsu_control_arg_t control_arg;
+	ctsu_control_arg_t control_arg;
 #if !defined(BSP_MCU_RX113)
-    control_arg.cmd = CTSU_CMD_GET_CTSUCHAC;
-    ctsuchx_t cmd_ret_val;
-    cmd_ret_val.bit_64 = 0;
-    control_arg.p_context = &cmd_ret_val;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
-    cmd_ret_val.bit_8[3] = (uint8_t)(value & 0xFF);
-    control_arg.cmd = CTSU_CMD_SET_CTSUCHAC;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	control_arg.cmd = CTSU_CMD_GET_CTSUCHAC;
+	ctsuchx_t cmd_ret_val;
+	cmd_ret_val.bit_64 = 0;
+	control_arg.p_context = &cmd_ret_val;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	cmd_ret_val.bit_8[3] = (value & 0xFF);
+	control_arg.cmd = CTSU_CMD_SET_CTSUCHAC;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
     return CMD_RESULT_SUCCESS;
 #else
     return CMD_RESULT_SUCCESS;;
@@ -2415,17 +2360,17 @@ static uint8_t SetRegisterCTSUCHAC3(uint16_t value)
 ***********************************************************************************************************************/
 static uint8_t GetRegisterCTSUCHAC4(uint16_t * value)
 {
-    ctsu_control_arg_t control_arg;
+	ctsu_control_arg_t control_arg;
 #if !defined(BSP_MCU_RX113)
-    control_arg.cmd = CTSU_CMD_GET_CTSUCHAC;
-    ctsuchx_t cmd_ret_val;
-    control_arg.p_context = &cmd_ret_val;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
-    *value = (uint16_t)(cmd_ret_val.bit_8[4]);
+	control_arg.cmd = CTSU_CMD_GET_CTSUCHAC;
+	ctsuchx_t cmd_ret_val;
+	control_arg.p_context = &cmd_ret_val;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	*value = (uint16_t)(cmd_ret_val.bit_8[4]);
 #else
     *value = 0;
 #endif
-    return CMD_RESULT_SUCCESS;;
+	return CMD_RESULT_SUCCESS;;
 }
 
 /***********************************************************************************************************************
@@ -2437,19 +2382,19 @@ static uint8_t GetRegisterCTSUCHAC4(uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t SetRegisterCTSUCHAC4(uint16_t value)
 {
-    ctsu_control_arg_t control_arg;
+	ctsu_control_arg_t control_arg;
 #if !defined(BSP_MCU_RX113)
-    control_arg.cmd = CTSU_CMD_GET_CTSUCHAC;
-    ctsuchx_t cmd_ret_val;
-    cmd_ret_val.bit_64 = 0;
-    control_arg.p_context = &cmd_ret_val;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
-    cmd_ret_val.bit_8[4] = (uint8_t)(value & 0xFF);
-    control_arg.cmd = CTSU_CMD_SET_CTSUCHAC;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	control_arg.cmd = CTSU_CMD_GET_CTSUCHAC;
+	ctsuchx_t cmd_ret_val;
+	cmd_ret_val.bit_64 = 0;
+	control_arg.p_context = &cmd_ret_val;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	cmd_ret_val.bit_8[4] = (value & 0xFF);
+	control_arg.cmd = CTSU_CMD_SET_CTSUCHAC;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
 #else
 #endif
-    return CMD_RESULT_SUCCESS;
+	return CMD_RESULT_SUCCESS;
 }
 
 /***********************************************************************************************************************
@@ -2461,12 +2406,12 @@ static uint8_t SetRegisterCTSUCHAC4(uint16_t value)
 ***********************************************************************************************************************/
 static uint8_t GetRegisterCTSUCHTRC0(uint16_t * value)
 {
-    ctsu_control_arg_t control_arg;
-    control_arg.cmd = CTSU_CMD_GET_CTSUCHTRC;
-    ctsuchx_t cmd_ret_val;
-    control_arg.p_context = &cmd_ret_val;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
-    *value = (uint16_t)(cmd_ret_val.bit_8[0]);
+	ctsu_control_arg_t control_arg;
+	control_arg.cmd = CTSU_CMD_GET_CTSUCHTRC;
+	ctsuchx_t cmd_ret_val;
+	control_arg.p_context = &cmd_ret_val;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	*value = (uint16_t)(cmd_ret_val.bit_8[0]);
     return CMD_RESULT_SUCCESS;
 }
 
@@ -2479,15 +2424,15 @@ static uint8_t GetRegisterCTSUCHTRC0(uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t SetRegisterCTSUCHTRC0(uint16_t value)
 {
-    ctsu_control_arg_t control_arg;
-    control_arg.cmd = CTSU_CMD_GET_CTSUCHTRC;
-    ctsuchx_t cmd_ret_val;
-    cmd_ret_val.bit_64 = 0;
-    control_arg.p_context = &cmd_ret_val;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
-    cmd_ret_val.bit_8[0] = (uint8_t)(value & 0xFF);
-    control_arg.cmd = CTSU_CMD_SET_CTSUCHTRC;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	ctsu_control_arg_t control_arg;
+	control_arg.cmd = CTSU_CMD_GET_CTSUCHTRC;
+	ctsuchx_t cmd_ret_val;
+	cmd_ret_val.bit_64 = 0;
+	control_arg.p_context = &cmd_ret_val;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	cmd_ret_val.bit_8[0] = (value & 0xFF);
+	control_arg.cmd = CTSU_CMD_SET_CTSUCHTRC;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
     return CMD_RESULT_SUCCESS;
 }
 
@@ -2500,12 +2445,12 @@ static uint8_t SetRegisterCTSUCHTRC0(uint16_t value)
 ***********************************************************************************************************************/
 static uint8_t GetRegisterCTSUCHTRC1(uint16_t * value)
 {
-    ctsu_control_arg_t control_arg;
-    control_arg.cmd = CTSU_CMD_GET_CTSUCHTRC;
-    ctsuchx_t cmd_ret_val;
-    control_arg.p_context = &cmd_ret_val;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
-    *value = (uint16_t)(cmd_ret_val.bit_8[1]);
+	ctsu_control_arg_t control_arg;
+	control_arg.cmd = CTSU_CMD_GET_CTSUCHTRC;
+	ctsuchx_t cmd_ret_val;
+	control_arg.p_context = &cmd_ret_val;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	*value = (uint16_t)(cmd_ret_val.bit_8[1]);
     return CMD_RESULT_SUCCESS;
 }
 
@@ -2518,15 +2463,15 @@ static uint8_t GetRegisterCTSUCHTRC1(uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t SetRegisterCTSUCHTRC1(uint16_t value)
 {
-    ctsu_control_arg_t control_arg;
-    control_arg.cmd = CTSU_CMD_GET_CTSUCHTRC;
-    ctsuchx_t cmd_ret_val;
-    cmd_ret_val.bit_64 = 0;
-    control_arg.p_context = &cmd_ret_val;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
-    cmd_ret_val.bit_8[1] = (uint8_t)(value & 0xFF);
-    control_arg.cmd = CTSU_CMD_SET_CTSUCHTRC;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	ctsu_control_arg_t control_arg;
+	control_arg.cmd = CTSU_CMD_GET_CTSUCHTRC;
+	ctsuchx_t cmd_ret_val;
+	cmd_ret_val.bit_64 = 0;
+	control_arg.p_context = &cmd_ret_val;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	cmd_ret_val.bit_8[1] = (value & 0xFF);
+	control_arg.cmd = CTSU_CMD_SET_CTSUCHTRC;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
     return CMD_RESULT_SUCCESS;
 }
 
@@ -2539,15 +2484,15 @@ static uint8_t SetRegisterCTSUCHTRC1(uint16_t value)
 ***********************************************************************************************************************/
 static uint8_t GetRegisterCTSUCHTRC2(uint16_t * value)
 {
-    ctsu_control_arg_t control_arg;
+	ctsu_control_arg_t control_arg;
 #if !defined(BSP_MCU_RX113)
-    control_arg.cmd = CTSU_CMD_GET_CTSUCHTRC;
-    ctsuchx_t cmd_ret_val;
-    control_arg.p_context = &cmd_ret_val;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
-    *value = (uint16_t)(cmd_ret_val.bit_8[2]);
+	control_arg.cmd = CTSU_CMD_GET_CTSUCHTRC;
+	ctsuchx_t cmd_ret_val;
+	control_arg.p_context = &cmd_ret_val;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	*value = (uint16_t)(cmd_ret_val.bit_8[2]);
 #else
-    *value = 0;
+	*value = 0;
 #endif
     return CMD_RESULT_SUCCESS;
 }
@@ -2561,19 +2506,19 @@ static uint8_t GetRegisterCTSUCHTRC2(uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t SetRegisterCTSUCHTRC2(uint16_t value)
 {
-    ctsu_control_arg_t control_arg;
+	ctsu_control_arg_t control_arg;
 #if !defined(BSP_MCU_RX113)
-    control_arg.cmd = CTSU_CMD_GET_CTSUCHTRC;
-    ctsuchx_t cmd_ret_val;
-    cmd_ret_val.bit_64 = 0;
-    control_arg.p_context = &cmd_ret_val;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
-    cmd_ret_val.bit_8[2] = (uint8_t)(value & 0xFF);
-    control_arg.cmd = CTSU_CMD_SET_CTSUCHTRC;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	control_arg.cmd = CTSU_CMD_GET_CTSUCHTRC;
+	ctsuchx_t cmd_ret_val;
+	cmd_ret_val.bit_64 = 0;
+	control_arg.p_context = &cmd_ret_val;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	cmd_ret_val.bit_8[2] = (value & 0xFF);
+	control_arg.cmd = CTSU_CMD_SET_CTSUCHTRC;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
 #else
 #endif
-    return CMD_RESULT_SUCCESS;;
+	return CMD_RESULT_SUCCESS;;
 }
 
 /***********************************************************************************************************************
@@ -2585,15 +2530,15 @@ static uint8_t SetRegisterCTSUCHTRC2(uint16_t value)
 ***********************************************************************************************************************/
 static uint8_t GetRegisterCTSUCHTRC3(uint16_t * value)
 {
-    ctsu_control_arg_t control_arg;
+	ctsu_control_arg_t control_arg;
 #if !defined(BSP_MCU_RX113)
-    control_arg.cmd = CTSU_CMD_GET_CTSUCHTRC;
-    ctsuchx_t cmd_ret_val;
-    control_arg.p_context = &cmd_ret_val;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
-    *value = (uint16_t)(cmd_ret_val.bit_8[3]);
+	control_arg.cmd = CTSU_CMD_GET_CTSUCHTRC;
+	ctsuchx_t cmd_ret_val;
+	control_arg.p_context = &cmd_ret_val;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	*value = (uint16_t)(cmd_ret_val.bit_8[3]);
 #else
-    *value = 0;
+	*value = 0;
 #endif
     return CMD_RESULT_SUCCESS;
 }
@@ -2607,19 +2552,19 @@ static uint8_t GetRegisterCTSUCHTRC3(uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t SetRegisterCTSUCHTRC3(uint16_t value)
 {
-    ctsu_control_arg_t control_arg;
+	ctsu_control_arg_t control_arg;
 #if !defined(BSP_MCU_RX113)
-    control_arg.cmd = CTSU_CMD_GET_CTSUCHTRC;
-    ctsuchx_t cmd_ret_val;
-    cmd_ret_val.bit_64 = 0;
-    control_arg.p_context = &cmd_ret_val;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
-    cmd_ret_val.bit_8[3] = (uint8_t)(value & 0xFF);
-    control_arg.cmd = CTSU_CMD_SET_CTSUCHTRC;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	control_arg.cmd = CTSU_CMD_GET_CTSUCHTRC;
+	ctsuchx_t cmd_ret_val;
+	cmd_ret_val.bit_64 = 0;
+	control_arg.p_context = &cmd_ret_val;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	cmd_ret_val.bit_8[3] = (value & 0xFF);
+	control_arg.cmd = CTSU_CMD_SET_CTSUCHTRC;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
 #else
 #endif
-    return CMD_RESULT_SUCCESS;;
+	return CMD_RESULT_SUCCESS;;
 }
 
 /***********************************************************************************************************************
@@ -2631,15 +2576,15 @@ static uint8_t SetRegisterCTSUCHTRC3(uint16_t value)
 ***********************************************************************************************************************/
 static uint8_t GetRegisterCTSUCHTRC4(uint16_t * value)
 {
-    ctsu_control_arg_t control_arg;
+	ctsu_control_arg_t control_arg;
 #if !defined(BSP_MCU_RX113)
-    control_arg.cmd = CTSU_CMD_GET_CTSUCHTRC;
-    ctsuchx_t cmd_ret_val;
-    control_arg.p_context = &cmd_ret_val;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
-    *value = (uint16_t)(cmd_ret_val.bit_8[4]);
+	control_arg.cmd = CTSU_CMD_GET_CTSUCHTRC;
+	ctsuchx_t cmd_ret_val;
+	control_arg.p_context = &cmd_ret_val;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	*value = (uint16_t)(cmd_ret_val.bit_8[4]);
 #else
-    *value = 0;
+	*value = 0;
 #endif
     return CMD_RESULT_SUCCESS;
 }
@@ -2653,16 +2598,16 @@ static uint8_t GetRegisterCTSUCHTRC4(uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t SetRegisterCTSUCHTRC4(uint16_t value)
 {
-    ctsu_control_arg_t control_arg;
+	ctsu_control_arg_t control_arg;
 #if !defined(BSP_MCU_RX113)
-    control_arg.cmd = CTSU_CMD_GET_CTSUCHTRC;
-    ctsuchx_t cmd_ret_val;
-    cmd_ret_val.bit_64 = 0;
-    control_arg.p_context = &cmd_ret_val;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
-    cmd_ret_val.bit_8[4] = (uint8_t)(value & 0xFF);
-    control_arg.cmd = CTSU_CMD_SET_CTSUCHTRC;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	control_arg.cmd = CTSU_CMD_GET_CTSUCHTRC;
+	ctsuchx_t cmd_ret_val;
+	cmd_ret_val.bit_64 = 0;
+	control_arg.p_context = &cmd_ret_val;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	cmd_ret_val.bit_8[4] = (value & 0xFF);
+	control_arg.cmd = CTSU_CMD_SET_CTSUCHTRC;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
     return CMD_RESULT_SUCCESS;
 #else
     return CMD_RESULT_SUCCESS;;
@@ -2678,10 +2623,10 @@ static uint8_t SetRegisterCTSUCHTRC4(uint16_t value)
 ***********************************************************************************************************************/
 static uint8_t GetRegisterCTSUDCLKC(uint16_t * value)
 {
-    ctsu_control_arg_t control_arg;
-    control_arg.cmd = CTSU_CMD_GET_CTSUDCLKC;
-    control_arg.p_context = value;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	ctsu_control_arg_t control_arg;
+	control_arg.cmd = CTSU_CMD_GET_CTSUDCLKC;
+	control_arg.p_context = value;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
     return CMD_RESULT_SUCCESS;
 }
 
@@ -2694,11 +2639,11 @@ static uint8_t GetRegisterCTSUDCLKC(uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t SetRegisterCTSUDCLKC(uint16_t value)
 {
-    ctsu_control_arg_t control_arg;
-    all_ctsu_configs[g_access_method]->p_ctsu_settings->ctsudclkc.byte = (uint8_t)(value & 0xff);
-    control_arg.cmd = CTSU_CMD_SET_CTSUDCLKC;
-    control_arg.p_context = &all_ctsu_configs[g_access_method]->p_ctsu_settings->ctsudclkc.byte;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+	ctsu_control_arg_t control_arg;
+	all_ctsu_configs[g_access_method]->p_ctsu_settings->ctsudclkc.byte = (value & 0xff);
+	control_arg.cmd = CTSU_CMD_SET_CTSUDCLKC;
+	control_arg.p_context = &all_ctsu_configs[g_access_method]->p_ctsu_settings->ctsudclkc.byte;
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
     return CMD_RESULT_SUCCESS;
 }
 
@@ -2719,9 +2664,9 @@ static uint8_t GetRegisterCTSUST(uint16_t * value)
     uint32_t scan_errors;
     control_info.cmd = CTSU_CMD_GET_ERROR_INFORMATION;
     control_info.p_context = &scan_errors;
-    R_CTSU_Control(ctsu_handle_id[g_access_method], &control_info);
-    scan_errors &= (CTSU_ERR_CTSU_SC_OVF|CTSU_ERR_CTSU_RC_OVF);
-    *value = (uint16_t)(scan_errors<<1);
+	R_CTSU_Control(ctsu_handle_id[g_access_method], &control_info);
+	scan_errors &= (CTSU_ERR_CTSU_SC_OVF|CTSU_ERR_CTSU_RC_OVF);
+	*value = (scan_errors<<1);
 #endif
     return CMD_RESULT_SUCCESS;
 }
@@ -2735,9 +2680,8 @@ static uint8_t GetRegisterCTSUST(uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t SetRegisterCTSUST(uint16_t value)
 {
-    SSP_PARAMETER_NOT_USED(value);
-    uint8_t result = CMD_RESULT_FAILURE;
-    ASSERT(result!=CMD_RESULT_FAILURE);
+	uint8_t result = CMD_RESULT_FAILURE;
+	ASSERT(result!=CMD_RESULT_FAILURE);
     return CMD_RESULT_FAILURE;
 }
 
@@ -2756,25 +2700,24 @@ static uint8_t GetRegisterCTSUSSC(uint16_t channel, uint16_t * value)
     result = CMD_RESULT_FAILURE;
     if (channel < g_method_info[g_access_method].enable)
     {
-        if (0 == g_method_info[g_access_method].type)
-        {
-            /* Touch sensor measurement method : Self capacitance */
-            uint8_t index = g_key_info[g_access_method].sensor_index[channel];
-            if (0xff != index)
+        if (g_method_info[g_access_method].type == 0)
+        {   /* Touch sensor measurement method : Self capacitance */
+        	uint8_t index = g_key_info[g_access_method].sensor_index[channel];
+            if (index != 0xff)
             {
-                ctsu_sensor_setting_t* pval = all_ctsu_configs[g_access_method]->p_sensor_settings;
-                *value = pval[index].ctsussc;
+            	ctsu_sensor_setting_t* ch_setting = all_ctsu_configs[g_access_method]->p_sensor_settings;
+                *value = ch_setting[index].ctsussc;
                 result = CMD_RESULT_SUCCESS;
             }
         }
         else
         {   /* Touch sensor measurement method : Mutual capacitance */
-            uint8_t index = g_key_info[g_access_method].sensor_index[channel];
+        	uint8_t index = g_key_info[g_access_method].sensor_index[channel];
             if (index != 0xff)
             {
-                ctsu_sensor_setting_t* ch_setting = all_ctsu_configs[g_access_method]->p_sensor_settings;
-                *value = ch_setting[index].ctsussc;
-                result = CMD_RESULT_SUCCESS;
+            	ctsu_sensor_setting_t* ch_setting = all_ctsu_configs[g_access_method]->p_sensor_settings;
+            	*value = ch_setting[index].ctsussc;
+            	result = CMD_RESULT_SUCCESS;
             }
         }
     }
@@ -2798,22 +2741,22 @@ static uint8_t SetRegisterCTSUSSC(uint16_t channel, uint16_t value)
     {
         if (g_method_info[g_access_method].type == 0)
         {   /* Touch sensor measurement method : Self capacitance */
-            uint8_t index = g_key_info[g_access_method].sensor_index[channel];
+        	uint8_t index = g_key_info[g_access_method].sensor_index[channel];
             if (index != 0xff)
             {
-                ctsu_sensor_setting_t* ch_setting = all_ctsu_configs[g_access_method]->p_sensor_settings;
-                ch_setting[index].ctsussc = value;
-                result = CMD_RESULT_SUCCESS;
+            	ctsu_sensor_setting_t* ch_setting = all_ctsu_configs[g_access_method]->p_sensor_settings;
+            	ch_setting[index].ctsussc = value;
+            	result = CMD_RESULT_SUCCESS;
             }
         }
         else
         {   /* Touch sensor measurement method : Mutual capacitance */
-            uint8_t index = g_key_info[g_access_method].sensor_index[channel];
+        	uint8_t index = g_key_info[g_access_method].sensor_index[channel];
             if (index != 0xff)
             {
-                ctsu_sensor_setting_t* ch_setting = all_ctsu_configs[g_access_method]->p_sensor_settings;
-                ch_setting[index].ctsussc = value;
-                result = CMD_RESULT_SUCCESS;
+            	ctsu_sensor_setting_t* ch_setting = all_ctsu_configs[g_access_method]->p_sensor_settings;
+            	ch_setting[index].ctsussc = value;
+            	result = CMD_RESULT_SUCCESS;
             }
         }
     }
@@ -2837,22 +2780,22 @@ static uint8_t GetRegisterCTSUSO0(uint16_t channel, uint16_t * value)
     {
         if (g_method_info[g_access_method].type == 0)
         {   /* Touch sensor measurement method : Self capacitance */
-            uint8_t index = g_key_info[g_access_method].sensor_index[channel];
+        	uint8_t index = g_key_info[g_access_method].sensor_index[channel];
             if (index != 0xff)
             {
-                ctsu_sensor_setting_t* ch_setting = all_ctsu_configs[g_access_method]->p_sensor_settings;
-                *value = ch_setting[index].ctsuso0;
-                result = CMD_RESULT_SUCCESS;
+            	ctsu_sensor_setting_t* ch_setting = all_ctsu_configs[g_access_method]->p_sensor_settings;
+            	*value = ch_setting[index].ctsuso0;
+            	result = CMD_RESULT_SUCCESS;
             }
         }
         else
         {   /* Touch sensor measurement method : Mutual capacitance */
-            uint8_t index = g_key_info[g_access_method].sensor_index[channel];
+        	uint8_t index = g_key_info[g_access_method].sensor_index[channel];
             if (index != 0xff)
             {
-                ctsu_sensor_setting_t* ch_setting = all_ctsu_configs[g_access_method]->p_sensor_settings;
-                *value = ch_setting[index].ctsuso0;
-                result = CMD_RESULT_SUCCESS;
+            	ctsu_sensor_setting_t* ch_setting = all_ctsu_configs[g_access_method]->p_sensor_settings;
+            	*value = ch_setting[index].ctsuso0;
+            	result = CMD_RESULT_SUCCESS;
             }
         }
     }
@@ -2876,22 +2819,22 @@ static uint8_t SetRegisterCTSUSO0(uint16_t channel, uint16_t value)
     {
         if (g_method_info[g_access_method].type == 0)
         {   /* Touch sensor measurement method : Self capacitance */
-            uint8_t index = g_key_info[g_access_method].sensor_index[channel];
+        	uint8_t index = g_key_info[g_access_method].sensor_index[channel];
             if (index != 0xff)
             {
-                ctsu_sensor_setting_t* ch_setting = all_ctsu_configs[g_access_method]->p_sensor_settings;
-                ch_setting[index].ctsuso0 = value;
-                result = CMD_RESULT_SUCCESS;
+            	ctsu_sensor_setting_t* ch_setting = all_ctsu_configs[g_access_method]->p_sensor_settings;
+            	ch_setting[index].ctsuso0 = value;
+            	result = CMD_RESULT_SUCCESS;
             }
         }
         else
         {   /* Touch sensor measurement method : Mutual capacitance */
-            uint8_t index = g_key_info[g_access_method].sensor_index[channel];
+        	uint8_t index = g_key_info[g_access_method].sensor_index[channel];
             if (index != 0xff)
             {
-                ctsu_sensor_setting_t* ch_setting = all_ctsu_configs[g_access_method]->p_sensor_settings;
-                ch_setting[index].ctsuso0 = value;
-                result = CMD_RESULT_SUCCESS;
+            	ctsu_sensor_setting_t* ch_setting = all_ctsu_configs[g_access_method]->p_sensor_settings;
+            	ch_setting[index].ctsuso0 = value;
+            	result = CMD_RESULT_SUCCESS;
             }
         }
     }
@@ -2915,22 +2858,22 @@ static uint8_t GetRegisterCTSUSO1(uint16_t channel, uint16_t * value)
     {
         if (g_method_info[g_access_method].type == 0)
         {   /* Touch sensor measurement method : Self capacitance */
-            uint8_t index = g_key_info[g_access_method].sensor_index[channel];
+        	uint8_t index = g_key_info[g_access_method].sensor_index[channel];
             if (index != 0xff)
             {
-                ctsu_sensor_setting_t* ch_setting = all_ctsu_configs[g_access_method]->p_sensor_settings;
-                *value = ch_setting[index].ctsuso1;
-                result = CMD_RESULT_SUCCESS;
+            	ctsu_sensor_setting_t* ch_setting = all_ctsu_configs[g_access_method]->p_sensor_settings;
+            	*value = ch_setting[index].ctsuso1;
+            	result = CMD_RESULT_SUCCESS;
             }
         }
         else
         {   /* Touch sensor measurement method : Mutual capacitance */
-            uint8_t index = g_key_info[g_access_method].sensor_index[channel];
+        	uint8_t index = g_key_info[g_access_method].sensor_index[channel];
             if (index != 0xff)
             {
-                ctsu_sensor_setting_t* ch_setting = all_ctsu_configs[g_access_method]->p_sensor_settings;
-                *value = ch_setting[index].ctsuso1;
-                result = CMD_RESULT_SUCCESS;
+            	ctsu_sensor_setting_t* ch_setting = all_ctsu_configs[g_access_method]->p_sensor_settings;
+            	*value = ch_setting[index].ctsuso1;
+            	result = CMD_RESULT_SUCCESS;
             }
         }
     }
@@ -2954,22 +2897,22 @@ static uint8_t SetRegisterCTSUSO1(uint16_t channel, uint16_t value)
     {
         if (g_method_info[g_access_method].type == 0)
         {   /* Touch sensor measurement method : Self capacitance */
-            uint8_t index = g_key_info[g_access_method].sensor_index[channel];
+        	uint8_t index = g_key_info[g_access_method].sensor_index[channel];
             if (index != 0xff)
             {
-                ctsu_sensor_setting_t* ch_setting = all_ctsu_configs[g_access_method]->p_sensor_settings;
-                ch_setting[index].ctsuso1 = value;
-                result = CMD_RESULT_SUCCESS;
+            	ctsu_sensor_setting_t* ch_setting = all_ctsu_configs[g_access_method]->p_sensor_settings;
+            	ch_setting[index].ctsuso1 = value;
+            	result = CMD_RESULT_SUCCESS;
             }
         }
         else
         {   /* Touch sensor measurement method : Mutual capacitance */
-            uint8_t index = g_key_info[g_access_method].sensor_index[channel];
+        	uint8_t index = g_key_info[g_access_method].sensor_index[channel];
             if (index != 0xff)
             {
-                ctsu_sensor_setting_t* ch_setting = all_ctsu_configs[g_access_method]->p_sensor_settings;
-                ch_setting[index].ctsuso1 = value;
-                result = CMD_RESULT_SUCCESS;
+            	ctsu_sensor_setting_t* ch_setting = all_ctsu_configs[g_access_method]->p_sensor_settings;
+            	ch_setting[index].ctsuso1 = value;
+            	result = CMD_RESULT_SUCCESS;
             }
         }
     }
@@ -2985,7 +2928,7 @@ static uint8_t SetRegisterCTSUSO1(uint16_t channel, uint16_t value)
 ***********************************************************************************************************************/
 static uint8_t GetRegisterCTSUERRS(uint16_t * value)
 {
-    uint8_t result = CMD_RESULT_FAILURE;
+	uint8_t result = CMD_RESULT_FAILURE;
 
     ctsu_control_arg_t control_info;
     uint32_t scan_errors;
@@ -2993,10 +2936,10 @@ static uint8_t GetRegisterCTSUERRS(uint16_t * value)
     control_info.p_context = &scan_errors;
     R_CTSU_Control(ctsu_handle_id[g_access_method], &control_info);
     scan_errors &= (CTSU_ERR_CTSU_ICOMP);
-    *value = (uint16_t)(scan_errors<<9);
+    *value = (scan_errors<<9);
     result = CMD_RESULT_SUCCESS;
 
-    ASSERT(result!=CMD_RESULT_FAILURE);
+	ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
 }
 
@@ -3009,9 +2952,8 @@ static uint8_t GetRegisterCTSUERRS(uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t SetRegisterCTSUERRS(uint16_t value)
 {
-    SSP_PARAMETER_NOT_USED(value);
-    uint8_t result = CMD_RESULT_FAILURE;
-    ASSERT(result!=CMD_RESULT_FAILURE);
+	uint8_t result = CMD_RESULT_FAILURE;
+	ASSERT(result!=CMD_RESULT_FAILURE);
     return CMD_RESULT_FAILURE;
 }
 
@@ -3056,22 +2998,22 @@ static uint8_t GetUtilityExecuteBatch(uint8_t * pvalue, uint16_t * length)
                 endSensor     = g_method_info[method].enable;
             }
             g_access_method = method;
-            if (cmd != 0x04/* SLDPOS */ && cmd != 0x05/* WHLPOS */)
-            {           
-                for (sensor = 0; (sensor < endSensor) && (status != CMD_RESULT_FAILURE); sensor++)
-                {
-                    if (GetSensorValue(cmd, sensor, &value) != CMD_RESULT_FAILURE)
-                    {
-                        pvalue[index++] = (uint8_t)(value & 0xff);
-                        pvalue[index++] = (uint8_t)(value >> 8);
-                    }
-                    else
-                    {
-                        status    = CMD_RESULT_FAILURE;
-                    }
-                }
-            }
-            else
+			if (cmd != 0x04/* SLDPOS */ && cmd != 0x05/* WHLPOS */)
+            {			
+				for (sensor = 0; (sensor < endSensor) && (status != CMD_RESULT_FAILURE); sensor++)
+				{
+					if (GetSensorValue(cmd, sensor, &value) != CMD_RESULT_FAILURE)
+					{
+						pvalue[index++] = (uint8_t)(value & 0xff);
+						pvalue[index++] = (uint8_t)(value >> 8);
+					}
+					else
+					{
+						status    = CMD_RESULT_FAILURE;
+					}
+				}
+			}
+			else
             {
                 if (GetSensorValue(cmd, method, &value) != CMD_RESULT_FAILURE)
                 {
@@ -3159,7 +3101,7 @@ static uint8_t SetChecksum(uint8_t main, uint8_t sub, uint8_t size, uint8_t *pda
     sum = (uint8_t)(main + sub + size);
     for (i = 0; i < size; i++)
     {
-        sum = (uint8_t)(sum + pdata[i]);
+        sum += pdata[i];
     }
 
     return sum;
@@ -3265,7 +3207,6 @@ static uint8_t GetSensorValue(uint8_t code, uint16_t channel, uint16_t *pval)
 ***********************************************************************************************************************/
 static void SensorProfileReadResponse(com_data_tx_t *pcmd, uint16_t channel)
 {
-    SSP_PARAMETER_NOT_USED(channel);
     uint16_t value;
     uint8_t status;
 
@@ -3296,35 +3237,35 @@ static void SensorProfileReadResponse(com_data_tx_t *pcmd, uint16_t channel)
             break;
         case 0x04:
             /* MCU model name 0 */
-            value =  (uint16_t)((uint16_t)g_mcu_model_name[0] + ((uint16_t)g_mcu_model_name[1] << 8));
+            value =  (uint16_t)g_mcu_model_name[0] + ((uint16_t)g_mcu_model_name[1] << 8);
             break;
         case 0x05:
             /* MCU model name 1 */
-            value =  (uint16_t)((uint16_t)g_mcu_model_name[2] + ((uint16_t)g_mcu_model_name[3] << 8));
+            value =  (uint16_t)g_mcu_model_name[2] + ((uint16_t)g_mcu_model_name[3] << 8);
             break;
         case 0x06:
             /* MCU model name 2 */
-            value =  (uint16_t)((uint16_t)g_mcu_model_name[4] + ((uint16_t)g_mcu_model_name[5] << 8));
+            value =  (uint16_t)g_mcu_model_name[4] + ((uint16_t)g_mcu_model_name[5] << 8);
             break;
         case 0x07:
             /* MCU model name 3 */
-            value =  (uint16_t)((uint16_t)g_mcu_model_name[6] + ((uint16_t)g_mcu_model_name[7] << 8));
+            value =  (uint16_t)g_mcu_model_name[6] + ((uint16_t)g_mcu_model_name[7] << 8);
             break;
         case 0x08:
             /* MCU model name 4 */
-            value =  (uint16_t)((uint16_t)g_mcu_model_name[8] + ((uint16_t)g_mcu_model_name[9] << 8));
+            value =  (uint16_t)g_mcu_model_name[8] + ((uint16_t)g_mcu_model_name[9] << 8);
             break;
         case 0x09:
             /* MCU model name 5 */
-            value =  (uint16_t)((uint16_t)g_mcu_model_name[10] + ((uint16_t)g_mcu_model_name[11] << 8));
+            value =  (uint16_t)g_mcu_model_name[10] + ((uint16_t)g_mcu_model_name[11] << 8);
             break;
         case 0x0a:
             /* MCU model name 6 */
-            value =  (uint16_t)((uint16_t)g_mcu_model_name[12] + ((uint16_t)g_mcu_model_name[13] << 8));
+            value = (uint16_t)g_mcu_model_name[12] + ((uint16_t)g_mcu_model_name[13] << 8);
             break;
         case 0x0b:
             /* MCU model name 7 */
-            value =  (uint16_t)((uint16_t)g_mcu_model_name[14] + ((uint16_t)g_mcu_model_name[15] << 8));
+            value =  (uint16_t)g_mcu_model_name[14] + ((uint16_t)g_mcu_model_name[15] << 8);
             break;
         case 0x0c:
             /* Date information 0 */
@@ -3373,10 +3314,10 @@ static void SensorMeasureReadResponse(com_data_tx_t *pcmd, uint16_t channel)
 
     if (GetSensorValue(pcmd->fmt.sub, channel, &value) != CMD_RESULT_FAILURE)
     {
-        pcmd->fmt.size = 3;
-        pcmd->fmt.data[0] = CMD_RESULT_SUCCESS;
-        pcmd->fmt.data[1] = (uint8_t)(value & 0xff);
-        pcmd->fmt.data[2] = (uint8_t)(value >> 8);
+    	pcmd->fmt.size = 3;
+    	pcmd->fmt.data[0] = CMD_RESULT_SUCCESS;
+    	pcmd->fmt.data[1] = (uint8_t)(value & 0xff);
+    	pcmd->fmt.data[2] = (uint8_t)(value >> 8);
     }
 }
 
@@ -3432,34 +3373,34 @@ static void SensorParameterReadResponse(com_data_tx_t * pcmd, uint16_t channel)
             status = GetParameterSliderSensorNumber(channel, &value);
             break;
         case 0x0c:
-            status  = GetParameterSliderSensor((uint8_t)channel, 0, &value);
+            status  = GetParameterSliderSensor(channel, 0, &value);
             break;
         case 0x0d:
-            status  = GetParameterSliderSensor((uint8_t)channel, 1, &value);
+            status  = GetParameterSliderSensor(channel, 1, &value);
             break;
         case 0x0e:
-            status  = GetParameterSliderSensor((uint8_t)channel, 2, &value);
+            status  = GetParameterSliderSensor(channel, 2, &value);
             break;
         case 0x0f:
-            status  = GetParameterSliderSensor((uint8_t)channel, 3, &value);
+            status  = GetParameterSliderSensor(channel, 3, &value);
             break;
         case 0x10:
-            status  = GetParameterSliderSensor((uint8_t)channel, 4, &value);
+            status  = GetParameterSliderSensor(channel, 4, &value);
             break;
         case 0x11:
-            status  = GetParameterSliderSensor((uint8_t)channel, 5, &value);
+            status  = GetParameterSliderSensor(channel, 5, &value);
             break;
         case 0x12:
-            status  = GetParameterSliderSensor((uint8_t)channel, 6, &value);
+            status  = GetParameterSliderSensor(channel, 6, &value);
             break;
         case 0x13:
-            status  = GetParameterSliderSensor((uint8_t)channel, 7, &value);
+            status  = GetParameterSliderSensor(channel, 7, &value);
             break;
         case 0x14:
-            status  = GetParameterSliderSensor((uint8_t)channel, 8, &value);
+            status  = GetParameterSliderSensor(channel, 8, &value);
             break;
         case 0x15:
-            status  = GetParameterSliderSensor((uint8_t)channel, 9, &value);
+            status  = GetParameterSliderSensor(channel, 9, &value);
             break;
         case 0x16:
             status = GetParameterSliderResolution(channel, &value);
@@ -3474,34 +3415,34 @@ static void SensorParameterReadResponse(com_data_tx_t * pcmd, uint16_t channel)
             status = GetParameterWheelSensorNumber(channel, &value);
             break;
         case 0x1a:
-            status = GetParameterWheelSensor((uint8_t)channel, 0, &value);
+            status = GetParameterWheelSensor(channel, 0, &value);
             break;
         case 0x1b:
-            status = GetParameterWheelSensor((uint8_t)channel, 1, &value);
+            status = GetParameterWheelSensor(channel, 1, &value);
             break;
         case 0x1c:
-            status = GetParameterWheelSensor((uint8_t)channel, 2, &value);
+            status = GetParameterWheelSensor(channel, 2, &value);
             break;
         case 0x1d:
-            status = GetParameterWheelSensor((uint8_t)channel, 3, &value);
+            status = GetParameterWheelSensor(channel, 3, &value);
             break;
         case 0x1e:
-            status = GetParameterWheelSensor((uint8_t)channel, 4, &value);
+            status = GetParameterWheelSensor(channel, 4, &value);
             break;
         case 0x1f:
-            status = GetParameterWheelSensor((uint8_t)channel, 5, &value);
+            status = GetParameterWheelSensor(channel, 5, &value);
             break;
         case 0x20:
-            status = GetParameterWheelSensor((uint8_t)channel, 6, &value);
+            status = GetParameterWheelSensor(channel, 6, &value);
             break;
         case 0x21:
-            status = GetParameterWheelSensor((uint8_t)channel, 7, &value);
+            status = GetParameterWheelSensor(channel, 7, &value);
             break;
         case 0x22:
-            status = GetParameterWheelSensor((uint8_t)channel, 8, &value);
+            status = GetParameterWheelSensor(channel, 8, &value);
             break;
         case 0x23:
-            status = GetParameterWheelSensor((uint8_t)channel, 9, &value);
+            status = GetParameterWheelSensor(channel, 9, &value);
             break;
         case 0x24:
             status = GetParameterWheelResolution(channel, &value);
@@ -3553,7 +3494,7 @@ static void SensorParameterWriteResponse(com_data_tx_t * pcmd, uint16_t channel)
     pcmd->fmt.size = 1;
     status  = CMD_RESULT_FAILURE;
 
-    value = (uint16_t)(((uint16_t)com_data.fmt.data[1] << 8) + com_data.fmt.data[0]);
+    value = ((uint16_t)com_data.fmt.data[1] << 8) + com_data.fmt.data[0];
 
     switch (pcmd->fmt.sub)
     {
@@ -3717,11 +3658,10 @@ static void SensorRegisterWriteResponse(com_data_tx_t * pcmd, uint16_t channel)
     uint8_t  i;
     uint8_t  num;
 
-    SSP_PARAMETER_NOT_USED(i);
-    SSP_PARAMETER_NOT_USED(num);
+    (void) i, num;	//Suppress warning of unused variable.
 
     /* Set the value to write CTSU register */
-    value = (uint16_t)(((uint16_t)com_data.fmt.data[1] << 8) + com_data.fmt.data[0]);
+    value = ((uint16_t)com_data.fmt.data[1] << 8) + com_data.fmt.data[0];
 
     switch (pcmd->fmt.sub)
     {
@@ -3826,7 +3766,7 @@ static void SensorUtilityReadResponse(com_data_tx_t *pcmd, uint16_t channel)
 {
     uint16_t value;
     uint16_t tmpval;
-    uint8_t  status = CMD_RESULT_FAILURE;
+    uint8_t  status;
     uint8_t  size;
     uint16_t monitorSize;
 
@@ -3846,12 +3786,12 @@ static void SensorUtilityReadResponse(com_data_tx_t *pcmd, uint16_t channel)
             status = CMD_RESULT_FAILURE;
             if (GetUtilityExecuteBatch(&pcmd->fmt.data[1], &monitorSize) != CMD_RESULT_FAILURE)
             {
-                monitorSize++;
+                monitorSize += 1;
                 status = CMD_RESULT_SUCCESS;
             }
             if (CMD_RESULT_FAILURE != status)
             {
-                size = (uint8_t)monitorSize;
+                size = monitorSize;
                 if  (monitorSize > 255)
                 {
                     pcmd->fmt.main |= 0x20;
@@ -3894,13 +3834,13 @@ static void SensorUtilityReadResponse(com_data_tx_t *pcmd, uint16_t channel)
                 value |= (uint8_t)(0x10);
             }
             for (int i = 0; i < MUTUAL_METHOD_NUM; i++) {
-                tmpval = (uint16_t)(tmpval | (1 << + i));
+                tmpval |= (1 << + i);
             }
             if (0 != SELF_METHOD_NUM )
             {
-                tmpval = (uint16_t)(tmpval << 1);
+                tmpval <<= 1;
             }
-            value |= (uint16_t)(tmpval << 8);
+            value |= (tmpval << 8);
             status = CMD_RESULT_SUCCESS;
             break;
         case 0x09:    // METHOD_INFO
@@ -3922,7 +3862,7 @@ static void SensorUtilityReadResponse(com_data_tx_t *pcmd, uint16_t channel)
     {
         pcmd->fmt.size    = size;
         pcmd->fmt.data[0] = status;
-        if (0x03 != pcmd->fmt.sub/* EXEC_BATCH */)
+        if (pcmd->fmt.sub != 0x03/* EXEC_BATCH */)
         {
             pcmd->fmt.data[1] = (uint8_t)(value & 0xff);
             pcmd->fmt.data[2] = (uint8_t)(value >> 8);
@@ -3939,7 +3879,6 @@ static void SensorUtilityReadResponse(com_data_tx_t *pcmd, uint16_t channel)
 ***********************************************************************************************************************/
 static void SensorUtilityWriteResponse(com_data_tx_t *pcmd, uint16_t channel)
 {
-    SSP_PARAMETER_NOT_USED(channel);
     uint8_t i;
     uint8_t status;
     ctsu_err_t err;
@@ -3952,18 +3891,18 @@ static void SensorUtilityWriteResponse(com_data_tx_t *pcmd, uint16_t channel)
             status = CMD_RESULT_SUCCESS;
             break;
         case 0x01:    // RESET (Initialize from parameter interface )
-            g_ctsu_soft_mode = CTSU_STOP_MODE;
-            /* Reset parameters from ROM */
-            for(uint32_t itr = 0; itr < METHOD_NUM; itr++)
-            {
-                do
-                {
-                    err = R_CTSU_Close(ctsu_handle_id[g_access_method]);
-                }
-                while(CTSU_ERR_LOCKED==err);
-            }
-            g_ctsu_soft_mode = CTSU_READY_MODE;
-            status = CMD_RESULT_SUCCESS;
+        	g_ctsu_soft_mode = CTSU_STOP_MODE;
+        	/* Reset parameters from ROM */
+        	for(uint32_t itr = 0; itr < METHOD_NUM; itr++)
+        	{
+        		do
+        		{
+        			err = R_CTSU_Close(ctsu_handle_id[g_access_method]);
+        		}
+        		while(CTSU_ERR_LOCKED==err);
+        	}
+        	g_ctsu_soft_mode = CTSU_READY_MODE;
+        	status = CMD_RESULT_SUCCESS;
             break;
         case 0x02:    // SET_BATCH
             for (i = 0; i < com_data.fmt.size; i++)
@@ -3978,25 +3917,23 @@ static void SensorUtilityWriteResponse(com_data_tx_t *pcmd, uint16_t channel)
         case 0x04:    // MEASURE
             if (0 != com_data.fmt.data[0])
             {
-                /* Measurement Re-start */
-                R_CTSU_Close(ctsu_handle_id[g_access_method]);
-                err = R_CTSU_Open(ctsu_handle_id[g_access_method], all_ctsu_configs[g_access_method]);
-                if (CTSU_SUCCESS == err)
-                    status = CMD_RESULT_SUCCESS;
-                control_arg.cmd = CTSU_CMD_SET_CALLBACK;
-                control_arg.p_context = serial_control_callback;
-                err = R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
-                if (CTSU_SUCCESS == err)
-                    status = CMD_RESULT_SUCCESS;
-                g_ctsu_soft_mode = CTSU_READY_MODE;
+            	/* Measurement Re-start */
+            	R_CTSU_Close(ctsu_handle_id[g_access_method]);
+            	err = R_CTSU_Open(ctsu_handle_id[g_access_method], all_ctsu_configs[g_access_method]);
+            	ASSERT(err==CTSU_SUCCESS);
+            	control_arg.cmd = CTSU_CMD_SET_CALLBACK;
+            	control_arg.p_context = serial_control_callback;
+            	err = R_CTSU_Control(ctsu_handle_id[g_access_method], &control_arg);
+            	ASSERT(err==CTSU_SUCCESS);
+            	g_ctsu_soft_mode = CTSU_READY_MODE;
             }
             else
-            {   /* Close the handle */
-                R_CTSU_Close(ctsu_handle_id[g_access_method]);
-                g_ctsu_soft_mode = CTSU_STOP_MODE;
-                memset((void*)&g_ctsu_status[g_access_method], 0, sizeof(ctsu_status_t));
-                status = CMD_RESULT_SUCCESS;
+            {	/* Close the handle */
+            	R_CTSU_Close(ctsu_handle_id[g_access_method]);
+            	g_ctsu_soft_mode = CTSU_STOP_MODE;
+            	memset((void*)&g_ctsu_status[g_access_method], 0, sizeof(ctsu_status_t));
             }
+            status = CMD_RESULT_SUCCESS;
             break;
 //        case 0x05:    // FLAGS (Read only)
 //            break;
@@ -4107,36 +4044,36 @@ uint32_t scan_count = 0;
 void serial_control_callback(ctsu_callback_arg_t const * const p_arg)
 {
 
-    if(p_arg->event_mask == CTSU_EVENT_SCAN_COMPLETED)
-    {
-        scan_count++;
-        if(p_arg->info == 0)
-        {
-            g_ctsu_status[g_access_method].flag.data_update = 1;
-            g_ctsu_status[g_access_method].flag.sens_over = 0;
-            g_ctsu_status[g_access_method].flag.ref_over = 0;
-            g_ctsu_status[g_access_method].flag.icomp_error = 0;
-        }
-        else
-        {
-            if(p_arg->info & CTSU_ERR_CTSU_SC_OVF)
-            {
-                g_ctsu_status[g_access_method].flag.sens_over = 1;
-            }
-            if(p_arg->info & CTSU_ERR_CTSU_RC_OVF)
-            {
-                g_ctsu_status[g_access_method].flag.ref_over = 1;
-            }
-            else if(p_arg->info & CTSU_ERR_CTSU_ICOMP)
-            {
-                g_ctsu_status[g_access_method].flag.icomp_error = 1;
-            }
-        }
-    }
-    else if ((p_arg->event_mask & CTSU_EVENT_STARTING_SCAN) == CTSU_EVENT_STARTING_SCAN)
-    {
-        g_ctsu_status[g_access_method].flag.ctsu_measure = 1;
-    }
+	if(p_arg->event_mask == CTSU_EVENT_SCAN_COMPLETED)
+	{
+		scan_count++;
+		if(p_arg->info == 0)
+		{
+			g_ctsu_status[g_access_method].flag.data_update = 1;
+			g_ctsu_status[g_access_method].flag.sens_over = 0;
+			g_ctsu_status[g_access_method].flag.ref_over = 0;
+			g_ctsu_status[g_access_method].flag.icomp_error = 0;
+		}
+		else
+		{
+			if(p_arg->info & CTSU_ERR_CTSU_SC_OVF)
+			{
+				g_ctsu_status[g_access_method].flag.sens_over = 1;
+			}
+			if(p_arg->info & CTSU_ERR_CTSU_RC_OVF)
+			{
+				g_ctsu_status[g_access_method].flag.ref_over = 1;
+			}
+			else if(p_arg->info & CTSU_ERR_CTSU_ICOMP)
+			{
+				g_ctsu_status[g_access_method].flag.icomp_error = 1;
+			}
+		}
+	}
+	else if ((p_arg->event_mask & CTSU_EVENT_STARTING_SCAN) == CTSU_EVENT_STARTING_SCAN)
+	{
+		g_ctsu_status[g_access_method].flag.ctsu_measure = 1;
+	}
 }
 #endif    //] WORKBENCH_COMMAND_USE
 /******************************************************************************
