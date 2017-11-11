@@ -354,7 +354,7 @@ Acquire the software tools from the Synergy Gallery then follow the steps below.
 
 1. Install the e2studio Integrate Solution Development Environment. Note the installation path.
 2. Install the Synergy Software Package v1.3.0; or later versions. You may have to provide the installation path from step 1.
-3. Copy the downloaded **Renesas.r_ctsu_v2.1.3.0.pack** and Renesas.r_touch_v2.1.3.0.pack pack files to the `internal\projectgen\arm\Packs` folder in e2studio.
+3. Copy the downloaded **Renesas.r_ctsu_v2.1.3.0.pack** and **Renesas.r_touch_v2.1.3.0.pack** files to the `internal\projectgen\arm\Packs` folder in e2studio installation.
 
 ## Creating a New Synergy C Project ##
 1. Start e2studio and specify a Workspace Location. Select **OK**.

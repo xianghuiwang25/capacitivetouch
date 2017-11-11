@@ -55,10 +55,12 @@ Macro definitions
 #endif
 #endif  //LAST_TS
 
+#if !defined(TOUCH_CFG_MAX_UPPER_LAYER_CALLBACKS)
 /**
  * Define maximum number of upper layer callbacks (Default = 1)
  */
 #define TOUCH_CFG_MAX_UPPER_LAYER_CALLBACKS         (3)
+#endif
 
 /***********************************************************************************************************************
 Typedef definitions

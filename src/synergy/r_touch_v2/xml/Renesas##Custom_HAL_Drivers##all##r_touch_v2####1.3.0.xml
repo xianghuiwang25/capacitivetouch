@@ -36,6 +36,9 @@
         <property default="100" display="Calibration (Lower Limit Count)" id="config.driver.touch_v2.lower_limit">
             <constraint display="Name must be number greater than 0">testInteger("${config.driver.touch_v2.lower_limit}")  &amp;&amp; ("${config.driver.touch_v2.lower_limit}" &gt; 0)</constraint>
         </property>
+        <property default="1" display="Max. Upper Layer Callbacks" id="config.driver.touch_v2.max_upper_cb">
+            <constraint display="Name must be number greater than 0">testInteger("${config.driver.touch_v2.max_upper_cb}")  &amp;&amp; ("${config.driver.touch_v2.max_upper_cb}" &gt; 0)</constraint>
+        </property>             
         <property default="1" display="Max. Error Count Before reporting to upper layer" id="config.driver.touch_v2.max_err">
             <constraint display="Name must be number greater than 0">testInteger("${config.driver.touch_v2.max_err}")  &amp;&amp; ("${config.driver.touch_v2.max_err}" &gt; 0)</constraint>
         </property>     
@@ -90,6 +93,11 @@
              */
             #define TOUCH_CFG_MAX_ERROR_COUNT             (${config.driver.touch_v2.max_err})
             
+            /**
+             * Define maximum number of upper layer callbacks (Default = 1)
+             */
+            #define TOUCH_CFG_MAX_UPPER_LAYER_CALLBACKS         (${config.driver.touch_v2.max_upper_cb})
+            
         </content>
     </config>
     <module config="config.driver.touch_v2" display="Driver|Input|${module.driver.touch.name} TOUCH V2 Driver on r_touch_v2" id="module.driver.touch_on_touch" common="100" version="1">
@@ -101,7 +109,7 @@
         <provides interface="interface.driver.touch_on_touch" />
         <provides interface="interface.driver.touch.${module.driver.touch.name}" />
         
-        <property default="g_touch${_instance}" display="Name" id="module.driver.touch.name">
+        <property default="g_touch${_instance}" display="Name(touch_instance_t)" id="module.driver.touch.name">
             <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.touch.name}")</constraint>
         </property>
         <property default="g_touch${_instance}_binary" display="Binary Result Buffer" id="module.driver.touch.p_binary_result">
