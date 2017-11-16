@@ -148,7 +148,7 @@ ctsu_instance_t const %(name)s =
             tx.sort();
             
             self.CR0 = "(MUTUAL%d_CTSUTXVSEL<<7)" % itr
-            self.CR1 = "((_11_CTSUMD_MUTUAL<<6)|(_00_CTSUCLK_PCLK<<4)|(MUTUAL%(itr)d_CTSUATUNE1<<3)|(_0_CTSUATUNE0_NORMAL<<2)|(_1_CTSUCSW_ON<<1)|(_1_CTSUPON_HW_POWER_ON<<0))" % {'itr':itr}
+            self.CR1 = "((_11_CTSUMD_MUTUAL<<6)|(MUTUAL%(itr)d_CTSUCLK_PCLKDIV<<4)|(MUTUAL%(itr)d_CTSUATUNE1<<3)|(_0_CTSUATUNE0_NORMAL<<2)|(_1_CTSUCSW_ON<<1)|(_1_CTSUPON_HW_POWER_ON<<0))" % {'itr':itr}
             self.SDPRS = "((MUTUAL%(itr)d_CTSUSOFF<<6)|(MUTUAL%(itr)d_CTSUPRMODE<<4)|(MUTUAL%(itr)d_CTSUPRRATIO<<0))" % {'itr':itr}
             
             for ch in en:
@@ -196,7 +196,7 @@ ctsu_instance_t const %(name)s =
             ## Self capacitance mode ##
             assert tx == None;
             self.CR0 = "(0x00)"
-            self.CR1 = "((_01_CTSUMD_SELF_MULTI<<6)|(_00_CTSUCLK_PCLK<<4)|(SELF_CTSUATUNE1<<3)|(_0_CTSUATUNE0_NORMAL<<2)|(_1_CTSUCSW_ON<<1)|(_1_CTSUPON_HW_POWER_ON<<0))"
+            self.CR1 = "((_01_CTSUMD_SELF_MULTI<<6)|(SELF_CTSUCLK_PCLKDIV<<4)|(SELF_CTSUATUNE1<<3)|(_0_CTSUATUNE0_NORMAL<<2)|(_1_CTSUCSW_ON<<1)|(_1_CTSUPON_HW_POWER_ON<<0))" % {'itr':itr,}
             self.SDPRS = "((SELF_CTSUSOFF<<6)|(SELF_CTSUPRMODE<<4)|(SELF_CTSUPRRATIO<<0))"
 
             for ch in en:
@@ -434,7 +434,7 @@ def copy_clean_header(infile, outfile):
 
     logging.info("Dir Name: %s" % os.path.dirname(outfile))
     outpath = os.path.dirname(outfile);
-    outfile = outpath + "/r_ctsu.h"
+    outfile = outpath + "/r_ctsu_tuning.h"
     ## File Clean up ##
     ctsu_stdinth_add_index = [line for line in file_lines_ctsu if "Includes" in line]
     ctsu_stdinth_add_index = file_lines_ctsu.index(ctsu_stdinth_add_index[0])+ 2
@@ -540,7 +540,10 @@ def get_ctsuso1(pclkb, targetfreq, ctsuclk, mode):
     return (ctsuicog << 13) | (ctsusdpa << 8) | ctsuricoa
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Create a CTSU configuration instance from a Workbench6 auto-generated file (r_ctsu.h).')
+    parser = argparse.ArgumentParser(description=
+                                     """
+                                     Create a CTSU configuration instance from a Workbench6 auto-generated file (r_ctsu.h).
+                                     """)
     parser.add_argument('-t', '--tx', dest='tx', nargs='+', type=int, help='(optional)Specify TS pin numbers to use as Transmit Pins for the CTSU.')
     parser.add_argument('-r', '--rx', dest='rx', nargs='+', type=int, help='(optional)Specify TS pin numbers to use as Receive Pins for the CTSU.')
     parser.add_argument('-o', '--output', dest='outfile', default="./output.c", help='Specify full path and file name for C output. E.g.: ./r_ctsu_rx_config_self01.c')
