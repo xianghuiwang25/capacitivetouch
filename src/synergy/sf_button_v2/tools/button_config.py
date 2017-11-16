@@ -8,6 +8,28 @@ import argparse
 import touch_config
 import ctsu_config
 
+license = """
+Copyright (c) 2017 Onkar Raut (onkar.raut.at.renesas.com).
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
+
 output_header = """
 /***********************************************************************************************************************
 * DISCLAIMER
@@ -38,7 +60,7 @@ output_header = """
 
 output_footer = """
 #define CONFIGURATION_COUNT    (%(count)s)
-touch_button_cfg_t const * const g_all_button_configs[CONFIGURATION_COUNT + 1] = 
+touch_button_instance_t const * const g_all_buttons[CONFIGURATION_COUNT + 1] = 
 {
 #if (CONFIGURATION_COUNT > 0)
     %(config_names)s,
@@ -50,9 +72,9 @@ const uint16_t g_button_config_count = CONFIGURATION_COUNT;
 """
 class BUTTON:
     """ Button Configuration Class. """
-    template = """extern touch_cfg_t %(touch_cfg)s;
+    template = """extern touch_instance_t const %(touch_cfg)s;
 extern void App_TOUCH_Button_Notification(void*);
-touch_button_cfg_t const %(name)s = { 
+static touch_button_cfg_t const %(name)s_cfg = { 
      .button.tx = %(tx)d,
      .button.rx = %(rx)d,
      .p_touch = &%(touch_cfg)s,
@@ -63,6 +85,15 @@ touch_button_cfg_t const %(name)s = {
      .debounce = %(debounce)d,
      .hold_max = 1000,
      .p_callback = %(cb_name)s,
+};
+
+static touch_button_instance_ctrl_t %(name)s_ctrl;
+
+touch_button_instance_t const %(name)s = 
+{
+    .p_ctrl = &%(name)s_ctrl,
+    .p_cfg  = &%(name)s_cfg,
+    .p_api  = &g_touch_button_on_g_touch_button,
 };
 """
     configs = set()

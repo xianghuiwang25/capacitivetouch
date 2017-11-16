@@ -11,7 +11,29 @@ import xml.dom.minidom
 import ctsu_config
 import touch_config
 import button_config
-import slider_config
+# import slider_config
+
+license = """
+Copyright (c) 2017 Onkar Raut (onkar.raut.at.renesas.com).
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
 
 class MCU(object):
     """ MCU Settings"""
@@ -246,7 +268,7 @@ const uint8_t g_num_ctsu_configs = %(count)s;
 #             sys.exit(1)
 #         unzip(zipfile, dest)
 #         
-#     outdir = dest+"/Base_Project_RX" + mcu.family
+    outdir = dest # +"/Base_Project_RX" + mcu.family
 #     
 #     if False == os.path.isdir(outdir + "/src/ctsu"):
 #         logging.error(outdir + "/ctsu does not exist.")
@@ -423,26 +445,25 @@ const uint8_t g_num_ctsu_configs = %(count)s;
 #         f_wr.write(line)
 #     f_wr.close()
 #     
-#     """ Calculate PCLKB frequency """
-#     if mcu.family == "113" or mcu.family == "130":
-#         hoco_freq = 32000000
-#     elif mcu.family == "231" or mcu.family == "230":
-#         hoco_freq = 32000000 if int(mcu.hoco_freq) == 0 else 54000000
-#     
-#     if int(mcu.clk_src) == 1:
-#         """ Running using HOCO """
-#         frequency = hoco_freq
-#     elif int(mcu.clk_src) == 3:
-#         """ Running using Main Oscillator (no PLL)"""
-#         frequency = int(mcu.xtal_freq)
-#     elif int(mcu.clk_src) == 4:
-#         """ Running using PLL """
-#         frequency = (int(mcu.xtal_freq) * int(mcu.pll_m))/int(mcu.pll_d)
-#     else:
-#         logging.error("Invalid Clock Selection.")
-#         sys.exit(2)
+    """ Calculate PCLKB frequency """
+    if mcu.family == "113" or mcu.family == "130":
+        hoco_freq = 32000000
+    elif mcu.family == "231" or mcu.family == "230":
+        hoco_freq = 32000000 if int(mcu.hoco_freq) == 0 else 54000000
+     
+    if int(mcu.clk_src) == 1:
+        """ Running using HOCO """
+        frequency = hoco_freq
+    elif int(mcu.clk_src) == 3:
+        """ Running using Main Oscillator (no PLL)"""
+        frequency = int(mcu.xtal_freq)
+    elif int(mcu.clk_src) == 4:
+        """ Running using PLL """
+        frequency = (int(mcu.xtal_freq) * int(mcu.pll_m))/int(mcu.pll_d)
+    else:
+        logging.error("Invalid Clock Selection.")
+        sys.exit(2)
         
-
     pclkb_freq = frequency/int(mcu.pclk_b)
     
 #     """ Output BSP Configuration """
@@ -532,7 +553,7 @@ const uint8_t g_num_ctsu_configs = %(count)s;
     ctsu_cfg_extern = []
     for ctsu_cfg in ctsu_config.CTSU.configs:
         ctsu_cfg.pclk = int(pclkb_freq)
-        ctsu_cfg.write(ctsu_config.CTSU.template, outdir + "/src/ctsu/ctsu_config" + str(ctsu_config.CTSU.configs.index(ctsu_cfg)) + ".c")
+        ctsu_cfg.write(ctsu_config.CTSU.template, outdir + "/src/ctsu_config" + str(ctsu_config.CTSU.configs.index(ctsu_cfg)) + ".c")
         ctsu_cfg_name.append("&%s" % ctsu_cfg.name)
         ctsu_cfg_extern.append("extern ctsu_instance_t %s" % ctsu_cfg.name)
         
@@ -613,7 +634,7 @@ if __name__ == '__main__':
     ctsu_config.read(ctsu_file, args.tx, args.rx);
     touch_config.read(touch_file, ctsu_config.CTSU.configs)
     button_config.read(touch_config.TOUCH.configs)
-    slider_config.read(touch_config.TOUCH.configs)
+#     slider_config.read(touch_config.TOUCH.configs)
     
     """ Write out all information """
     write(mcu, args.install, args.outdir)
