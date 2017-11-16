@@ -53,8 +53,8 @@ output_header = """
 * Version      : 2.0
 * Description  : This file contains TOUCH middleware configuration settings.
 ***********************************************************************************************************************/
-#include "r_touch_tuning.h"
 #include "r_touch.h"
+#include "r_touch_tuning.h"
 """
 
 

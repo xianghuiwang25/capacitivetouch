@@ -52,8 +52,8 @@ output_header = """
 * Version      : 2.0
 * Description  : This file contains CTSU SFR settings.
 ***********************************************************************************************************************/
-#include "r_ctsu_tuning.h"
 #include "r_ctsu.h"
+#include "r_ctsu_tuning.h"
 
 """
 
