@@ -22,7 +22,6 @@
 * Version      : 2.0
 * Description  : This file contains CTSU SFR settings.
 ***********************************************************************************************************************/
-#include "bsp_api.h"
 #include "../../../synergy/r_ctsu_v2/inc/driver/instances/r_ctsu.h"
 #include "./r_ctsu.h"
 

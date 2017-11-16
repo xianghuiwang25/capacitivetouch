@@ -30,8 +30,8 @@ output_header = """
 * Version      : 2.0
 * Description  : This file contains CTSU SFR settings.
 ***********************************************************************************************************************/
+#include "r_ctsu_tuning.h"
 #include "r_ctsu.h"
-#include "r_ctsu_synergy_if.h"
 
 """
 
@@ -41,7 +41,7 @@ class CTSU(object):
     configs = []
     template = """
 /* TODO: In the SSP Configurator, set Measurement method for CTSU Driver on r_ctsu: %(name)s_cfg to id %(id)s */    
-#define CTSU_CFG_GENERATE    (%(generate)s)
+#define CTSU_CFG_GENERATE    (1) //(%(generate)s)
 
 static ctsu_const_sfrs_t %(name)s_common_sfrs = {
 	.ctsucr0.byte     = %(CR0)s,
@@ -72,7 +72,7 @@ static ctsu_sensor_setting_t %(name)s_sensor_settings[] =
 static uint16_t %(name)s_data_buffer[%(sensor_count)d];
 
 #if (CTSU_CFG_GENERATE == 1)
-ctsu_cfg_t %(name)s_cfg = {
+static ctsu_cfg_t %(name)s_cfg = {
     /* One Time Settings */
     .p_ctsu_settings = &%(name)s_common_sfrs,
     /* Per channel settings */
@@ -86,6 +86,16 @@ ctsu_cfg_t %(name)s_cfg = {
 	.correction_ctsuso_delta = %(corr_del)d,
 #endif
 };
+
+static ctsu_instance_ctrl_t %(name)s_ctrl;
+
+ctsu_instance_t const %(name)s = 
+{
+ .p_ctrl = &%(name)s_ctrl,
+ .p_cfg  = &%(name)s_cfg,
+ .p_api  = &g_ctsu_on_ctsu,
+};
+
 #endif
 	"""
     def __init__(self, pclk, en, itr=None, tx=None, rx=None):
