@@ -29,10 +29,10 @@ Includes   <System Includes> , "Project Includes"
 ***********************************************************************************************************************/
 #include <stdio.h>
 #include "bsp_api.h"
-#include "r_touch_config.h"
-#include "r_touch_synergy_if.h"
+#include "r_touch_cfg.h"
+#include "r_touch.h"
 /* Include the private header for retrieving the max count of control blocks.*/
-#include "src/r_touch_synergy_private.h"
+#include "../../../src/driver/r_touch/r_touch_private.h"
 
 #ifndef TEST_R_CTSU_RX_COMMON_TEST_H_
 #define TEST_R_CTSU_RX_COMMON_TEST_H_
@@ -49,10 +49,10 @@ Includes   <System Includes> , "Project Includes"
  * Initialize CTSU TSCAP and TS pins.
  * @param pin_mask Bit field which describes pins being used as TS pins.
  */
-void ctsu_pin_init(uint64_t pin_mask);
-uint64_t ctsu_get_tspin_mask(ctsu_cfg_t const*const p_cfg);
-uint64_t ctsu_get_rxpin_mask(ctsu_cfg_t const*const p_cfg);
-uint64_t ctsu_get_txpin_mask(ctsu_cfg_t const*const p_cfg);
-uint32_t ctsu_get_pin_count(uint64_t tspin_mask);
-ioport_level_t get_pin_level(ioport_port_pin_t pin);
+extern void ctsu_pin_init(uint64_t pin_mask);
+extern uint64_t ctsu_get_tspin_mask(ctsu_cfg_t const*const p_cfg);
+extern uint64_t ctsu_get_rxpin_mask(ctsu_cfg_t const*const p_cfg);
+extern uint64_t ctsu_get_txpin_mask(ctsu_cfg_t const*const p_cfg);
+extern uint32_t ctsu_get_pin_count(uint64_t tspin_mask);
+extern ioport_level_t get_pin_level(ioport_port_pin_t pin);
 #endif /* TEST_R_CTSU_RX_COMMON_TEST_H_ */

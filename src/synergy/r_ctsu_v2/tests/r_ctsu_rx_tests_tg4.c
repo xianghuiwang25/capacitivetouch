@@ -37,15 +37,15 @@
  * @{
  * Sample Usage:
  *
- * TEST_GROUP_RUNNER(TOUCH_TG4)
+ * TEST_GROUP_RUNNER(CTSU_TG4)
  * {
- *     RUN_TEST_CASE(TOUCH_TG4, TC_4_1_CTSUICOMP_Error);
- *     RUN_TEST_CASE(TOUCH_TG4, TC_4_2_CTSUSOVF_Error);
- *     RUN_TEST_CASE(TOUCH_TG4, TC_4_3_CTSUROVF_Error);
- *     RUN_TEST_CASE(TOUCH_TG4, TC_4_4_Read_Handle);
- *     RUN_TEST_CASE(TOUCH_TG4, TC_4_5_Scan_Handle);
- *     RUN_TEST_CASE(TOUCH_TG4, TC_4_6_Control_Handle);
- *     RUN_TEST_CASE(TOUCH_TG4, TC_4_7_Close_Handle);
+ *     RUN_TEST_CASE(CTSU_TG4, TC_4_1_CTSUICOMP_Error);
+ *     RUN_TEST_CASE(CTSU_TG4, TC_4_2_CTSUSOVF_Error);
+ *     RUN_TEST_CASE(CTSU_TG4, TC_4_3_CTSUROVF_Error);
+ *     RUN_TEST_CASE(CTSU_TG4, TC_4_4_Read_Handle);
+ *     RUN_TEST_CASE(CTSU_TG4, TC_4_5_Scan_Handle);
+ *     RUN_TEST_CASE(CTSU_TG4, TC_4_6_Control_Handle);
+ *     RUN_TEST_CASE(CTSU_TG4, TC_4_7_Close_Handle);
  * }
  *
  ***********************************************************************************************************************/
@@ -95,7 +95,7 @@ extern ctsu_cfg_t TOUCH_CONFIG1;
 extern ctsu_cfg_t TOUCH_CONFIG2;
 
 /* Define test groups. */
-TEST_GROUP(TOUCH_TG4);
+TEST_GROUP(CTSU_TG4);
 
 /***********************************************************************************************************************
  * Function Name: TEST_SETUP
@@ -103,7 +103,7 @@ TEST_GROUP(TOUCH_TG4);
  * Arguments    : none
  * Return Value : none
  ***********************************************************************************************************************/
-TEST_SETUP(TOUCH_TG4)
+TEST_SETUP(CTSU_TG4)
 {
     printf("Plug the \"Mutual Capacitance Button\" board into the kit.\n\r");
     printf("Press SW3 on MCU board to start test.\n\r");
@@ -117,12 +117,12 @@ TEST_SETUP(TOUCH_TG4)
  * Arguments    : none
  * Return Value : none
  ***********************************************************************************************************************/
-TEST_TEAR_DOWN(TOUCH_TG4)
+TEST_TEAR_DOWN(CTSU_TG4)
 {
 	scan_count = 0;
 }
 
-TEST(TOUCH_TG4, TC_4_1_CTSUICOMP_Error)
+TEST(CTSU_TG4, TC_4_1_CTSUICOMP_Error)
 {
     uint16_t ctsussc;
      uint16_t ctsuso0;
@@ -167,7 +167,7 @@ TEST(TOUCH_TG4, TC_4_1_CTSUICOMP_Error)
 
 }
 
-TEST(TOUCH_TG4, TC_4_2_CTSUSOVF_Error)
+TEST(CTSU_TG4, TC_4_2_CTSUSOVF_Error)
 {
     uint16_t ctsussc;
     uint16_t ctsuso0;
@@ -214,7 +214,7 @@ TEST(TOUCH_TG4, TC_4_2_CTSUSOVF_Error)
     p_cfg->p_sensor_settings[0].ctsuso1 = ctsuso1;
 }
 
-TEST(TOUCH_TG4, TC_4_3_CTSUROVF_Error)
+TEST(CTSU_TG4, TC_4_3_CTSUROVF_Error)
 {
     uint16_t ctsussc;
     uint16_t ctsuso0;
@@ -260,7 +260,7 @@ TEST(TOUCH_TG4, TC_4_3_CTSUROVF_Error)
     p_cfg->p_sensor_settings[0].ctsuso1 = ctsuso1;
 }
 
-TEST(TOUCH_TG4, TC_4_4_Read_Handle)
+TEST(CTSU_TG4, TC_4_4_Read_Handle)
 {
     ctsu_instance_ctrl_t id;
 	ctsu_cfg_t * p_cfg;
@@ -291,7 +291,7 @@ TEST(TOUCH_TG4, TC_4_4_Read_Handle)
 	TEST_ASSERT_EQUAL(CTSU_SUCCESS, R_CTSU_Close(&id));
 }
 
-TEST(TOUCH_TG4, TC_4_5_Scan_Handle)
+TEST(CTSU_TG4, TC_4_5_Scan_Handle)
 {
     ctsu_instance_ctrl_t id;
 	ctsu_cfg_t * p_cfg;
@@ -315,7 +315,7 @@ TEST(TOUCH_TG4, TC_4_5_Scan_Handle)
 	TEST_ASSERT_EQUAL(CTSU_SUCCESS, R_CTSU_Close(&id));
 }
 
-TEST(TOUCH_TG4, TC_4_6_Control_Handle)
+TEST(CTSU_TG4, TC_4_6_Control_Handle)
 {
     ctsu_instance_ctrl_t id;
 	ctsu_cfg_t * p_cfg;
@@ -336,7 +336,7 @@ TEST(TOUCH_TG4, TC_4_6_Control_Handle)
 	TEST_ASSERT_EQUAL(CTSU_SUCCESS, R_CTSU_Close(&id));
 }
 
-TEST(TOUCH_TG4, TC_4_7_Close_Handle)
+TEST(CTSU_TG4, TC_4_7_Close_Handle)
 {
     ctsu_instance_ctrl_t id;
 	ctsu_cfg_t * p_cfg;
@@ -364,9 +364,9 @@ void ctsu_event_callback_tg4(ctsu_callback_arg_t const * const p_arg)
 
     if (CTSU_EVENT_SCAN_COMPLETED == p_arg->event_mask)
 	{
-        if( strcmp(Unity.CurrentTestName, "TEST(TOUCH_TG4, TC_4_1_CTSUICOMP_Error)") ) {;}
-        else if( strcmp(Unity.CurrentTestName, "TEST(TOUCH_TG4, TC_4_2_CTSUSOVF_Error)") ) {;}
-        else if( strcmp(Unity.CurrentTestName, "TEST(TOUCH_TG4, TC_4_3_CTSUROVF_Error)") ) {;}
+        if( strcmp(Unity.CurrentTestName, "TEST(CTSU_TG4, TC_4_1_CTSUICOMP_Error)") ) {;}
+        else if( strcmp(Unity.CurrentTestName, "TEST(CTSU_TG4, TC_4_2_CTSUSOVF_Error)") ) {;}
+        else if( strcmp(Unity.CurrentTestName, "TEST(CTSU_TG4, TC_4_3_CTSUROVF_Error)") ) {;}
         else TEST_ASSERT_EQUAL( 0, p_arg->info);
 
 		scan_count += 1U;

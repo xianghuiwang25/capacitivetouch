@@ -56,94 +56,94 @@ Private global variables and functions
 static void RunAllTests(void);
 
 /***********************************************************************************************************************
-* Function Name: TEST_TOUCH_TG1_GROUP_RUNNER_runAll
+* Function Name: TEST_CTSU_TG1_GROUP_RUNNER_runAll
 * Description  : Test operation of API in self-capacitance mode.
 * Arguments    : None
 * Return Value : None
 ***********************************************************************************************************************/
-TEST_GROUP_RUNNER(TOUCH_TG1)
+TEST_GROUP_RUNNER(CTSU_TG1)
 {
 #if RUN_TG1==true
     /* Test operation of API in self-capacitance mode. */
-	RUN_TEST_CASE(TOUCH_TG1, TC_1_0_GetVersion);
-	RUN_TEST_CASE(TOUCH_TG1, TC_1_1_Open_Invalid_Param_test);
-	RUN_TEST_CASE(TOUCH_TG1, TC_1_2_Open_Close_Handle);
-	RUN_TEST_CASE(TOUCH_TG1, TC_1_3_Scan_Multiple_Handles);
-	RUN_TEST_CASE(TOUCH_TG1, TC_1_7_Calibrate_Handle);
-	RUN_TEST_CASE(TOUCH_TG1, TC_1_4_Read_Results);
-	RUN_TEST_CASE(TOUCH_TG1, TC_1_5_Control_Get_Tests);
-	RUN_TEST_CASE(TOUCH_TG1, TC_1_6_Control_Set_Tests);
-	RUN_TEST_CASE(TOUCH_TG1, TC_1_8_Event_Check);
+	RUN_TEST_CASE(CTSU_TG1, TC_1_0_GetVersion);
+	RUN_TEST_CASE(CTSU_TG1, TC_1_1_Open_Invalid_Param_test);
+	RUN_TEST_CASE(CTSU_TG1, TC_1_2_Open_Close_Handle);
+	RUN_TEST_CASE(CTSU_TG1, TC_1_3_Scan_Multiple_Handles);
+	RUN_TEST_CASE(CTSU_TG1, TC_1_7_Calibrate_Handle);
+	RUN_TEST_CASE(CTSU_TG1, TC_1_4_Read_Results);
+	RUN_TEST_CASE(CTSU_TG1, TC_1_5_Control_Get_Tests);
+	RUN_TEST_CASE(CTSU_TG1, TC_1_6_Control_Set_Tests);
+	RUN_TEST_CASE(CTSU_TG1, TC_1_8_Event_Check);
 #endif
 }
 /***********************************************************************************************************************
-End of function TEST_TOUCH_TG1_GROUP_RUNNER_runAll
+End of function TEST_CTSU_TG1_GROUP_RUNNER_runAll
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
-* Function Name: TEST_TOUCH_TG2_GROUP_RUNNER_runAll
+* Function Name: TEST_CTSU_TG2_GROUP_RUNNER_runAll
 * Description  : Test operation of API in mutual-capacitance mode.
 * Arguments    : None
 * Return Value : None
 ***********************************************************************************************************************/
-TEST_GROUP_RUNNER(TOUCH_TG2)
+TEST_GROUP_RUNNER(CTSU_TG2)
 {
 #if RUN_TG2==true
     /* Test operation of API in mutual-capacitance mode */
-	RUN_TEST_CASE(TOUCH_TG2, TC_2_0_GetVersion);
-	RUN_TEST_CASE(TOUCH_TG2, TC_2_1_Open_Invalid_Param_test);
-	RUN_TEST_CASE(TOUCH_TG2, TC_2_2_Open_Close_Handle);
-	RUN_TEST_CASE(TOUCH_TG2, TC_2_3_Scan_Multiple_Handles);
-	RUN_TEST_CASE(TOUCH_TG2, TC_2_7_Calibrate_Handle);
-	RUN_TEST_CASE(TOUCH_TG2, TC_2_4_Read_Results);
-	RUN_TEST_CASE(TOUCH_TG2, TC_2_5_Control_Get_Tests);
-	RUN_TEST_CASE(TOUCH_TG2, TC_2_6_Control_Set_Tests);
-	RUN_TEST_CASE(TOUCH_TG2, TC_2_8_Event_Check);
+	RUN_TEST_CASE(CTSU_TG2, TC_2_0_GetVersion);
+	RUN_TEST_CASE(CTSU_TG2, TC_2_1_Open_Invalid_Param_test);
+	RUN_TEST_CASE(CTSU_TG2, TC_2_2_Open_Close_Handle);
+	RUN_TEST_CASE(CTSU_TG2, TC_2_3_Scan_Multiple_Handles);
+	RUN_TEST_CASE(CTSU_TG2, TC_2_7_Calibrate_Handle);
+	RUN_TEST_CASE(CTSU_TG2, TC_2_4_Read_Results);
+	RUN_TEST_CASE(CTSU_TG2, TC_2_5_Control_Get_Tests);
+	RUN_TEST_CASE(CTSU_TG2, TC_2_6_Control_Set_Tests);
+	RUN_TEST_CASE(CTSU_TG2, TC_2_8_Event_Check);
 #endif
 }
 /***********************************************************************************************************************
-End of function TEST_TOUCH_TG2_GROUP_RUNNER_runAll
+End of function TEST_CTSU_TG2_GROUP_RUNNER_runAll
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
-* Function Name: TEST_TOUCH_TG3_GROUP_RUNNER_runAll
+* Function Name: TEST_CTSU_TG3_GROUP_RUNNER_runAll
 * Description  : Test Operation of CTSU in hybrid mode (i.e. Self + Mutual operation).
 * Arguments    : None
 * Return Value : None
 ***********************************************************************************************************************/
-TEST_GROUP_RUNNER(TOUCH_TG3)
+TEST_GROUP_RUNNER(CTSU_TG3)
 {
 #if RUN_TG3 == true
     /* Test operation of API in hybrid mode */
-//	RUN_TEST_CASE(TOUCH_TG3, TC_3_1_Open_Scan_Close);
-//	RUN_TEST_CASE(TOUCH_TG3, TC_3_2_Read_Hybrid);
+//	RUN_TEST_CASE(CTSU_TG3, TC_3_1_Open_Scan_Close);
+//	RUN_TEST_CASE(CTSU_TG3, TC_3_2_Read_Hybrid);
 #endif
 }
 /***********************************************************************************************************************
-End of function TEST_TOUCH_TG3_GROUP_RUNNER_runAll
+End of function TEST_CTSU_TG3_GROUP_RUNNER_runAll
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
-* Function Name: TEST_TOUCH_TG4_GROUP_RUNNER_runAll
+* Function Name: TEST_CTSU_TG4_GROUP_RUNNER_runAll
 * Description  : Left over feature/API tests.
 * Arguments    : None
 * Return Value : None
 ***********************************************************************************************************************/
-TEST_GROUP_RUNNER(TOUCH_TG4)
+TEST_GROUP_RUNNER(CTSU_TG4)
 {
 #if RUN_TG4 == true
     /* Test Error reporting from API */
-	RUN_TEST_CASE(TOUCH_TG4, TC_4_1_CTSUICOMP_Error);
-	RUN_TEST_CASE(TOUCH_TG4, TC_4_2_CTSUSOVF_Error);
-	RUN_TEST_CASE(TOUCH_TG4, TC_4_3_CTSUROVF_Error);
-	RUN_TEST_CASE(TOUCH_TG4, TC_4_4_Read_Handle);
-	RUN_TEST_CASE(TOUCH_TG4, TC_4_5_Scan_Handle);
-	RUN_TEST_CASE(TOUCH_TG4, TC_4_6_Control_Handle);
-	RUN_TEST_CASE(TOUCH_TG4, TC_4_7_Close_Handle);
+	RUN_TEST_CASE(CTSU_TG4, TC_4_1_CTSUICOMP_Error);
+	RUN_TEST_CASE(CTSU_TG4, TC_4_2_CTSUSOVF_Error);
+	RUN_TEST_CASE(CTSU_TG4, TC_4_3_CTSUROVF_Error);
+	RUN_TEST_CASE(CTSU_TG4, TC_4_4_Read_Handle);
+	RUN_TEST_CASE(CTSU_TG4, TC_4_5_Scan_Handle);
+	RUN_TEST_CASE(CTSU_TG4, TC_4_6_Control_Handle);
+	RUN_TEST_CASE(CTSU_TG4, TC_4_7_Close_Handle);
 #endif
 }
 /***********************************************************************************************************************
-End of function TEST_TOUCH_TG4_GROUP_RUNNER_runAll
+End of function TEST_CTSU_TG4_GROUP_RUNNER_runAll
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -157,10 +157,10 @@ static void RunAllTests(void)
 	/* Get module software versions */
 	printf ("\n  Touch Driver Version: V%d.%d\n", (CTSU_CODE_VERSION_MAJOR), (CTSU_CODE_VERSION_MINOR));
 
-	RUN_TEST_GROUP(TOUCH_TG1);
-	RUN_TEST_GROUP(TOUCH_TG2);
-	RUN_TEST_GROUP(TOUCH_TG3);
-	RUN_TEST_GROUP(TOUCH_TG4);
+	RUN_TEST_GROUP(CTSU_TG1);
+	RUN_TEST_GROUP(CTSU_TG2);
+	RUN_TEST_GROUP(CTSU_TG3);
+	RUN_TEST_GROUP(CTSU_TG4);
 }
 /***********************************************************************************************************************
 End of function RunAllTests

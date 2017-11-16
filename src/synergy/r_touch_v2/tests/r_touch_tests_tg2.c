@@ -78,7 +78,7 @@ Exported global variables (to be accessed by other files)
 Private global variables and functions
 ***********************************************************************************************************************/
 static void touch_event_callback_tg2(touch_callback_arg_t const * const arg);
-static uint32_t hdl_idx = UINT32_MAX;
+static touch_instance_ctrl_t g_touch_ctrl_tg2;
 static uint32_t scan_count = 0;
 static uint16_t touch_count_mutual = 0;
 static uint16_t results[256];
@@ -120,13 +120,8 @@ TEST_SETUP(TOUCH_TG2)
 ***********************************************************************************************************************/
 TEST_TEAR_DOWN(TOUCH_TG2)
 {
-	hdl_idx = UINT32_MAX;
 	scan_count = 0;
 	touch_count_mutual = 0;
-	for(uint32_t itr = 0; itr < TOUCH_CFG_MAX_CONTROL_BLOCK_COUNT; itr++)
-	{	/* Close any open blocks */
-		R_TOUCH_Close(itr);
-	}
 }
 
 /***********************************************************************************************************************
@@ -137,7 +132,16 @@ TEST_TEAR_DOWN(TOUCH_TG2)
 ***********************************************************************************************************************/
 TEST(TOUCH_TG2, TC_2_0_GetVersion)
 {
-    TEST_ASSERT_EQUAL_UINT32((uint32_t)((TOUCH_VERSION_MAJOR << 16) | (TOUCH_VERSION_MINOR)), R_TOUCH_GetVersion());
+    ssp_version_t version;
+
+    ssp_err_t err = R_TOUCH_GetVersion(&version);
+
+    TEST_ASSERT_EQUAL( TOUCH_SUCCESS, err);
+
+    TEST_ASSERT_EQUAL_UINT32(version.api_version_major, TOUCH_API_VERSION_MAJOR);
+    TEST_ASSERT_EQUAL_UINT32(version.api_version_minor, TOUCH_API_VERSION_MINOR);
+    TEST_ASSERT_EQUAL_UINT32(version.code_version_major, 2);
+    TEST_ASSERT_EQUAL_UINT32(version.code_version_minor, 0);
 }
 
 /***********************************************************************************************************************
@@ -153,45 +157,45 @@ TEST(TOUCH_TG2, TC_2_1_Open_Invalid_Param_test)
 	touch_cfg_t *	p_touch_cfg_valid_extern;
 	memset(&touch_cfg_tg2, 0, sizeof(touch_cfg_t));
 
-	TEST_ASSERT(TOUCH_CFG_MAX_CONTROL_BLOCK_COUNT <= g_touch_ctrl_blk_count );
+	TEST_ASSERT(TOUCH_CFG_MAX_CONTROL_BLOCK_COUNT <= TOUCH_CFG_MAX_OPEN_TOUCH_CONFIGS );
 
 	TEST_ASSERT_EQUAL( TOUCH_ERR_INVALID_PARAM, R_TOUCH_Open(NULL, NULL));
 	p_touch_cfg_tg2 = NULL;
-	TEST_ASSERT_EQUAL( TOUCH_ERR_INVALID_PARAM, R_TOUCH_Open(&hdl_idx, p_touch_cfg_tg2));
+	TEST_ASSERT_EQUAL( TOUCH_ERR_INVALID_PARAM, R_TOUCH_Open((touch_ctrl_t*)&g_touch_ctrl_tg2, p_touch_cfg_tg2));
 	p_touch_cfg_tg2 = &touch_cfg_tg2;
-	TEST_ASSERT_EQUAL( TOUCH_ERR_INVALID_PARAM, R_TOUCH_Open(&hdl_idx, p_touch_cfg_tg2));
+	TEST_ASSERT_EQUAL( TOUCH_ERR_INVALID_PARAM, R_TOUCH_Open((touch_ctrl_t*)&g_touch_ctrl_tg2, p_touch_cfg_tg2));
 #if defined(BSP_MCU_GROUP_S3A7)
 	p_touch_cfg_valid_extern = &TOUCH_CONFIG0;
 #endif
 	memcpy((void*)&p_touch_cfg_tg2->p_binary_result,
 			(void*)&p_touch_cfg_valid_extern->p_binary_result,
 			sizeof(uint8_t*));
-	TEST_ASSERT_EQUAL( TOUCH_ERR_INVALID_PARAM, R_TOUCH_Open(&hdl_idx, p_touch_cfg_tg2));
+	TEST_ASSERT_EQUAL( TOUCH_ERR_INVALID_PARAM, R_TOUCH_Open((touch_ctrl_t*)&g_touch_ctrl_tg2, p_touch_cfg_tg2));
 
 	memcpy((void*)&p_touch_cfg_tg2->p_sensor,
 			(void*)&p_touch_cfg_valid_extern->p_sensor,
 			sizeof(touch_sensor_parameter_t*));
-	TEST_ASSERT_EQUAL( TOUCH_ERR_INVALID_PARAM, R_TOUCH_Open(&hdl_idx, p_touch_cfg_tg2));
+	TEST_ASSERT_EQUAL( TOUCH_ERR_INVALID_PARAM, R_TOUCH_Open((touch_ctrl_t*)&g_touch_ctrl_tg2, p_touch_cfg_tg2));
 
 	memcpy((void*)&p_touch_cfg_tg2->p_common,
 			(void*)&p_touch_cfg_valid_extern->p_common,
 			sizeof(touch_common_parameter_t*));
-	TEST_ASSERT_EQUAL( TOUCH_ERR_INVALID_PARAM, R_TOUCH_Open(&hdl_idx, p_touch_cfg_tg2));
+	TEST_ASSERT_EQUAL( TOUCH_ERR_INVALID_PARAM, R_TOUCH_Open((touch_ctrl_t*)&g_touch_ctrl_tg2, p_touch_cfg_tg2));
 
-    memcpy((void*)&p_touch_cfg_tg2->p_ctsu_cfg,
-            (void*)&p_touch_cfg_valid_extern->p_ctsu_cfg,
+    memcpy((void*)&p_touch_cfg_tg2->p_ctsu->p_cfg,
+            (void*)&p_touch_cfg_valid_extern->p_ctsu->p_cfg,
             sizeof(ctsu_cfg_t*));
-	TEST_ASSERT_EQUAL( TOUCH_ERR_INVALID_PARAM, R_TOUCH_Open(&hdl_idx, p_touch_cfg_tg2));
+	TEST_ASSERT_EQUAL( TOUCH_ERR_INVALID_PARAM, R_TOUCH_Open((touch_ctrl_t*)&g_touch_ctrl_tg2, p_touch_cfg_tg2));
 
 	memcpy((void*)&p_touch_cfg_tg2->buffer.p_start,
 			(void*)&p_touch_cfg_valid_extern->buffer.p_start,
 			sizeof(uint8_t*));
-	TEST_ASSERT_EQUAL( TOUCH_ERR_INSUFFICIENT_MEMORY, R_TOUCH_Open(&hdl_idx, p_touch_cfg_tg2));
+	TEST_ASSERT_EQUAL( TOUCH_ERR_INSUFFICIENT_MEMORY, R_TOUCH_Open((touch_ctrl_t*)&g_touch_ctrl_tg2, p_touch_cfg_tg2));
 
 	memcpy((void*)&p_touch_cfg_tg2->buffer.size,
 			(void*)&p_touch_cfg_valid_extern->buffer.size,
 			sizeof(size_t));
-	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Open(&hdl_idx, p_touch_cfg_tg2));
+	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Open((touch_ctrl_t*)&g_touch_ctrl_tg2, p_touch_cfg_tg2));
 }
 
 /***********************************************************************************************************************
@@ -206,10 +210,10 @@ TEST(TOUCH_TG2, TC_2_2_Open_Close_Handle)
 #if defined(BSP_MCU_GROUP_S3A7)
 	p_touch_cfg_valid_extern = &TOUCH_CONFIG0;
 #endif
-	TEST_ASSERT(TOUCH_CFG_MAX_CONTROL_BLOCK_COUNT <= g_touch_ctrl_blk_count );
+	TEST_ASSERT(TOUCH_CFG_MAX_CONTROL_BLOCK_COUNT <= TOUCH_CFG_MAX_OPEN_TOUCH_CONFIGS );
 
-	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Open(&hdl_idx, p_touch_cfg_valid_extern));
-	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Close(hdl_idx));
+	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Open((touch_ctrl_t*)&g_touch_ctrl_tg2, p_touch_cfg_valid_extern));
+	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Close((touch_ctrl_t*)&g_touch_ctrl_tg2));
 }
 
 /***********************************************************************************************************************
@@ -230,22 +234,22 @@ TEST(TOUCH_TG2, TC_2_3_Scan_Multiple_Handles)
 	max_itr_count = 2;
 
 	touch_config_mutual_mode[0] = &TOUCH_CONFIG1;
-	num_sensors[0] = (ctsu_get_pin_count(ctsu_get_rxpin_mask(touch_config_mutual_mode[0]->p_ctsu_cfg))
-	                * ctsu_get_pin_count(ctsu_get_txpin_mask(touch_config_mutual_mode[0]->p_ctsu_cfg)))
+	num_sensors[0] = (ctsu_get_pin_count(ctsu_get_rxpin_mask(touch_config_mutual_mode[0]->p_ctsu->p_cfg))
+	                * ctsu_get_pin_count(ctsu_get_txpin_mask(touch_config_mutual_mode[0]->p_ctsu->p_cfg)))
 	                & UINT16_MAX;
 	touch_config_mutual_mode[1] = &TOUCH_CONFIG2;
-	num_sensors[1] = (ctsu_get_pin_count(ctsu_get_rxpin_mask(touch_config_mutual_mode[1]->p_ctsu_cfg))
-                    * ctsu_get_pin_count(ctsu_get_txpin_mask(touch_config_mutual_mode[1]->p_ctsu_cfg)))
+	num_sensors[1] = (ctsu_get_pin_count(ctsu_get_rxpin_mask(touch_config_mutual_mode[1]->p_ctsu->p_cfg))
+                    * ctsu_get_pin_count(ctsu_get_txpin_mask(touch_config_mutual_mode[1]->p_ctsu->p_cfg)))
                     & UINT16_MAX;;
 #endif
 
-	TEST_ASSERT(TOUCH_CFG_MAX_CONTROL_BLOCK_COUNT <= g_touch_ctrl_blk_count );
+	TEST_ASSERT(TOUCH_CFG_MAX_CONTROL_BLOCK_COUNT <= TOUCH_CFG_MAX_OPEN_TOUCH_CONFIGS );
 
 	for(itr = 0; itr < max_itr_count; itr++)
 	{	/* Open multiple handles */
 	    touch_config_mutual_mode[itr]->p_callback = touch_event_callback_tg2;
 		TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Open(&touch_hdl_idx[itr], touch_config_mutual_mode[itr]));
-		tspin_mask |= ctsu_get_tspin_mask(touch_config_mutual_mode[itr]->p_ctsu_cfg);
+		tspin_mask |= ctsu_get_tspin_mask(touch_config_mutual_mode[itr]->p_ctsu->p_cfg);
 	}
 
 	ctsu_pin_init(tspin_mask);
@@ -276,25 +280,25 @@ TEST(TOUCH_TG2, TC_2_4_Update_Touch_Test)
 #if defined(BSP_MCU_GROUP_S3A7)
 	p_touch_cfg_valid_extern = &TOUCH_CONFIG0;
 #endif
-	TEST_ASSERT(TOUCH_CFG_MAX_CONTROL_BLOCK_COUNT <= g_touch_ctrl_blk_count );
+	TEST_ASSERT(TOUCH_CFG_MAX_CONTROL_BLOCK_COUNT <= TOUCH_CFG_MAX_OPEN_TOUCH_CONFIGS );
 
 	p_touch_cfg_valid_extern->p_callback = touch_event_callback_tg2;
-	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Open(&hdl_idx, p_touch_cfg_valid_extern));
+	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Open((touch_ctrl_t*)&g_touch_ctrl_tg2, p_touch_cfg_valid_extern));
 
-	tspin_mask |= ctsu_get_tspin_mask(p_touch_cfg_valid_extern->p_ctsu_cfg);
+	tspin_mask |= ctsu_get_tspin_mask(p_touch_cfg_valid_extern->p_ctsu->p_cfg);
 
 	ctsu_pin_init(tspin_mask);
 
 	printf(" Please Touch Board ...\n\r");
 
 	do{
-		TEST_ASSERT_EQUAL(TOUCH_SUCCESS, R_TOUCH_StartScan(hdl_idx));
-		while(TOUCH_SUCCESS != R_TOUCH_Update(hdl_idx));
+		TEST_ASSERT_EQUAL(TOUCH_SUCCESS, R_TOUCH_StartScan((touch_ctrl_t*)&g_touch_ctrl_tg2));
+		while(TOUCH_SUCCESS != R_TOUCH_Update((touch_ctrl_t*)&g_touch_ctrl_tg2));
 	}while(touch_count_mutual < 1);
 
 	printf("Touch Detected!\n\r");
 
-	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Close(hdl_idx));
+	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Close((touch_ctrl_t*)&g_touch_ctrl_tg2));
 }
 
 /***********************************************************************************************************************
@@ -316,22 +320,22 @@ TEST(TOUCH_TG2, TC_2_5_Touch_Multiple_Open)
 	max_itr_count = 2;
 
 	touch_config_mutual_mode[0] = &TOUCH_CONFIG1;
-	num_sensors[0] = (ctsu_get_pin_count(ctsu_get_rxpin_mask(touch_config_mutual_mode[0]->p_ctsu_cfg))
-                    * ctsu_get_pin_count(ctsu_get_txpin_mask(touch_config_mutual_mode[0]->p_ctsu_cfg)))
+	num_sensors[0] = (ctsu_get_pin_count(ctsu_get_rxpin_mask(touch_config_mutual_mode[0]->p_ctsu->p_cfg))
+                    * ctsu_get_pin_count(ctsu_get_txpin_mask(touch_config_mutual_mode[0]->p_ctsu->p_cfg)))
                     & UINT16_MAX;
 	touch_config_mutual_mode[1] = &TOUCH_CONFIG2;
-	num_sensors[1] = (ctsu_get_pin_count(ctsu_get_rxpin_mask(touch_config_mutual_mode[1]->p_ctsu_cfg))
-                    * ctsu_get_pin_count(ctsu_get_txpin_mask(touch_config_mutual_mode[1]->p_ctsu_cfg)))
+	num_sensors[1] = (ctsu_get_pin_count(ctsu_get_rxpin_mask(touch_config_mutual_mode[1]->p_ctsu->p_cfg))
+                    * ctsu_get_pin_count(ctsu_get_txpin_mask(touch_config_mutual_mode[1]->p_ctsu->p_cfg)))
                     & UINT16_MAX;;
 #endif
 
-	TEST_ASSERT(TOUCH_CFG_MAX_CONTROL_BLOCK_COUNT <= g_touch_ctrl_blk_count );
+	TEST_ASSERT(TOUCH_CFG_MAX_CONTROL_BLOCK_COUNT <= TOUCH_CFG_MAX_OPEN_TOUCH_CONFIGS );
 
 	for(itr = 0; itr < max_itr_count; itr++)
 	{	/* Open multiple handles */
 		touch_config_mutual_mode[itr]->p_callback = touch_event_callback_tg2;
 		TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Open(&touch_hdl_idx[itr], touch_config_mutual_mode[itr]));
-		tspin_mask |= ctsu_get_tspin_mask(touch_config_mutual_mode[itr]->p_ctsu_cfg);
+		tspin_mask |= ctsu_get_tspin_mask(touch_config_mutual_mode[itr]->p_ctsu->p_cfg);
 	}
 
 	ctsu_pin_init(tspin_mask);
@@ -371,8 +375,8 @@ TEST(TOUCH_TG2, TC_2_6_Read_Touch_Test)
 	uint64_t tspin_mask = 0;
 #if defined(BSP_MCU_GROUP_S3A7)
 	p_touch_cfg_valid_extern = &TOUCH_CONFIG0;
-	sensor_count = (ctsu_get_pin_count(ctsu_get_rxpin_mask(p_touch_cfg_valid_extern->p_ctsu_cfg))
-            * ctsu_get_pin_count(ctsu_get_txpin_mask(p_touch_cfg_valid_extern->p_ctsu_cfg)))
+	sensor_count = (ctsu_get_pin_count(ctsu_get_rxpin_mask(p_touch_cfg_valid_extern->p_ctsu->p_cfg))
+            * ctsu_get_pin_count(ctsu_get_txpin_mask(p_touch_cfg_valid_extern->p_ctsu->p_cfg)))
             & UINT16_MAX;;
 	touch_sensor_t rx130_mutual01_sensors[] = {
 			[0] =  {.rx = 0, .tx = 18,},
@@ -405,81 +409,81 @@ TEST(TOUCH_TG2, TC_2_6_Read_Touch_Test)
 	};
 	sensor_info_t *const p_sensor_info = (sensor_info_t *)p_touch_cfg_valid_extern->buffer.p_start;
 #endif
-	TEST_ASSERT(TOUCH_CFG_MAX_CONTROL_BLOCK_COUNT <= g_touch_ctrl_blk_count );
+	TEST_ASSERT(TOUCH_CFG_MAX_CONTROL_BLOCK_COUNT <= TOUCH_CFG_MAX_OPEN_TOUCH_CONFIGS );
 
 	p_touch_cfg_valid_extern->p_callback = touch_event_callback_tg2;
-	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Open(&hdl_idx, p_touch_cfg_valid_extern));
-	tspin_mask |= ctsu_get_tspin_mask(p_touch_cfg_valid_extern->p_ctsu_cfg);
+	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Open((touch_ctrl_t*)&g_touch_ctrl_tg2, p_touch_cfg_valid_extern));
+	tspin_mask |= ctsu_get_tspin_mask(p_touch_cfg_valid_extern->p_ctsu->p_cfg);
 
 	ctsu_pin_init(tspin_mask);
 
 	printf("... Please Touch a sensor ...\n\r");
 
 	do{
-		TEST_ASSERT_EQUAL(TOUCH_SUCCESS, R_TOUCH_StartScan(hdl_idx));
-		while(TOUCH_SUCCESS != R_TOUCH_Update(hdl_idx));
+		TEST_ASSERT_EQUAL(TOUCH_SUCCESS, R_TOUCH_StartScan((touch_ctrl_t*)&g_touch_ctrl_tg2));
+		while(TOUCH_SUCCESS != R_TOUCH_Update((touch_ctrl_t*)&g_touch_ctrl_tg2));
 	}while(touch_count_mutual < 1);
 
 	printf("... \n\rTouch Detected ... Reading parameters ...\n\r");
 
 	read_args.read_cmd = TOUCH_DATA_FILTERED_COUNT;
-	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Read(hdl_idx, &read_args));
+	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Read((touch_ctrl_t*)&g_touch_ctrl_tg2, &read_args));
 	for(itr = 0; itr < sensor_count; itr++)
 	{
 		TEST_ASSERT_EQUAL(p_sensor_info[itr].input, results[itr]);
 	}
 
 	read_args.read_cmd = TOUCH_DATA_BASELINE_COUNT;
-	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Read(hdl_idx, &read_args));
+	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Read((touch_ctrl_t*)&g_touch_ctrl_tg2, &read_args));
 	for(itr = 0; itr < sensor_count; itr++)
 	{
 		TEST_ASSERT_EQUAL(p_sensor_info[itr].baseline, results[itr]);
 	}
 
 	read_args.read_cmd = TOUCH_DATA_DELTA_COUNT;
-	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Read(hdl_idx, &read_args));
+	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Read((touch_ctrl_t*)&g_touch_ctrl_tg2, &read_args));
 	for(itr = 0; itr < sensor_count; itr++)
 	{
 		TEST_ASSERT_EQUAL(p_sensor_info[itr].delta, results[itr]);
 	}
 
 	read_args.read_cmd = TOUCH_DATA_DELAY_TO_TOUCH_COUNTER;
-	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Read(hdl_idx, &read_args));
+	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Read((touch_ctrl_t*)&g_touch_ctrl_tg2, &read_args));
 	for(itr = 0; itr < sensor_count; itr++)
 	{
 		TEST_ASSERT_EQUAL(p_sensor_info[itr].dt_count, ((uint8_t*)results)[itr]);
 	}
 
 	read_args.read_cmd = TOUCH_DATA_DELAY_TO_RELEASE_COUNTER;
-	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Read(hdl_idx, &read_args));
+	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Read((touch_ctrl_t*)&g_touch_ctrl_tg2, &read_args));
 	for(itr = 0; itr < sensor_count; itr++)
 	{
 		TEST_ASSERT_EQUAL(p_sensor_info[itr].dr_count, ((uint8_t*)results)[itr]);
 	}
 
 	read_args.read_cmd = TOUCH_DATA_AVERAGE_INPUT;
-	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Read(hdl_idx, &read_args));
+	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Read((touch_ctrl_t*)&g_touch_ctrl_tg2, &read_args));
 	for(itr = 0; itr < sensor_count; itr++)
 	{
 		TEST_ASSERT_EQUAL(p_sensor_info[itr].avg_input, results[itr]);
 	}
 
 	read_args.read_cmd = TOUCH_DATA_MINIMUM_INPUT;
-	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Read(hdl_idx, &read_args));
+	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Read((touch_ctrl_t*)&g_touch_ctrl_tg2, &read_args));
 	for(itr = 0; itr < sensor_count; itr++)
 	{
 		TEST_ASSERT_EQUAL(p_sensor_info[itr].min_input, results[itr]);
 	}
 
 	read_args.read_cmd = TOUCH_DATA_MAXIMUM_INPUT;
-	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Read(hdl_idx, &read_args));
+	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Read((touch_ctrl_t*)&g_touch_ctrl_tg2, &read_args));
 	for(itr = 0; itr < sensor_count; itr++)
 	{
 		TEST_ASSERT_EQUAL(p_sensor_info[itr].max_input, results[itr]);
 	}
 
 	read_args.read_cmd = TOUCH_DATA_DRIFT_COUNTER;
-	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Read(hdl_idx, &read_args));
+	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Read((touch_ctrl_t*)&g_touch_ctrl_tg2, &read_args));
 	for(itr = 0; itr < sensor_count; itr++)
 	{
 		TEST_ASSERT_EQUAL(p_sensor_info[itr].drift_counter, results[itr]);
@@ -487,7 +491,7 @@ TEST(TOUCH_TG2, TC_2_6_Read_Touch_Test)
 
 #if defined(TOUCH_CFG_VARIABLE_DRIFT_RATES)&&(TOUCH_CFG_VARIABLE_DRIFT_RATES==1)
 	read_args.read_cmd = TOUCH_READ_DRIFT_INTERVAL;
-	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Read(hdl_idx, &read_args));
+	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Read((touch_ctrl_t*)&g_touch_ctrl_tg2, &read_args));
 	for(itr = 0; itr < sensor_count; itr++)
 	{
 		TEST_ASSERT_EQUAL(p_sensor_info[itr].drift_interval, results[itr]);
@@ -495,21 +499,21 @@ TEST(TOUCH_TG2, TC_2_6_Read_Touch_Test)
 #endif
 
 	read_args.read_cmd = TOUCH_DATA_AVG_SEN_COUNTER_PRI;
-	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Read(hdl_idx, &read_args));
+	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Read((touch_ctrl_t*)&g_touch_ctrl_tg2, &read_args));
 	for(itr = 0; itr < sensor_count; itr++)
 	{
 		TEST_ASSERT_EQUAL(p_sensor_info[itr].avg_sen_cnt_pri, results[itr]);
 	}
 
 	read_args.read_cmd = TOUCH_DATA_AVG_REF_COUNTER_PRI;
-	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Read(hdl_idx, &read_args));
+	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Read((touch_ctrl_t*)&g_touch_ctrl_tg2, &read_args));
 	for(itr = 0; itr < sensor_count; itr++)
 	{
 		TEST_ASSERT_EQUAL(p_sensor_info[itr].avg_ref_cnt_sec, results[itr]);
 	}
 
 	read_args.read_cmd = TOUCH_DATA_RECALIBRATION_COUNTER;
-	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Read(hdl_idx, &read_args));
+	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Read((touch_ctrl_t*)&g_touch_ctrl_tg2, &read_args));
 	for(itr = 0; itr < sensor_count; itr++)
 	{
 		TEST_ASSERT_EQUAL(p_sensor_info[itr].recalib_counter, results[itr]);
@@ -517,11 +521,11 @@ TEST(TOUCH_TG2, TC_2_6_Read_Touch_Test)
 	binary_result = 0;
 	read_args.p_dest = &binary_result;
 	read_args.read_cmd = TOUCH_DATA_BINARY;
-	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Read(hdl_idx, &read_args));
+	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Read((touch_ctrl_t*)&g_touch_ctrl_tg2, &read_args));
 
 	printf("Binary Result: %llxh\n\r", binary_result);
 
-	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Close(hdl_idx));
+	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Close((touch_ctrl_t*)&g_touch_ctrl_tg2));
 }
 
 /***********************************************************************************************************************
@@ -537,26 +541,26 @@ TEST(TOUCH_TG2, TC_2_7_Calibrate_Test)
 #if defined(BSP_MCU_GROUP_S3A7)
 	p_touch_cfg_valid_extern = &TOUCH_CONFIG0;
 #endif
-	TEST_ASSERT(TOUCH_CFG_MAX_CONTROL_BLOCK_COUNT <= g_touch_ctrl_blk_count );
+	TEST_ASSERT(TOUCH_CFG_MAX_CONTROL_BLOCK_COUNT <= TOUCH_CFG_MAX_OPEN_TOUCH_CONFIGS );
 
 	p_touch_cfg_valid_extern->p_callback = touch_event_callback_tg2;
-	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Open(&hdl_idx, p_touch_cfg_valid_extern));
-	tspin_mask |= ctsu_get_tspin_mask(p_touch_cfg_valid_extern->p_ctsu_cfg);
+	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Open((touch_ctrl_t*)&g_touch_ctrl_tg2, p_touch_cfg_valid_extern));
+	tspin_mask |= ctsu_get_tspin_mask(p_touch_cfg_valid_extern->p_ctsu->p_cfg);
 
 	ctsu_pin_init(tspin_mask);
 
-	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Calibrate(hdl_idx));
+	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Calibrate((touch_ctrl_t*)&g_touch_ctrl_tg2));
 
 	printf("\n\r Calibration Complete! Please touch a sensor ... \n\r");
 
 	do{
-		TEST_ASSERT_EQUAL(TOUCH_SUCCESS, R_TOUCH_StartScan(hdl_idx));
-		while(TOUCH_SUCCESS != R_TOUCH_Update(hdl_idx));
+		TEST_ASSERT_EQUAL(TOUCH_SUCCESS, R_TOUCH_StartScan((touch_ctrl_t*)&g_touch_ctrl_tg2));
+		while(TOUCH_SUCCESS != R_TOUCH_Update((touch_ctrl_t*)&g_touch_ctrl_tg2));
 	}while(touch_count_mutual < 1);
 
 	printf("Touch Detected!");
 
-	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Close(hdl_idx));
+	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Close((touch_ctrl_t*)&g_touch_ctrl_tg2));
 }
 
 /***********************************************************************************************************************
@@ -577,7 +581,7 @@ TEST(TOUCH_TG2, TC_2_8_Excluded_Channel_Test)
 	};
 	p_touch_cfg_valid_extern = &TOUCH_CONFIG0;
 #endif
-	TEST_ASSERT(TOUCH_CFG_MAX_CONTROL_BLOCK_COUNT <= g_touch_ctrl_blk_count );
+	TEST_ASSERT(TOUCH_CFG_MAX_CONTROL_BLOCK_COUNT <= TOUCH_CFG_MAX_OPEN_TOUCH_CONFIGS );
 
 	touch_cfg_t touch_local;
 	uint64_t binary_result;
@@ -593,14 +597,14 @@ TEST(TOUCH_TG2, TC_2_8_Excluded_Channel_Test)
 	printf("\n\r Key 0, 12, and 19 are excluded. Please touch any other sensors ... \n\r");
 
 	touch_local.p_callback = touch_event_callback_tg2;
-	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Open(&hdl_idx, &touch_local));
-	tspin_mask |= ctsu_get_tspin_mask(p_touch_cfg_valid_extern->p_ctsu_cfg);
+	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Open((touch_ctrl_t*)&g_touch_ctrl_tg2, &touch_local));
+	tspin_mask |= ctsu_get_tspin_mask(p_touch_cfg_valid_extern->p_ctsu->p_cfg);
 
 	ctsu_pin_init(tspin_mask);
 
 	do{
-		TEST_ASSERT_EQUAL(TOUCH_SUCCESS, R_TOUCH_StartScan(hdl_idx));
-		while(TOUCH_SUCCESS != R_TOUCH_Update(hdl_idx));
+		TEST_ASSERT_EQUAL(TOUCH_SUCCESS, R_TOUCH_StartScan((touch_ctrl_t*)&g_touch_ctrl_tg2));
+		while(TOUCH_SUCCESS != R_TOUCH_Update((touch_ctrl_t*)&g_touch_ctrl_tg2));
 	}while(touch_count_mutual < 1);
 
 	printf("Touch Detected!\n\r");
@@ -614,7 +618,7 @@ TEST(TOUCH_TG2, TC_2_8_Excluded_Channel_Test)
 #endif
 
 	printf("Binary Result: %llxh\n\r", binary_result);
-	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Close(hdl_idx));
+	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Close((touch_ctrl_t*)&g_touch_ctrl_tg2));
 }
 
 TEST(TOUCH_TG2, TC_2_9_Continuous_Touch_Release_Test)
@@ -634,14 +638,14 @@ TEST(TOUCH_TG2, TC_2_9_Continuous_Touch_Release_Test)
      .size = sizeof(continuous_on_counter),
     };
 #endif
-    TEST_ASSERT(TOUCH_CFG_MAX_CONTROL_BLOCK_COUNT <= g_touch_ctrl_blk_count );
+    TEST_ASSERT(TOUCH_CFG_MAX_CONTROL_BLOCK_COUNT <= TOUCH_CFG_MAX_OPEN_TOUCH_CONFIGS );
 
     touch_cfg_t touch_local;
     memcpy(&touch_local, p_touch_cfg_valid_extern, sizeof(touch_cfg_t));
     touch_local.p_callback = touch_event_callback_tg2;
 
-    TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Open(&hdl_idx, &touch_local));
-    tspin_mask |= ctsu_get_tspin_mask(p_touch_cfg_valid_extern->p_ctsu_cfg);
+    TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Open((touch_ctrl_t*)&g_touch_ctrl_tg2, &touch_local));
+    tspin_mask |= ctsu_get_tspin_mask(p_touch_cfg_valid_extern->p_ctsu->p_cfg);
 
     ctsu_pin_init(tspin_mask);
 
@@ -649,22 +653,22 @@ TEST(TOUCH_TG2, TC_2_9_Continuous_Touch_Release_Test)
 
     do{
 
-        TEST_ASSERT_EQUAL(TOUCH_SUCCESS, R_TOUCH_StartScan(hdl_idx));
-        while(TOUCH_SUCCESS != R_TOUCH_Update(hdl_idx));
+        TEST_ASSERT_EQUAL(TOUCH_SUCCESS, R_TOUCH_StartScan((touch_ctrl_t*)&g_touch_ctrl_tg2));
+        while(TOUCH_SUCCESS != R_TOUCH_Update((touch_ctrl_t*)&g_touch_ctrl_tg2));
     }while(touch_count_mutual < 1);
 
     printf("A sensor is touched.\n\r");
     printf("Continue to hold down sensor. Sensor will release automatically due to limiter.\n\r");
 
     do{
-        TEST_ASSERT_EQUAL(TOUCH_SUCCESS, R_TOUCH_StartScan(hdl_idx));
-        do{;}while (R_TOUCH_Update (hdl_idx) != TOUCH_SUCCESS);
+        TEST_ASSERT_EQUAL(TOUCH_SUCCESS, R_TOUCH_StartScan((touch_ctrl_t*)&g_touch_ctrl_tg2));
+        do{;}while (R_TOUCH_Update ((touch_ctrl_t*)&g_touch_ctrl_tg2) != TOUCH_SUCCESS);
         read_args.read_cmd = TOUCH_DATA_COMMON_CONTINUOUS_ON_COUNTER;
         read_args.p_dest = &continuous_on_counter;
-        TEST_ASSERT_EQUAL(TOUCH_SUCCESS, R_TOUCH_Read(hdl_idx, &read_args));
+        TEST_ASSERT_EQUAL(TOUCH_SUCCESS, R_TOUCH_Read((touch_ctrl_t*)&g_touch_ctrl_tg2, &read_args));
         read_args.read_cmd = TOUCH_DATA_COMMON_CONTINUOUS_ON_INTERVAL;
         read_args.p_dest = &continuous_on_limit;
-        TEST_ASSERT_EQUAL(TOUCH_SUCCESS, R_TOUCH_Read(hdl_idx, &read_args));
+        TEST_ASSERT_EQUAL(TOUCH_SUCCESS, R_TOUCH_Read((touch_ctrl_t*)&g_touch_ctrl_tg2, &read_args));
         uint32_t percent = (continuous_on_counter<<10)/(continuous_on_limit*10);
         static uint32_t prev_percent = 0;
         if((percent - prev_percent) == 9)
@@ -674,7 +678,7 @@ TEST(TOUCH_TG2, TC_2_9_Continuous_Touch_Release_Test)
         }
     }while(touch_count_mutual > 0);
 
-    TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Close(hdl_idx));
+    TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Close((touch_ctrl_t*)&g_touch_ctrl_tg2));
 }
 
 /***********************************************************************************************************************

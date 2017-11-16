@@ -30,16 +30,16 @@
  * @brief This is a brief description
  * @{
  * Sample Usage:
- * TEST_GROUP_RUNNER(TOUCH_TG2)
+ * TEST_GROUP_RUNNER(CTSU_TG2)
  * {
- *     RUN_TEST_CASE(TOUCH_TG2, TC_2_0_GetVersion);
- *     RUN_TEST_CASE(TOUCH_TG2, TC_2_1_Open_Invalid_Param_test);
- *     RUN_TEST_CASE(TOUCH_TG2, TC_2_2_Open_Close_Handle);
- *     RUN_TEST_CASE(TOUCH_TG2, TC_2_3_Scan_Multiple_Handles);
- *     RUN_TEST_CASE(TOUCH_TG2, TC_2_4_Read_Results);
- *     RUN_TEST_CASE(TOUCH_TG2, TC_2_5_Control_Get_Tests);
- *     RUN_TEST_CASE(TOUCH_TG2, TC_2_6_Control_Set_Tests);
- *     RUN_TEST_CASE(TOUCH_TG2, TC_2_7_Calibrate_Handle);
+ *     RUN_TEST_CASE(CTSU_TG2, TC_2_0_GetVersion);
+ *     RUN_TEST_CASE(CTSU_TG2, TC_2_1_Open_Invalid_Param_test);
+ *     RUN_TEST_CASE(CTSU_TG2, TC_2_2_Open_Close_Handle);
+ *     RUN_TEST_CASE(CTSU_TG2, TC_2_3_Scan_Multiple_Handles);
+ *     RUN_TEST_CASE(CTSU_TG2, TC_2_4_Read_Results);
+ *     RUN_TEST_CASE(CTSU_TG2, TC_2_5_Control_Get_Tests);
+ *     RUN_TEST_CASE(CTSU_TG2, TC_2_6_Control_Set_Tests);
+ *     RUN_TEST_CASE(CTSU_TG2, TC_2_7_Calibrate_Handle);
  * }
  *
  ***********************************************************************************************************************/
@@ -85,7 +85,7 @@ extern ctsu_cfg_t CTSU_CONFIG3;
 extern ctsu_cfg_t CTSU_CONFIG4;
 
 /* Define test groups. */
-TEST_GROUP(TOUCH_TG2);
+TEST_GROUP(CTSU_TG2);
 
 /***********************************************************************************************************************
 * Function Name: TEST_SETUP
@@ -93,7 +93,7 @@ TEST_GROUP(TOUCH_TG2);
 * Arguments    : none
 * Return Value : none
 ***********************************************************************************************************************/
-TEST_SETUP(TOUCH_TG2)
+TEST_SETUP(CTSU_TG2)
 {
     printf("Plug the \"Mutual Capacitance Button\" board into the kit.\n\r");
     printf("Press SW3 on MCU board to start test.\n\r");
@@ -101,7 +101,7 @@ TEST_SETUP(TOUCH_TG2)
     while(get_pin_level(SW3)==SW_ACTIVE);
 }
 /***********************************************************************************************************************
-End of function TEST_TOUCH_TG2_SETUP
+End of function TEST_CTSU_TG2_SETUP
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -110,12 +110,12 @@ End of function TEST_TOUCH_TG2_SETUP
 * Arguments    : none
 * Return Value : none
 ***********************************************************************************************************************/
-TEST_TEAR_DOWN(TOUCH_TG2)
+TEST_TEAR_DOWN(CTSU_TG2)
 {
 	scan_count = 0;
 }
 /***********************************************************************************************************************
-End of function TEST_TOUCH_TG2_TEAR_DOWN
+End of function TEST_CTSU_TG2_TEAR_DOWN
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -124,12 +124,12 @@ End of function TEST_TOUCH_TG2_TEAR_DOWN
 * Arguments    : none
 * Return Value : none
 ***********************************************************************************************************************/
-TEST(TOUCH_TG2, TC_2_0_GetVersion)
+TEST(CTSU_TG2, TC_2_0_GetVersion)
 {
 
 }
 /***********************************************************************************************************************
-End of function TEST_TOUCH_TG2_TC_2_0_GetVersion_
+End of function TEST_CTSU_TG2_TC_2_0_GetVersion_
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -138,7 +138,7 @@ End of function TEST_TOUCH_TG2_TC_2_0_GetVersion_
 * Arguments    : none
 * Return Value : none
 ***********************************************************************************************************************/
-TEST(TOUCH_TG2, TC_2_1_Open_Invalid_Param_test)
+TEST(CTSU_TG2, TC_2_1_Open_Invalid_Param_test)
 {
 	ctsu_cfg_t	ctsu_cfg_tg1;
 	ctsu_cfg_t *	p_ctsu_cfg_tg1;
@@ -175,7 +175,7 @@ TEST(TOUCH_TG2, TC_2_1_Open_Invalid_Param_test)
 #endif
 }
 /***********************************************************************************************************************
-End of function TEST_TOUCH_TG2_TC_2_1_Open_Invalid_Param_test_
+End of function TEST_CTSU_TG2_TC_2_1_Open_Invalid_Param_test_
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -184,7 +184,7 @@ End of function TEST_TOUCH_TG2_TC_2_1_Open_Invalid_Param_test_
 * Arguments    : none
 * Return Value : none
 ***********************************************************************************************************************/
-TEST(TOUCH_TG2, TC_2_2_Open_Close_Handle)
+TEST(CTSU_TG2, TC_2_2_Open_Close_Handle)
 {
 	ctsu_cfg_t *	p_ctsu_cfg_valid_extern;
 	ctsu_instance_ctrl_t ctsu_ctrl;
@@ -200,7 +200,7 @@ TEST(TOUCH_TG2, TC_2_2_Open_Close_Handle)
 	TEST_ASSERT_EQUAL( CTSU_SUCCESS, R_CTSU_Close(&ctsu_ctrl));
 }
 /***********************************************************************************************************************
-End of function TEST_TOUCH_TG2_TC_2_2_Open_Close_Handle_
+End of function TEST_CTSU_TG2_TC_2_2_Open_Close_Handle_
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -209,7 +209,7 @@ End of function TEST_TOUCH_TG2_TC_2_2_Open_Close_Handle_
 * Arguments    : none
 * Return Value : none
 ***********************************************************************************************************************/
-TEST(TOUCH_TG2, TC_2_3_Scan_Multiple_Handles)
+TEST(CTSU_TG2, TC_2_3_Scan_Multiple_Handles)
 {
 #define NUM_MUTUAL_CONFIGS		(2)
 	ctsu_cfg_t * mutual_configs[NUM_MUTUAL_CONFIGS];
@@ -277,7 +277,7 @@ TEST(TOUCH_TG2, TC_2_3_Scan_Multiple_Handles)
 
 }
 /***********************************************************************************************************************
-End of function TEST_TOUCH_TG2_TC_2_3_Scan_Multiple_Handles_
+End of function TEST_CTSU_TG2_TC_2_3_Scan_Multiple_Handles_
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -286,7 +286,7 @@ End of function TEST_TOUCH_TG2_TC_2_3_Scan_Multiple_Handles_
 * Arguments    : none
 * Return Value : none
 ***********************************************************************************************************************/
-TEST(TOUCH_TG2, TC_2_4_Read_Results)
+TEST(CTSU_TG2, TC_2_4_Read_Results)
 {
 	ctsu_cfg_t * mutual_configs[CTSU_CFG_MAX_CONTROL_BLOCK_COUNT];
 	ctsu_instance_ctrl_t mutual_hdl_idx[CTSU_CFG_MAX_CONTROL_BLOCK_COUNT];
@@ -446,7 +446,7 @@ TEST(TOUCH_TG2, TC_2_4_Read_Results)
 
 }
 /***********************************************************************************************************************
-End of function TEST_TOUCH_TG2_TC_2_4_Read_Results_
+End of function TEST_CTSU_TG2_TC_2_4_Read_Results_
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -455,7 +455,7 @@ End of function TEST_TOUCH_TG2_TC_2_4_Read_Results_
 * Arguments    : none
 * Return Value : none
 ***********************************************************************************************************************/
-TEST(TOUCH_TG2, TC_2_5_Control_Get_Tests)
+TEST(CTSU_TG2, TC_2_5_Control_Get_Tests)
 {
 	ctsu_cfg_t *	p_ctsu_cfg_extern;
 	uint16_t itr;
@@ -595,7 +595,7 @@ TEST(TOUCH_TG2, TC_2_5_Control_Get_Tests)
 	TEST_ASSERT_EQUAL( CTSU_SUCCESS, R_CTSU_Close(&ctsu_ctrl));
 }
 /***********************************************************************************************************************
-End of function TEST_TOUCH_TG2_TC_2_5_Control_Get_Tests_
+End of function TEST_CTSU_TG2_TC_2_5_Control_Get_Tests_
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -604,7 +604,7 @@ End of function TEST_TOUCH_TG2_TC_2_5_Control_Get_Tests_
 * Arguments    : none
 * Return Value : none
 ***********************************************************************************************************************/
-TEST(TOUCH_TG2, TC_2_6_Control_Set_Tests)
+TEST(CTSU_TG2, TC_2_6_Control_Set_Tests)
 {
 	ctsu_cfg_t *	p_ctsu_cfg_extern;
 	uint16_t itr;
@@ -824,16 +824,16 @@ TEST(TOUCH_TG2, TC_2_6_Control_Set_Tests)
 	TEST_ASSERT_EQUAL( CTSU_SUCCESS, R_CTSU_Close(&ctsu_ctrl));
 }
 /***********************************************************************************************************************
-End of function TEST_TOUCH_TG2_TC_2_6_Control_Set_Tests_
+End of function TEST_CTSU_TG2_TC_2_6_Control_Set_Tests_
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
-* Function Name: TEST_TOUCH_TG2_TC_2_7_Calibrate_Handle_
+* Function Name: TEST_CTSU_TG2_TC_2_7_Calibrate_Handle_
 * Description  : Checking changing handle parameters on the fly.
 * Arguments    : none
 * Return Value : none
 ***********************************************************************************************************************/
-TEST(TOUCH_TG2, TC_2_7_Calibrate_Handle)
+TEST(CTSU_TG2, TC_2_7_Calibrate_Handle)
 {
 #if (CTSU_CFG_CALIBRATION_ENABLE == 1)
 	ctsu_cfg_t * mutual_configs[CTSU_CFG_MAX_CONTROL_BLOCK_COUNT];
@@ -888,7 +888,7 @@ TEST(TOUCH_TG2, TC_2_7_Calibrate_Handle)
 #endif
 }
 /***********************************************************************************************************************
-End of function TEST_TOUCH_TG2_TC_2_7_Calibrate_Handle_
+End of function TEST_CTSU_TG2_TC_2_7_Calibrate_Handle_
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -897,13 +897,13 @@ End of function TEST_TOUCH_TG2_TC_2_7_Calibrate_Handle_
 * Arguments    : None
 * Return Value : None
 ***********************************************************************************************************************/
-TEST(TOUCH_TG2, TC_2_8_Event_Check)
+TEST(CTSU_TG2, TC_2_8_Event_Check)
 {
     const uint32_t expected_mask = (CTSU_EVENT_SFRS_CHANGED | CTSU_EVENT_STARTING_SCAN) | CTSU_EVENT_SCAN_COMPLETED;
     TEST_ASSERT_EQUAL(expected_mask, event_mask);
 }
 /***********************************************************************************************************************
-End of function TEST_TOUCH_TG2_TC_2_8_Event_Check_
+End of function TEST_CTSU_TG2_TC_2_8_Event_Check_
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************

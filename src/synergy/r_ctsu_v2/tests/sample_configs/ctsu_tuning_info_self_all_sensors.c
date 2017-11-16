@@ -23,9 +23,10 @@
 * Description  : This file contains CTSU SFR settings.
 ***********************************************************************************************************************/
 #include "bsp_api.h"
-#include "r_ctsu_api.h"
-#include "r_ctsu.h"
+#include "../../../synergy/r_ctsu_v2/inc/driver/instances/r_ctsu.h"
+#include "./r_ctsu.h"
 
+static ctsu_instance_ctrl_t g_ctsu_ctrl_self_all;
 
 static ctsu_sensor_setting_t sensor_setting_g_ctsu_cfg_self_all[] =
 {
@@ -91,3 +92,9 @@ ctsu_cfg_t g_ctsu_cfg_self_all = {
 #endif
 };
 	
+ctsu_instance_t const g_ctsu_self_all =
+{
+ .p_ctrl = &g_ctsu_ctrl_self_all,
+ .p_cfg  = &g_ctsu_cfg_self_all,
+ .p_api  = &g_ctsu_on_ctsu,
+};

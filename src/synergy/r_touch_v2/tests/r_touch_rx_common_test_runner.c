@@ -47,7 +47,8 @@ Includes   <System Includes> , "Project Includes"
 #include "unity_fixture.h"
 
 #if defined(BSP_MCU_GROUP_S124) || defined(BSP_MCU_GROUP_S3A7) || defined(BSP_MCU_GROUP_S5D9) || defined(BSP_MCU_GROUP_S7G2)
-#include "r_touch_synergy_if.h"
+#include "r_touch_rx_common_test.h"
+
 /***********************************************************************************************************************
 Macro definitions
 ***********************************************************************************************************************/
@@ -132,7 +133,14 @@ TEST_GROUP_RUNNER(TOUCH_TG4)
 static void RunAllTests(void)
 {
 	/* Get module software versions */
-	printf ("\n  Touch Driver Version: V%lu.%lu\n\r", (R_TOUCH_GetVersion() >> 16), (R_TOUCH_GetVersion() & 0xFF));
+    ssp_version_t version;
+
+    ssp_err_t err = R_TOUCH_GetVersion(&version);
+
+    while(SSP_SUCCESS != err);
+
+	printf ("\n  Touch Driver Code Version: V%u.%u\n\r", version.code_version_major, version.code_version_minor);
+	printf ("\n  Touch Driver API  Version: V%u.%u\n\r", version.api_version_major , version.api_version_minor );
 
 #if defined(UNITY_TESTING)
 	RUN_TEST_GROUP(TOUCH_TG1);
@@ -154,7 +162,7 @@ static void RunAllTests(void)
 * Arguments    : none
 * Return Value : none
 ***********************************************************************************************************************/
-void test_main(void)
+void test_touch(void)
 {
     printf("\n\r-------- Test Project Compiled on %s %s--------\n\r", __DATE__, __TIME__);
     char* args[2] = {"", "-v"};

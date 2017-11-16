@@ -33,16 +33,16 @@
  * @brief This is a brief description
  * @{
  * Sample Usage:
- *  TEST_GROUP_RUNNER(TOUCH_TG1)
+ *  TEST_GROUP_RUNNER(CTSU_TG1)
  *  {
- *      RUN_TEST_CASE(TOUCH_TG1, TC_1_0_GetVersion);
- *      RUN_TEST_CASE(TOUCH_TG1, TC_1_1_Open_Invalid_Param_test);
- *      RUN_TEST_CASE(TOUCH_TG1, TC_1_2_Open_Close_Handle);
- *      RUN_TEST_CASE(TOUCH_TG1, TC_1_3_Scan_Multiple_Handles);
- *      RUN_TEST_CASE(TOUCH_TG1, TC_1_4_Read_Results);
- *      RUN_TEST_CASE(TOUCH_TG1, TC_1_5_Control_Get_Tests);
- *      RUN_TEST_CASE(TOUCH_TG1, TC_1_6_Control_Set_Tests);
- *      RUN_TEST_CASE(TOUCH_TG1, TC_1_7_Calibrate_Handle);
+ *      RUN_TEST_CASE(CTSU_TG1, TC_1_0_GetVersion);
+ *      RUN_TEST_CASE(CTSU_TG1, TC_1_1_Open_Invalid_Param_test);
+ *      RUN_TEST_CASE(CTSU_TG1, TC_1_2_Open_Close_Handle);
+ *      RUN_TEST_CASE(CTSU_TG1, TC_1_3_Scan_Multiple_Handles);
+ *      RUN_TEST_CASE(CTSU_TG1, TC_1_4_Read_Results);
+ *      RUN_TEST_CASE(CTSU_TG1, TC_1_5_Control_Get_Tests);
+ *      RUN_TEST_CASE(CTSU_TG1, TC_1_6_Control_Set_Tests);
+ *      RUN_TEST_CASE(CTSU_TG1, TC_1_7_Calibrate_Handle);
  *  }
  *
  ***********************************************************************************************************************/
@@ -93,15 +93,15 @@ extern ctsu_cfg_t TOUCH_CONFIG3;
 extern ctsu_cfg_t TOUCH_CONFIG4;
 
 /* Define test groups. */
-TEST_GROUP(TOUCH_TG1);
+TEST_GROUP(CTSU_TG1);
 
 /***********************************************************************************************************************
-* Function Name: TEST_TOUCH_TG1_SETUP
+* Function Name: TEST_CTSU_TG1_SETUP
 * Description  : Setup for these unit tests. This will be run before every test case.
 * Arguments    : none
 * Return Value : none
 ***********************************************************************************************************************/
-TEST_SETUP(TOUCH_TG1)
+TEST_SETUP(CTSU_TG1)
 {
 	printf("Plug the \"Self-Capacitance Buttons/Wheels/Slider\" board into the kit.\n\r");
 	printf("Press SW3 on MCU board to start test.\n\r");
@@ -109,21 +109,21 @@ TEST_SETUP(TOUCH_TG1)
 	while(get_pin_level(SW3)==SW_ACTIVE);
 }
 /***********************************************************************************************************************
-End of function TEST_TOUCH_TG1_SETUP
+End of function TEST_CTSU_TG1_SETUP
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
-* Function Name: TEST_TOUCH_TG1_TEAR_DOWN
+* Function Name: TEST_CTSU_TG1_TEAR_DOWN
 * Description  : Tear down for these unit tests. This will be run after each test case.
 * Arguments    : none
 * Return Value : none
 ***********************************************************************************************************************/
-TEST_TEAR_DOWN(TOUCH_TG1)
+TEST_TEAR_DOWN(CTSU_TG1)
 {
 	scan_count = 0;
 }
 /***********************************************************************************************************************
-End of function TEST_TOUCH_TG1_TEAR_DOWN
+End of function TEST_CTSU_TG1_TEAR_DOWN
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -132,12 +132,12 @@ End of function TEST_TOUCH_TG1_TEAR_DOWN
 * Arguments    : none
 * Return Value : none
 ***********************************************************************************************************************/
-TEST(TOUCH_TG1, TC_1_0_GetVersion)
+TEST(CTSU_TG1, TC_1_0_GetVersion)
 {
 
 }
 /***********************************************************************************************************************
-End of function TEST_TOUCH_TG1_TC_1_0_GetVersion_
+End of function TEST_CTSU_TG1_TC_1_0_GetVersion_
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -146,7 +146,7 @@ End of function TEST_TOUCH_TG1_TC_1_0_GetVersion_
 * Arguments    : none
 * Return Value : none
 ***********************************************************************************************************************/
-TEST(TOUCH_TG1, TC_1_1_Open_Invalid_Param_test)
+TEST(CTSU_TG1, TC_1_1_Open_Invalid_Param_test)
 {
 	ctsu_cfg_t	ctsu_cfg_tg1;
 	ctsu_cfg_t *	p_ctsu_cfg_tg1;
@@ -185,7 +185,7 @@ TEST(TOUCH_TG1, TC_1_1_Open_Invalid_Param_test)
 #endif //CTSU_CFG_ENABLE_CORRECTION==true
 }
 /***********************************************************************************************************************
-End of function TEST_TOUCH_TG1_TC_1_1_Open_Invalid_Param_test_
+End of function TEST_CTSU_TG1_TC_1_1_Open_Invalid_Param_test_
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -194,7 +194,7 @@ End of function TEST_TOUCH_TG1_TC_1_1_Open_Invalid_Param_test_
 * Arguments    : none
 * Return Value : none
 ***********************************************************************************************************************/
-TEST(TOUCH_TG1, TC_1_2_Open_Close_Handle)
+TEST(CTSU_TG1, TC_1_2_Open_Close_Handle)
 {
 	ctsu_cfg_t *	p_ctsu_cfg_valid_extern;
 	ctsu_instance_ctrl_t ctsu_ctrl;
@@ -210,7 +210,7 @@ TEST(TOUCH_TG1, TC_1_2_Open_Close_Handle)
 	TEST_ASSERT_EQUAL( CTSU_SUCCESS, R_CTSU_Close(&ctsu_ctrl));
 }
 /***********************************************************************************************************************
-End of function TEST_TOUCH_TG1_TC_1_2_Open_Close_Handle_
+End of function TEST_CTSU_TG1_TC_1_2_Open_Close_Handle_
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -219,7 +219,7 @@ End of function TEST_TOUCH_TG1_TC_1_2_Open_Close_Handle_
 * Arguments    : none
 * Return Value : none
 ***********************************************************************************************************************/
-TEST(TOUCH_TG1, TC_1_3_Scan_Multiple_Handles)
+TEST(CTSU_TG1, TC_1_3_Scan_Multiple_Handles)
 {
 	ctsu_cfg_t * self_configs[CTSU_CFG_MAX_CONTROL_BLOCK_COUNT];
 	ctsu_instance_ctrl_t self_hdl_idx[CTSU_CFG_MAX_CONTROL_BLOCK_COUNT];
@@ -318,7 +318,7 @@ TEST(TOUCH_TG1, TC_1_3_Scan_Multiple_Handles)
 
 }
 /***********************************************************************************************************************
-End of function TEST_TOUCH_TG1_TC_1_3_Scan_Multiple_Handles_
+End of function TEST_CTSU_TG1_TC_1_3_Scan_Multiple_Handles_
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -327,7 +327,7 @@ End of function TEST_TOUCH_TG1_TC_1_3_Scan_Multiple_Handles_
 * Arguments    : none
 * Return Value : none
 ***********************************************************************************************************************/
-TEST(TOUCH_TG1, TC_1_4_Read_Results)
+TEST(CTSU_TG1, TC_1_4_Read_Results)
 {
 	ctsu_cfg_t * self_configs[CTSU_CFG_MAX_CONTROL_BLOCK_COUNT];
 	ctsu_instance_ctrl_t self_hdl_idx[CTSU_CFG_MAX_CONTROL_BLOCK_COUNT];
@@ -482,7 +482,7 @@ TEST(TOUCH_TG1, TC_1_4_Read_Results)
 	}
 }
 /***********************************************************************************************************************
-End of function TEST_TOUCH_TG1_TC_1_4_Read_Results_
+End of function TEST_CTSU_TG1_TC_1_4_Read_Results_
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -491,7 +491,7 @@ End of function TEST_TOUCH_TG1_TC_1_4_Read_Results_
 * Arguments    : none
 * Return Value : none
 ***********************************************************************************************************************/
-TEST(TOUCH_TG1, TC_1_5_Control_Get_Tests)
+TEST(CTSU_TG1, TC_1_5_Control_Get_Tests)
 {
 	ctsu_cfg_t *	p_ctsu_cfg_valid_extern;
 	uint16_t itr;
@@ -632,7 +632,7 @@ TEST(TOUCH_TG1, TC_1_5_Control_Get_Tests)
 	TEST_ASSERT_EQUAL( CTSU_SUCCESS, R_CTSU_Close(&ctsu_ctrl));
 }
 /***********************************************************************************************************************
-End of function TEST_TOUCH_TG1_TC_1_5_Control_Get_Tests_
+End of function TEST_CTSU_TG1_TC_1_5_Control_Get_Tests_
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -641,7 +641,7 @@ End of function TEST_TOUCH_TG1_TC_1_5_Control_Get_Tests_
 * Arguments    : none
 * Return Value : none
 ***********************************************************************************************************************/
-TEST(TOUCH_TG1, TC_1_6_Control_Set_Tests)
+TEST(CTSU_TG1, TC_1_6_Control_Set_Tests)
 {
 	ctsu_cfg_t *	p_ctsu_cfg_extern;
 	uint16_t itr;
@@ -863,7 +863,7 @@ TEST(TOUCH_TG1, TC_1_6_Control_Set_Tests)
 	TEST_ASSERT_EQUAL( CTSU_SUCCESS, R_CTSU_Close(&ctsu_ctrl));
 }
 /***********************************************************************************************************************
-End of function TEST_TOUCH_TG1_TC_1_6_Control_Set_Tests_
+End of function TEST_CTSU_TG1_TC_1_6_Control_Set_Tests_
 ***********************************************************************************************************************/
 
 
@@ -874,7 +874,7 @@ End of function TEST_TOUCH_TG1_TC_1_6_Control_Set_Tests_
 * Return Value : none
 * TODO: Put in a section on how to calibrate Sensor Offset if drive frequency is known
 ***********************************************************************************************************************/
-TEST(TOUCH_TG1, TC_1_7_Calibrate_Handle)
+TEST(CTSU_TG1, TC_1_7_Calibrate_Handle)
 {
 #if (CTSU_CFG_CALIBRATION_ENABLE == 1)
 	ctsu_cfg_t * self_configs[CTSU_CFG_MAX_CONTROL_BLOCK_COUNT];
@@ -945,7 +945,7 @@ TEST(TOUCH_TG1, TC_1_7_Calibrate_Handle)
 #endif
 }
 /***********************************************************************************************************************
-End of function TEST_TOUCH_TG1_TC_1_7_Calibrate_Handle_
+End of function TEST_CTSU_TG1_TC_1_7_Calibrate_Handle_
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -954,13 +954,13 @@ End of function TEST_TOUCH_TG1_TC_1_7_Calibrate_Handle_
 * Arguments    : None
 * Return Value : None
 ***********************************************************************************************************************/
-TEST(TOUCH_TG1, TC_1_8_Event_Check)
+TEST(CTSU_TG1, TC_1_8_Event_Check)
 {
     const uint32_t expected_mask = (CTSU_EVENT_SFRS_CHANGED | CTSU_EVENT_STARTING_SCAN) | CTSU_EVENT_SCAN_COMPLETED;
     TEST_ASSERT_EQUAL(expected_mask, event_mask);
 }
 /***********************************************************************************************************************
-End of function TEST_TOUCH_TG1_TC_1_8_Event_Check_
+End of function TEST_CTSU_TG1_TC_1_8_Event_Check_
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************

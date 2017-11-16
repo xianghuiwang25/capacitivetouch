@@ -23,9 +23,8 @@
 * Description  : This file contains CTSU SFR settings.
 ***********************************************************************************************************************/
 #include "bsp_api.h"
-#include "r_ctsu_cfg.h"
-#include "r_ctsu_api.h"
-#include "r_ctsu.h"
+#include "../../../synergy/r_ctsu_v2/inc/driver/instances/r_ctsu.h"
+#include "./r_ctsu.h"
 
 static const uint16_t ctsu_sensor_ico_ideal[] =
 {
@@ -83,6 +82,9 @@ static ctsu_const_sfrs_t ctsu_const_sfrs_g_ctsu_cfg_self_slider = {
 
 static uint16_t ctsu_correction_buffer[(2*61) + ((sizeof(sensor_setting_g_ctsu_cfg_self_slider))/sizeof(ctsu_sensor_setting_t))];
 
+
+static ctsu_instance_ctrl_t g_ctsu_ctrl_self_slider;
+
 ctsu_cfg_t g_ctsu_cfg_self_slider = {
     /* One Time Settings */
     .p_ctsu_settings = &ctsu_const_sfrs_g_ctsu_cfg_self_slider,
@@ -96,5 +98,12 @@ ctsu_cfg_t g_ctsu_cfg_self_slider = {
     .p_correction_buffer = &ctsu_correction_buffer[0],
     .tscal_pin = 4,
 #endif
+};
+
+ctsu_instance_t const g_ctsu_self_slider =
+{
+ .p_ctrl = &g_ctsu_ctrl_self_slider,
+ .p_cfg  = &g_ctsu_cfg_self_slider,
+ .p_api  = &g_ctsu_on_ctsu,
 };
 	

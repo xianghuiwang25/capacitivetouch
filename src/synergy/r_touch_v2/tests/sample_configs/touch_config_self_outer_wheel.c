@@ -23,8 +23,8 @@
 * Version      : 2.0
 * Description  : This file contains TOUCH middleware configuration settings.
 ***********************************************************************************************************************/
-#include "r_touch_synergy_if.h"
-#include "r_touch.h"
+#include "../../../synergy/r_touch_v2/inc/driver/instances/r_touch.h"
+#include "./r_touch.h"
 
 static touch_common_parameter_t g_touch_cfg_on_g_ctsu_cfg_self_common_parameter_outer_wheel =
 {
@@ -54,11 +54,11 @@ uint8_t g_touch_cfg_on_g_ctsu_cfg_self_binary_outer_wheel[(8/8) + 1];
 
 static uint8_t g_touch_cfg_on_g_ctsu_cfg_self_buffer_outer_wheel[256];
 
-extern ctsu_cfg_t g_ctsu_cfg_self_outer_wheel;
+extern ctsu_instance_t const g_ctsu_self_outer_wheel;
 
 touch_cfg_t g_touch_cfg_on_g_ctsu_cfg_self_outer_wheel =
 {
-    .p_ctsu_cfg = &g_ctsu_cfg_self_outer_wheel,
+    .p_ctsu = &g_ctsu_self_outer_wheel,
     .p_common = &g_touch_cfg_on_g_ctsu_cfg_self_common_parameter_outer_wheel,
     .p_sensor = (touch_sensor_parameter_t*)&g_touch_cfg_on_g_ctsu_cfg_self_sensor_parameter_outer_wheel,
     .p_binary_result = g_touch_cfg_on_g_ctsu_cfg_self_binary_outer_wheel,

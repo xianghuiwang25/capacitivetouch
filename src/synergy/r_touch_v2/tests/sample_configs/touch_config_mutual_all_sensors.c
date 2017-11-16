@@ -23,8 +23,8 @@
 * Version      : 2.0
 * Description  : This file contains TOUCH middleware configuration settings.
 ***********************************************************************************************************************/
-#include "r_touch_synergy_if.h"
-#include "r_touch.h"
+#include "../../../synergy/r_touch_v2/inc/driver/instances/r_touch.h"
+#include "./r_touch.h"
 
 static touch_common_parameter_t g_touch_cfg_on_g_ctsu_cfg_mutual0_common_parameter_all =
 {
@@ -66,11 +66,11 @@ uint8_t g_touch_cfg_on_g_ctsu_cfg_mutual0_binary_all[(20/8) + 1];
 
 static uint8_t g_touch_cfg_on_g_ctsu_cfg_mutual0_buffer_all[640];
 
-extern ctsu_cfg_t g_ctsu_cfg_mutual_all_sensors;
+extern ctsu_instance_t g_ctsu_mutual_all_sensors;
 
 touch_cfg_t g_touch_cfg_on_g_ctsu_cfg_mutual0 =
 {
-    .p_ctsu_cfg = &g_ctsu_cfg_mutual_all_sensors,
+    .p_ctsu = &g_ctsu_mutual_all_sensors,
     .p_common = &g_touch_cfg_on_g_ctsu_cfg_mutual0_common_parameter_all,
     .p_sensor = (touch_sensor_parameter_t*)&g_touch_cfg_on_g_ctsu_cfg_mutual0_sensor_parameter_all,
     .p_binary_result = g_touch_cfg_on_g_ctsu_cfg_mutual0_binary_all,
