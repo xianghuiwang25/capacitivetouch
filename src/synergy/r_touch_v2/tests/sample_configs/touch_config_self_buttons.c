@@ -72,4 +72,13 @@ touch_cfg_t g_touch_cfg_on_g_ctsu_cfg_self_buttons =
         .num_filter_instances = 0,
     },
 };
+
+static touch_instance_ctrl_t g_touch_ctrl_self_buttons;
+
+touch_instance_t const g_touch_on_g_ctsu_self_buttons =
+{
+ .p_ctrl = &g_touch_ctrl_self_buttons,
+ .p_cfg  = &g_touch_cfg_on_g_ctsu_cfg_self_buttons,
+ .p_api  = &g_touch_on_touch,
+};
     

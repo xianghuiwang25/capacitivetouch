@@ -89,4 +89,12 @@ touch_cfg_t g_touch_cfg_on_g_ctsu_cfg_mutual0 =
         .num_filter_instances = 0,
     },
 };
-    
+
+static touch_instance_ctrl_t g_touch_ctrl_mutual_all_sensors;
+
+touch_instance_t const g_touch_mutual_all_sensors =
+{
+ .p_ctrl = &g_touch_ctrl_mutual_all_sensors,
+ .p_cfg  = &g_touch_cfg_on_g_ctsu_cfg_mutual0,
+ .p_api  = &g_touch_on_touch,
+};
