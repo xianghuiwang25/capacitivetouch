@@ -128,14 +128,15 @@
             <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.touch.p_callback}")</constraint>
         </property>
         <header>
-        
+        #if (DATA_SOURCE == DATA_SOURCE_SSPCONFIG)
         /** CTSU SFRs common to all sensors (in a configuration) */
         extern uint64_t ${module.driver.touch.p_binary_result};
 
-    #ifndef ${module.driver.touch.p_callback}
-            void ${module.driver.touch.p_callback}(touch_callback_arg_t * p_args);
-    #endif
-
+	    #ifndef ${module.driver.touch.p_callback}
+	            void ${module.driver.touch.p_callback}(touch_callback_arg_t * p_args);
+	    #endif
+		#endif /* (DATA_SOURCE == DATA_SOURCE_SSPCONFIG) */
+		
         extern touch_instance_t const ${module.driver.touch.name};
         
         </header>
@@ -146,7 +147,7 @@
         #include &quot;r_touch_api.h&quot;
         </includes>
         <declarations>
-        
+        #if (DATA_SOURCE == DATA_SOURCE_SSPCONFIG)
         static touch_common_parameter_t ${module.driver.touch.name}_common_parameter =
         {
             .drift_hold_limit = ${module.driver.touch.drift_hold_limit},
@@ -385,6 +386,7 @@
             .p_api  = &amp;g_touch_on_touch,
         };
         
+        #endif /* (DATA_SOURCE == DATA_SOURCE_SSPCONFIG) */
 
         </declarations>
         <functions>
