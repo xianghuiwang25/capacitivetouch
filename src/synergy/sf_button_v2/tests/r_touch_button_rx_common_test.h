@@ -56,11 +56,6 @@
 #define CAPTOUCH_SENSOR_COUNT   (12)
 #endif
 
-void touch_rx113_init_ports(void);
-void touch_rx130_init_ports(void);
-void touch_rx230_init_ports(void);
-void touch_rx231_init_ports(void);
-
 extern void ctsu_pin_init(uint64_t pin_mask);
 extern uint64_t ctsu_get_tspin_mask(ctsu_cfg_t const*const p_cfg);
 extern uint64_t ctsu_get_rxpin_mask(ctsu_cfg_t const*const p_cfg);

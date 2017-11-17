@@ -137,6 +137,7 @@ touch_button_err_t R_TOUCH_ButtonOpen(touch_button_ctrl_t * const handle, touch_
     touch_err_t touch_err;
 #if (BUTTON_CFG_PARAM_CHECKING_ENABLE == true)
     ASSERT(NULL != handle);
+    ASSERT(NULL != p_cfg);
     ASSERT(NULL != p_cfg->p_touch);
 #endif
 
@@ -171,9 +172,9 @@ touch_button_err_t R_TOUCH_ButtonOpen(touch_button_ctrl_t * const handle, touch_
         .hold_counter = 0,
     };
 
-    touch_instance_t * p_hdl = (touch_instance_t *)&ctrl.ptouch;
+    touch_instance_t * p_hdl = (touch_instance_t *)ctrl.ptouch;
 
-    memcpy(&touch_cfg, p_cfg->p_touch, sizeof(touch_cfg));
+    memcpy(&touch_cfg, p_cfg->p_touch->p_cfg, sizeof(touch_cfg));
 
     /* Change the callback function to use the button update callback */
     touch_cfg.p_callback = touch_button_callback;
@@ -235,19 +236,24 @@ touch_button_err_t R_TOUCH_ButtonClose(touch_button_ctrl_t * p_ctrl)
     ASSERT(OPEN==pctrl->open);
 #endif
 
-    if(true==R_BSP_SoftwareLock(&pctrl->lock))
+    if (R_BSP_SoftwareLock (&pctrl->lock) == SSP_SUCCESS)
     {
         /* Not being used at the moment */
         touch_err_t touch_err = pctrl->ptouch->p_api->close(pctrl->ptouch->p_ctrl);
-        if(TOUCH_SUCCESS == touch_err)
+
+        SSP_ASSERT(TOUCH_SUCCESS == touch_err);
+
+        memset(pctrl, 0, sizeof(touch_button_instance_ctrl_t));
+        for(uint32_t itr = 0; itr < NUM_CTRL_BLOCKS; itr++)
         {
-            memset(pctrl, 0, sizeof(touch_button_instance_ctrl_t));
-            err = TOUCH_BUTTON_SUCCESS;
+            if (pvt_button_ctrl_blk[itr] == pctrl)
+            {
+                pvt_button_ctrl_blk[itr] = NULL;
+                return TOUCH_BUTTON_SUCCESS;
+            }
         }
-        else
-        {
-            err = TOUCH_BUTTON_ERR_LOCKED;
-        }
+
+        err = TOUCH_BUTTON_ERR_INVALID_PARAM;
     }
     else
     {
@@ -549,7 +555,19 @@ static touch_button_err_t set_control_block_parameter(touch_button_instance_ctrl
 #if (BUTTON_CFG_PARAM_CHECKING_ENABLE == true)
     ASSERT(size <= p_arg->size);
 #endif
-    memcpy((base_addr + offset), p_arg->p_dest, size);
+
+    ssp_err_t err = R_BSP_SoftwareLock (&p_ctrl->lock);
+
+    if(SSP_SUCCESS == err)
+    {
+        memcpy((base_addr + offset), p_arg->p_dest, size);
+    }
+    else
+    {
+        return TOUCH_BUTTON_ERR_LOCKED;
+    }
+
+    R_BSP_SoftwareUnlock(&p_ctrl->lock);
 
     return TOUCH_BUTTON_SUCCESS;
 }
@@ -568,7 +586,7 @@ static void touch_button_callback(touch_callback_arg_t const * const p_arg)
     touch_button_callback_arg_t button_arg;
     touch_event_t event = (touch_event_t)(p_arg->event);
 
-    if ((event & TOUCH_EVENT_REQUEST_DELAY) == TOUCH_EVENT_REQUEST_DELAY)
+    if (TOUCH_EVENT_REQUEST_DELAY == event)
     {
         /* Lower layer requesting a delay */
         button_arg.event = TOUCH_BUTTON_EVENT_REQUEST_DELAY;
@@ -592,10 +610,10 @@ static void touch_button_callback(touch_callback_arg_t const * const p_arg)
             touch_button_instance_ctrl_t * pctrl = pvt_button_ctrl_blk[itr];
             if (OPEN == pctrl->open)
             {
-                if (pctrl->ptouch == p_arg->handle_num)
+                if (pctrl->ptouch->p_ctrl == p_arg->handle_num)
                 {
                     touch_button_update (pctrl, &button_arg);
-                    button_arg.id = itr;
+                    button_arg.id = pctrl;
                 }
                 if ((p_arg->info > 1) && (TOUCH_BUTTON_EVENT_PRESSED == button_arg.event))
                 {

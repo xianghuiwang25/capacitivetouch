@@ -61,6 +61,7 @@ static touch_button_instance_ctrl_t g_touch_button_ctrl_tg1 ;
 static uint32_t scan_count = 0;
 static uint16_t touch_count = 0;
 static uint16_t results[256];
+static touch_button_instance_ctrl_t button_hdl_idx[3];
 
 static const char console_messages[][32] =
 {
@@ -140,6 +141,7 @@ TEST(TOUCH_BUTTON_TG1, TC_1_1_Open_Invalid_Param_test)
 			p_cfg_valid_extern,
 			sizeof(touch_button_cfg_t));
 	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_ButtonOpen((touch_button_ctrl_t *)&g_touch_button_ctrl_tg1, &touch_button_tg1));
+	R_TOUCH_ButtonClose(&g_touch_button_ctrl_tg1);
 }
 
 /***********************************************************************************************************************
@@ -173,7 +175,7 @@ TEST(TOUCH_BUTTON_TG1, TC_1_3_Control_Handle)
 
 	typedef union
 	{
-		uint32_t touch_hdl;
+		touch_instance_t * touch_hdl;
 		touch_sensor_t sensor;
 		touch_button_callback_t p_callback;
 		uint8_t enable_mask;
@@ -265,7 +267,15 @@ TEST(TOUCH_BUTTON_TG1, TC_1_3_Control_Handle)
 	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_ButtonControl(&g_touch_button_ctrl_tg1, &control_arg));
 	TEST_ASSERT_EQUAL( 0xAA, result.active_counter );
 
-	result.touch_hdl = 1;
+	touch_instance_t * pbackup = NULL;
+
+	control_arg.cmd = TOUCH_BUTTON_GET_TOUCH_HANDLE;
+	control_arg.p_dest = &pbackup;
+	control_arg.size = sizeof(pbackup);
+	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_ButtonControl(&g_touch_button_ctrl_tg1, &control_arg));
+	TEST_ASSERT_EQUAL( p_cfg_valid_extern->p_touch, pbackup );
+
+    result.touch_hdl = 1;
 
 	control_arg.cmd = TOUCH_BUTTON_SET_TOUCH_HANDLE;
 	control_arg.p_dest = &result.touch_hdl;
@@ -278,6 +288,10 @@ TEST(TOUCH_BUTTON_TG1, TC_1_3_Control_Handle)
 	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_ButtonControl(&g_touch_button_ctrl_tg1, &control_arg));
 	TEST_ASSERT_EQUAL( 1, result.touch_hdl );
 
+	control_arg.cmd = TOUCH_BUTTON_SET_TOUCH_HANDLE;
+    control_arg.p_dest = &pbackup;
+    control_arg.size = sizeof(pbackup);
+	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_ButtonControl(&g_touch_button_ctrl_tg1, &control_arg));
 
 
 	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_ButtonClose(&g_touch_button_ctrl_tg1));
@@ -292,9 +306,9 @@ TEST(TOUCH_BUTTON_TG1, TC_1_3_Control_Handle)
 TEST(TOUCH_BUTTON_TG1, TC_1_4_Update_Test)
 {
 	touch_button_cfg_t touch_button_cfg[3];
-	uint32_t button_hdl_idx[3];
-	uint32_t touch_hdl_idx[3];
+	touch_instance_t * touch_hdl_idx[3];
 	uint32_t itr;
+	uint64_t tspin_mask = 0;
 
 	touch_button_control_arg_t control_arg;
 
@@ -318,15 +332,22 @@ TEST(TOUCH_BUTTON_TG1, TC_1_4_Update_Test)
 		control_arg.cmd = TOUCH_BUTTON_GET_TOUCH_HANDLE;
 		control_arg.p_dest = &touch_hdl_idx[itr];
 		control_arg.size = sizeof(touch_hdl_idx[itr]);
-		TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_ButtonControl(button_hdl_idx[itr], &control_arg));
+		TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_ButtonControl(&button_hdl_idx[itr], &control_arg));
+
+		tspin_mask |= ctsu_get_tspin_mask(touch_hdl_idx[itr]->p_cfg->p_ctsu->p_cfg);
+		ctsu_pin_init(tspin_mask);
+        TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Calibrate(touch_hdl_idx[itr]->p_ctrl));
 	}
+
+
+	printf("Touch each once button now...\n\r");
 
 	while(touch_count != 23)
 	{
 		for(itr = 0; itr < max_itr_count; itr++)
 		{	/* Scan with handle */
-			TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_StartScan(touch_hdl_idx[itr]));
-			while(TOUCH_SUCCESS != R_TOUCH_Update(touch_hdl_idx[itr]));
+			TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_StartScan(touch_hdl_idx[itr]->p_ctrl));
+			while(TOUCH_SUCCESS != R_TOUCH_Update(touch_hdl_idx[itr]->p_ctrl));
 		}
 
 		if(touch_count > 23)
@@ -337,7 +358,7 @@ TEST(TOUCH_BUTTON_TG1, TC_1_4_Update_Test)
 
 	for(itr = 0; itr < max_itr_count; itr++)
 	{	/* Close multiple handles */
-		TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_ButtonClose(button_hdl_idx[itr]));
+		TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_ButtonClose(&button_hdl_idx[itr]));
 		R_TOUCH_Close(touch_hdl_idx[itr]);
 	}
 
@@ -347,19 +368,19 @@ void touch_event_callback_tg1(touch_button_callback_arg_t * const p_arg)
 {
 	if(TOUCH_BUTTON_EVENT_REQUEST_DELAY == p_arg->event)
 	{
-		R_BSP_SoftwareDelay(500, BSP_DELAY_UNITS_MICROSECONDS);
+		R_BSP_SoftwareDelay(1, BSP_DELAY_UNITS_MILLISECONDS);
 	}
 	else if(TOUCH_BUTTON_EVENT_HOLD==p_arg->event)
 	{
-		if(0 == p_arg->id)
+		if((touch_ctrl_t *)&button_hdl_idx[0] == p_arg->id)
 		{
 			touch_count += 5;
 		}
-		else if(1 == p_arg->id)
+		else if((touch_ctrl_t *)&button_hdl_idx[1] == p_arg->id)
 		{
 			touch_count += 7;
 		}
-		else if(2 == p_arg->id)
+		else if((touch_ctrl_t *)&button_hdl_idx[2] == p_arg->id)
 		{
 			touch_count += 11;
 		}

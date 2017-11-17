@@ -32,7 +32,7 @@ static void g_touch_cfg_on_g_ctsu_cfg_self_button_callback(touch_button_callback
 
 touch_button_cfg_t Button_RX00_on_g_touch_cfg_on_g_ctsu_cfg_self = {
      .button.tx = 255,
-     .button.rx = 0,
+     .button.rx = 11,
      .p_touch = &g_touch_on_g_ctsu_self_buttons,
      .enable.bit.reserved = 0,
      .enable.bit.hold = false,
@@ -45,7 +45,7 @@ touch_button_cfg_t Button_RX00_on_g_touch_cfg_on_g_ctsu_cfg_self = {
 
 touch_button_cfg_t Button_RX01_on_g_touch_cfg_on_g_ctsu_cfg_self = {
      .button.tx = 255,
-     .button.rx = 1,
+     .button.rx = 30,
      .p_touch = &g_touch_on_g_ctsu_self_buttons,
      .enable.bit.reserved = 0,
      .enable.bit.hold = false,
@@ -58,7 +58,7 @@ touch_button_cfg_t Button_RX01_on_g_touch_cfg_on_g_ctsu_cfg_self = {
 
 touch_button_cfg_t Button_RX21_on_g_touch_cfg_on_g_ctsu_cfg_self = {
      .button.tx = 255,
-     .button.rx = 21,
+     .button.rx = 31,
      .p_touch = &g_touch_on_g_ctsu_self_buttons,
      .enable.bit.reserved = 0,
      .enable.bit.hold = false,

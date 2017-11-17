@@ -102,7 +102,7 @@ typedef enum e_touch_button_cmd
  */
 typedef struct st_touch_button_callback_arg
 {
-    uint32_t id;                        ///< Button Identifier (matches identifier returned by successful call to R_Touch_Button_Open)
+    touch_ctrl_t * id;                  ///< Button Identifier (matches identifier returned by successful call to R_Touch_Button_Open)
     uint32_t event;                     ///< Type of event occurred
     void const * p_context;             ///< Placeholder for user data (Future use)
 }touch_button_callback_arg_t;           ///< Refer @ref st_touch_button_callback_arg

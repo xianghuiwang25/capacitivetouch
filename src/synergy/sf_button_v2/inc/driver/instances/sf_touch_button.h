@@ -64,7 +64,7 @@ typedef struct st_touch_button_instance_ctrl_t
     /* Private values. Configured and manipulated by R_Touch_Button code only. */
     /***************************************************************************/
     bsp_lock_t lock;
-    touch_instance_t * const ptouch;       ///< Represents the identifier of the lower level.
+    touch_instance_t const * const ptouch;       ///< Represents the identifier of the lower level.
     touch_button_event_t  state;    ///< Represents the current state of the button.
     uint16_t debounce_counter;      ///< Variable value for debouncing purposes.
     uint16_t hold_counter;          ///< Variable value for noting the amount of time for which button is spending between press and release.
