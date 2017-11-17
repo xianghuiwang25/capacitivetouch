@@ -52,8 +52,8 @@ Includes   <System Includes> , "Project Includes"
 /***********************************************************************************************************************
 Macro definitions
 ***********************************************************************************************************************/
-#define RUN_TG1 (false)
-#define RUN_TG2 (true)
+#define RUN_TG1 (true)
+#define RUN_TG2 (false)
 #define RUN_TG3 (false)
 /***********************************************************************************************************************
 Typedef definitions
@@ -142,13 +142,9 @@ static void RunAllTests(void)
 	printf ("\n  Touch Driver Code Version: V%u.%u\n\r", version.code_version_major, version.code_version_minor);
 	printf ("\n  Touch Driver API  Version: V%u.%u\n\r", version.api_version_major , version.api_version_minor );
 
-#if defined(UNITY_TESTING)
 	RUN_TEST_GROUP(TOUCH_TG1);
 	RUN_TEST_GROUP(TOUCH_TG2);
 	RUN_TEST_GROUP(TOUCH_TG3);
-#else
-	RUN_TEST_GROUP(TOUCH_TG4);
-#endif
 }
 
 #if defined(BSP_MCU_RX130)

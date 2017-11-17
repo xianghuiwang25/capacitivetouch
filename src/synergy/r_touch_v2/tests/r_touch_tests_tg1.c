@@ -173,8 +173,8 @@ TEST(TOUCH_TG1, TC_1_1_Open_Invalid_Param_test)
 			sizeof(touch_common_parameter_t*));
 	TEST_ASSERT_EQUAL( TOUCH_ERR_INVALID_PARAM, R_TOUCH_Open((ctsu_ctrl_t*)&g_touch_ctrl_tg1, p_touch_cfg_tg1));
 
-	memcpy((void*)&p_touch_cfg_tg1->p_ctsu->p_cfg,
-			(void*)&p_touch_cfg_valid_extern->p_ctsu->p_cfg,
+	memcpy((void*)&p_touch_cfg_tg1->p_ctsu,
+			(void*)&p_touch_cfg_valid_extern->p_ctsu,
 			sizeof(ctsu_cfg_t*));
 	TEST_ASSERT_EQUAL( TOUCH_ERR_INVALID_PARAM, R_TOUCH_Open((ctsu_ctrl_t*)&g_touch_ctrl_tg1, p_touch_cfg_tg1));
 
@@ -187,6 +187,8 @@ TEST(TOUCH_TG1, TC_1_1_Open_Invalid_Param_test)
 			(void*)&p_touch_cfg_valid_extern->buffer.size,
 			sizeof(size_t));
 	TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Open((ctsu_ctrl_t*)&g_touch_ctrl_tg1, p_touch_cfg_tg1));
+
+	R_TOUCH_Close(&g_touch_ctrl_tg1);
 }
 
 /***********************************************************************************************************************
@@ -214,7 +216,7 @@ TEST(TOUCH_TG1, TC_1_2_Open_Close_Handle)
 TEST(TOUCH_TG1, TC_1_3_Scan_Multiple_Handles)
 {
 	touch_cfg_t * touch_config_self_mode[4];
-	uint32_t touch_hdl_idx[4];
+	touch_instance_ctrl_t touch_hdl_idx[4];
 	uint16_t num_sensors[4];
 	uint32_t itr;
 	uint8_t max_itr_count;
@@ -247,13 +249,13 @@ TEST(TOUCH_TG1, TC_1_3_Scan_Multiple_Handles)
 	for(itr = 0; itr < max_itr_count; itr++)
 	{	/* Scan with handle */
 		scan_count = 0;
-		TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_StartScan(touch_hdl_idx[itr]));
+		TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_StartScan(&touch_hdl_idx[itr]));
 		while(scan_count == 0);
 	}
 
 	for(itr = 0; itr < max_itr_count; itr++)
 	{	/* Close multiple handles */
-		TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Close(touch_hdl_idx[itr]));
+		TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Close(&touch_hdl_idx[itr]));
 	}
 }
 
@@ -297,7 +299,7 @@ TEST(TOUCH_TG1, TC_1_4_Update_Touch_Test)
 TEST(TOUCH_TG1, TC_1_5_Touch_Multiple_Open)
 {
 	touch_cfg_t * touch_config_self_mode[4];
-	uint32_t touch_hdl_idx[4];
+	touch_instance_ctrl_t touch_hdl_idx[4];
 	uint16_t num_sensors[4];
 	uint32_t itr;
 	uint8_t max_itr_count;
@@ -333,8 +335,8 @@ TEST(TOUCH_TG1, TC_1_5_Touch_Multiple_Open)
 		printf("%s", console_messages[itr]);
 		do
 		{	/* Scan with handle */
-			while(TOUCH_SUCCESS != R_TOUCH_StartScan(touch_hdl_idx[itr]));
-			while(TOUCH_SUCCESS != R_TOUCH_Update(touch_hdl_idx[itr]));
+			while(TOUCH_SUCCESS != R_TOUCH_StartScan(&touch_hdl_idx[itr]));
+			while(TOUCH_SUCCESS != R_TOUCH_Update(&touch_hdl_idx[itr]));
 		}while(touch_count_self < 1);
 		printf("... Touch Detected!\n\r");
 	}
@@ -343,7 +345,7 @@ TEST(TOUCH_TG1, TC_1_5_Touch_Multiple_Open)
 
 	for(itr = 0; itr < max_itr_count; itr++)
 	{	/* Close multiple handles */
-		TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Close(touch_hdl_idx[itr]));
+		TEST_ASSERT_EQUAL( TOUCH_SUCCESS, R_TOUCH_Close(&touch_hdl_idx[itr]));
 	}
 }
 

@@ -38,7 +38,7 @@ Includes   <System Includes> , "Project Includes"
 Macro definitions
 ***********************************************************************************************************************/
 #define RUN_TG1     (true)
-#define RUN_TG2     (true)
+#define RUN_TG2     (false)
 #define RUN_TG3     (false)
 #define RUN_TG4     (true)
 
@@ -178,10 +178,6 @@ void test_ctsu(void)
     char* args[2] = {"", "-v"};
     UnityMain(2, args, RunAllTests);
 
-    while(1)
-    {
-        /* Infinite loop. */
-    }
 }
 /***********************************************************************************************************************
 End of function test_ctsu

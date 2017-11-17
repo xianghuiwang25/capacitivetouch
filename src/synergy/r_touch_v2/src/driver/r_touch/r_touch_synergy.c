@@ -144,6 +144,7 @@ touch_err_t R_TOUCH_Open(touch_ctrl_t * const p_ctrl, touch_cfg_t const * const 
 {
 #if (TOUCH_CFG_PARAM_CHECKING_ENABLE==true)
     ASSERT(p_cfg!=NULL);
+    ASSERT(p_cfg->p_ctsu!=NULL);
     ASSERT(p_cfg->buffer.p_start != NULL);
     ASSERT(p_cfg->p_binary_result != NULL);
     ASSERT(p_cfg->p_common != NULL);
@@ -245,23 +246,39 @@ touch_err_t R_TOUCH_Open(touch_ctrl_t * const p_ctrl, touch_cfg_t const * const 
     ch_en = (uint8_t *) ctrl_blk_local.offset_en;
 
     /* Calculate offsets of rx and tx */
-    uint8_t * num_tx = (uint8_t*)&ctrl_blk_local.num_tx;
-    uint8_t * num_rx = (uint8_t*)&ctrl_blk_local.num_rx;
-    for (uint8_t itr = 0; itr < (LAST_TS + 1); itr++)
     {
-        /* Iterate through to the last sensor */
-        ch_en[itr] = 0xFF;
-        if(ctsuchtx & ((uint64_t)1<<itr))
+        uint8_t * num_tx = (uint8_t*)&ctrl_blk_local.num_tx;
+        uint8_t * num_rx = (uint8_t*)&ctrl_blk_local.num_rx;
+        for (uint8_t itr = 0; itr < (LAST_TS + 1); itr++)
         {
-            /* CTSU will be operated in mutual mode. */
-            ch_en[itr] = *num_tx;
-            *num_tx = ((*num_tx) + 1U) & 0xFF;
+            /* Iterate through to the last sensor */
+            ch_en[itr] = 0xFF;
+            if(ctsuchtx & ((uint64_t)1<<itr))
+            {
+                /* CTSU will be operated in mutual mode. */
+                ch_en[itr] = *num_tx;
+                *num_tx = ((*num_tx) + 1U) & 0xFF;
+            }
+            if(ctsuchrx & ((uint64_t)1<<itr))
+            {
+                /* CTSU will be operated in self mode. */
+                ch_en[itr] = *num_rx;
+                *num_rx = ((*num_rx) + 1U) & 0xFF;
+            }
         }
-        if(ctsuchrx & ((uint64_t)1<<itr))
+    }
+
+    {
+#if (TOUCH_CFG_PARAM_CHECKING_ENABLE==true)
+        ASSERT(ctrl_blk_local.num_sensors == ((CTSU_MODE_MUTUAL_CAPACITANCE==ctrl_blk_local.mode)?
+                ctrl_blk_local.num_tx*ctrl_blk_local.num_rx: ctrl_blk_local.num_rx));
+#endif
+        if(p_cfg->buffer.size < (ctrl_blk_local.num_sensors * sizeof(sensor_info_t)))
         {
-            /* CTSU will be operated in self mode. */
-            ch_en[itr] = *num_rx;
-            *num_rx = ((*num_rx) + 1U) & 0xFF;
+            p_ctsu->p_api->close(p_ctsu->p_ctrl);
+
+            /* Insufficient memory to maintain all sensors. */
+            return TOUCH_ERR_INSUFFICIENT_MEMORY;
         }
     }
 
@@ -315,17 +332,7 @@ touch_err_t R_TOUCH_Open(touch_ctrl_t * const p_ctrl, touch_cfg_t const * const 
 
         }
     }
-#if (TOUCH_CFG_PARAM_CHECKING_ENABLE==true)
-    ASSERT(ctrl_blk_local.num_sensors == ((CTSU_MODE_MUTUAL_CAPACITANCE==ctrl_blk_local.mode)?
-            ctrl_blk_local.num_tx*ctrl_blk_local.num_rx: ctrl_blk_local.num_rx));
-#endif
-    if(p_cfg->buffer.size < (ctrl_blk_local.num_sensors * sizeof(sensor_info_t)))
-    {
-        p_ctsu->p_api->close(p_ctsu->p_ctrl);
 
-        /* Insufficient memory to maintain all sensors. */
-        return TOUCH_ERR_INSUFFICIENT_MEMORY;
-    }
 
     memset(p_sensor_info, 0, (ctrl_blk_local.num_sensors * sizeof(sensor_info_t)));
     for(uint16_t itr = 0; itr < ctrl_blk_local.num_sensors; itr++)
