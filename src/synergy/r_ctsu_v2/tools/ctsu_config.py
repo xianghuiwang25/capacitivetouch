@@ -440,7 +440,9 @@ def read(infile, tx=None, rx=None):
                     return;
             enabled_channels_rx = keep_channels_rx;
 
-        ctsu = CTSU(0, enabled_channels_rx, num_mutual)
+#         ctsu = CTSU(0, enabled_channels_rx, num_mutual)
+        
+        ctsu = CTSU(0, enabled_channels_rx)
         CTSU.configs.append(ctsu)
 
 def copy_clean_header(infile, outfile):
