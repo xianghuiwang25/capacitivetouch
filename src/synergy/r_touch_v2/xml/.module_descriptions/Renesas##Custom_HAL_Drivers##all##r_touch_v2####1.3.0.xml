@@ -1,0 +1,399 @@
+<?xml version="1.0" ?>
+<synergyModuleDescription>
+    <!-- TOUCH Driver XML START here-->
+    <config id="config.driver.touch_v2" path="ssp_cfg/driver/r_touch_cfg.h" version="0">
+        <property default="config.driver.touch_v2.param_checking_enable.enabled" display="Parameter Checking Enable" id="config.driver.touch_v2.param_checking_enable">
+            <option display="Enabled" id="config.driver.touch_v2.param_checking_enable.enabled" value="1"/>
+            <option display="Disabled" id="config.driver.touch_v2.param_checking_enable.disabled" value="0"/>
+        </property>
+        <property default="config.driver.touch_v2.drift_non_touched.enabled" display="Drift Comp/Offset Adjust non-touched Sensors on touch" id="config.driver.touch_v2.drift_non_touched">
+            <option display="Enabled" id="config.driver.touch_v2.drift_non_touched.enabled" value="1"/>
+            <option display="Disabled" id="config.driver.touch_v2.drift_non_touched.disabled" value="0"/>
+        </property>
+        <property default="config.driver.touch_v2.filter_depth.d1" display="Running Average Filter Strength" id="config.driver.touch_v2.filter_depth">
+            <option display="2-sample average" id="config.driver.touch_v2.filter_depth.d1" value="1"/>
+            <option display="4-sample average" id="config.driver.touch_v2.filter_depth.d2" value="2"/>
+            <option display="8-sample average" id="config.driver.touch_v2.filter_depth.d3" value="3"/>
+            <option display="16-sample average" id="config.driver.touch_v2.filter_depth.d4" value="4"/>
+            <option display="32-sample average" id="config.driver.touch_v2.filter_depth.d5" value="5"/>
+        </property>
+        <property default="config.driver.touch_v2.variable_drift.enabled" display="Variable Drift Rate" id="config.driver.touch_v2.variable_drift">
+            <!-- <option display="Enabled" id="config.driver.touch_v2.variable_drift.enabled" value="1"/> -->
+            <option display="Disabled" id="config.driver.touch_v2.variable_drift.disabled" value="0"/>
+        </property>
+        <property default="config.driver.touch_v2.mtr_type.t0" display="Multi-Touch Rejection Strategy" id="config.driver.touch_v2.mtr_type">
+            <option display="No Multi-Touch Rejection" id="config.driver.touch_v2.mtr_type.t0" value="0"/>
+            <option display="Type 1 (release all touched sensors, if non-debounced touch count is > max_touched_sensors)" id="config.driver.touch_v2.mtr_type.t1" value="1"/>
+            <option display="Type 2 (release all touched sensors, if debounced touch count is > max_touched_sensors)" id="config.driver.touch_v2.mtr_type.t2" value="2"/>
+            <option display="Type 3 (release all touched sensors, if (current debounced sensors - previously debounced sensors) > max_touched_sensors)" id="config.driver.touch_v2.mtr_type.t3" value="3"/>
+        </property>
+        <property default="1" display="Max. Touch Configurations Open" id="config.driver.touch_v2.max_open">
+            <constraint display="Name must be number greater than 0">testInteger("${config.driver.touch_v2.max_open}")  &amp;&amp; ("${config.driver.touch_v2.max_open}" &gt; 0)</constraint>
+        </property>
+        <property default="150" display="Calibration (Upper Limit Count)" id="config.driver.touch_v2.upper_limit">
+            <constraint display="Name must be number greater than 0">testInteger("${config.driver.touch_v2.upper_limit}")  &amp;&amp; ("${config.driver.touch_v2.upper_limit}" &gt; 0)</constraint>
+        </property>
+        <property default="100" display="Calibration (Lower Limit Count)" id="config.driver.touch_v2.lower_limit">
+            <constraint display="Name must be number greater than 0">testInteger("${config.driver.touch_v2.lower_limit}")  &amp;&amp; ("${config.driver.touch_v2.lower_limit}" &gt; 0)</constraint>
+        </property>
+        <property default="1" display="Max. Upper Layer Callbacks" id="config.driver.touch_v2.max_upper_cb">
+            <constraint display="Name must be number greater than 0">testInteger("${config.driver.touch_v2.max_upper_cb}")  &amp;&amp; ("${config.driver.touch_v2.max_upper_cb}" &gt; 0)</constraint>
+        </property>             
+        <property default="1" display="Max. Error Count Before reporting to upper layer" id="config.driver.touch_v2.max_err">
+            <constraint display="Name must be number greater than 0">testInteger("${config.driver.touch_v2.max_err}")  &amp;&amp; ("${config.driver.touch_v2.max_err}" &gt; 0)</constraint>
+        </property>     
+        <content> /**
+             * Specify whether to include code for API parameter checking.
+             *    - 1 : Enabled (Assertion messages routed to Renesas Virtual Console if BSP_CFG_IO_LIB_ENABLE==1)
+             *    - 0 : No parameter checking (No assertions)
+             */
+             #define TOUCH_CFG_PARAM_CHECKING_ENABLE            (${config.driver.touch_v2.param_checking_enable})
+             
+             /**
+             * Perform drift compensation and sensitivity optimization for non-touched sensors while a sensor is touched.
+             */
+            #define TOUCH_CFG_COMPENSATE_WHILE_TOUCHED      (${config.driver.touch_v2.drift_non_touched})
+            
+            /**
+             * Define the depth of the Single-Input-Single-Output averaging filter.
+             */
+            #define TOUCH_CFG_FILTER_DEPTH                  (${config.driver.touch_v2.filter_depth})
+            
+            /**
+             * Define if interval for drift compensation should be variable.
+             */
+            #define TOUCH_CFG_VARIABLE_DRIFT_RATES              (${config.driver.touch_v2.variable_drift})
+            
+            /**
+             * Define the type of multi-touch rejection algorithm.
+             * 0 := No Multi-Touch Rejection. (Value in max_touched_sensors is ignored)
+             * 1 := Multi-Touch rejection will release all touched sensors, if non-debounced touch count is > max_touched_sensors.
+             * 2 := Multi-Touch rejection will release all touched sensors, if debounced touch count is > max_touched_sensors.
+             * 3 := Multi-Touch rejection will release all touched sensors, if (current debounced sensors - previously debounced sensors) > max_touched_sensors
+             */
+            #define TOUCH_CFG_MULTITOUCH_REJECTION_TYPE                 (${config.driver.touch_v2.mtr_type})
+            
+            /**
+             * Maximum open touch configurations used.
+             */
+            #define TOUCH_CFG_MAX_OPEN_TOUCH_CONFIGS            (${config.driver.touch_v2.max_open})
+            
+            /**
+             * Upper limit used while calibrating sensors.
+             */
+            #define TOUCH_CFG_TUNING_UPPER_DRIFT_LIMIT    (${config.driver.touch_v2.upper_limit})
+
+            /**
+             * Lower limit used when calibrating sensors.
+             */
+            #define TOUCH_CFG_TUNING_LOWER_DRIFT_LIMIT    (${config.driver.touch_v2.lower_limit})
+
+            /**
+             * Maximum errors allowed before reporting to the upper layer.
+             */
+            #define TOUCH_CFG_MAX_ERROR_COUNT             (${config.driver.touch_v2.max_err})
+            
+            /**
+             * Define maximum number of upper layer callbacks (Default = 1)
+             */
+            #define TOUCH_CFG_MAX_UPPER_LAYER_CALLBACKS         (${config.driver.touch_v2.max_upper_cb})
+            
+        </content>
+    </config>
+    <module config="config.driver.touch_v2" display="Driver|Input|${module.driver.touch.name} TOUCH V2 Driver on r_touch_v2" id="module.driver.touch_on_touch" common="100" version="1">
+        <requires id="module.driver.touch.requires.ctsu" interface="interface.driver.ctsu_v2" display="Add CTSU HAL Driver">
+            <override property="module.driver.ctsu.p_callback" value= "NULL"/>
+        </requires>
+
+        <provides interface="interface.driver.touch" />
+        <provides interface="interface.driver.touch_on_touch" />
+        <provides interface="interface.driver.touch.${module.driver.touch.name}" />
+        
+        <property default="g_touch${_instance}" display="Name(touch_instance_t)" id="module.driver.touch.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.touch.name}")</constraint>
+        </property>
+        <property default="g_touch${_instance}_binary" display="Binary Result Buffer" id="module.driver.touch.p_binary_result">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.touch.p_binary_result}")</constraint>
+        </property>
+        <property default="0" display="Paused Drift Compensations (N iterations)" id="module.driver.touch.drift_hold_limit">
+            <constraint display="Name must be a valid C symbol">testInteger("${module.driver.touch.drift_hold_limit}")  &amp;&amp; ("${module.driver.touch.drift_hold_limit}" &gt;= 0) &amp;&amp; ("${module.driver.touch.drift_hold_limit}" &lt; 65536)</constraint>
+        </property>
+        <property default="65535" display="Continuous ON limiter (N iterations)" id="module.driver.touch.on_limit">
+            <constraint display="Name must be a valid C symbol">testInteger("${module.driver.touch.on_limit}")  &amp;&amp; ("${module.driver.touch.on_limit}" &gt;= 0) &amp;&amp; ("${module.driver.touch.on_limit}" &lt; 65536)</constraint>
+        </property>
+        <property default="1" display="Max. Touched Sensors (simultaneous)" id="module.driver.touch.max_touched_sensors">
+            <constraint display="Name must be a valid C symbol">testInteger("${module.driver.touch.max_touched_sensors}")  &amp;&amp; ("${module.driver.touch.max_touched_sensors}" &gt; 0) &amp;&amp; ("${module.driver.touch.on_limit}" &lt; 65)</constraint>
+        </property>
+        <property default="NULL" display="Callback Function" id="module.driver.touch.p_callback">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.touch.p_callback}")</constraint>
+        </property>
+        <header>
+        #if (DATA_SOURCE == DATA_SOURCE_SSPCONFIG)
+        /** CTSU SFRs common to all sensors (in a configuration) */
+        extern uint64_t ${module.driver.touch.p_binary_result};
+
+	    #ifndef ${module.driver.touch.p_callback}
+	            void ${module.driver.touch.p_callback}(touch_callback_arg_t * p_args);
+	    #endif
+		#endif /* (DATA_SOURCE == DATA_SOURCE_SSPCONFIG) */
+		
+        extern touch_instance_t const ${module.driver.touch.name};
+        
+        </header>
+        <includes>
+        /* Include the headers for the TOUCH API */
+        #include &quot;r_touch.h&quot;
+        /* Include the headers for the TOUCH API */
+        #include &quot;r_touch_api.h&quot;
+        </includes>
+        <declarations>
+        #if (DATA_SOURCE == DATA_SOURCE_SSPCONFIG)
+        static touch_common_parameter_t ${module.driver.touch.name}_common_parameter =
+        {
+            .drift_hold_limit = ${module.driver.touch.drift_hold_limit},
+            .on_limit = ${module.driver.touch.on_limit},
+            .max_touched_sensors = ${module.driver.touch.max_touched_sensors},
+        };
+        
+        touch_sensor_parameter_t ${module.driver.touch.name}_sensor_parameter[${module.driver.touch.requires.ctsu::module.driver.ctsu.mode}_NUM] = 
+        {
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_0)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_0] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_0_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_1)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_1] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_1_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_2)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_2] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_2_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_3)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_3] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_3_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_4)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_4] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_4_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_5)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_5] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_5_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_6)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_6] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_6_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_7)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_7] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_7_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_8)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_8] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_8_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_9)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_9] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_9_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_10)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_10] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_10_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_11)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_11] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_11_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_12)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_12] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_12_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_13)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_13] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_13_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_14)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_14] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_14_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_15)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_15] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_15_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_16)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_16] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_16_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_17)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_17] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_17_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_18)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_18] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_18_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_19)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_19] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_19_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_20)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_20] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_20_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_21)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_21] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_21_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_22)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_22] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_22_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_23)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_23] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_23_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_24)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_24] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_24_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_25)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_25] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_25_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_26)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_26] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_26_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_27)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_27] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_27_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_28)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_28] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_28_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_29)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_29] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_29_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_30)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_30] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_30_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_31)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_31] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_31_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_32)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_32] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_32_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_33)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_33] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_33_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_34)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_34] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_34_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_35)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_35] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_35_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_36)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_36] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_36_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_37)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_37] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_37_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_38)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_38] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_38_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_39)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_39] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_39_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_40)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_40] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_40_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_41)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_41] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_41_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_42)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_42] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_42_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_43)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_43] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_43_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_44)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_44] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_44_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_45)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_45] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_45_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_46)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_46] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_46_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_47)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_47] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_47_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_48)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_48] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_48_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_49)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_49] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_49_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_50)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_50] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_50_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_51)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_51] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_51_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_52)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_52] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_52_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_53)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_53] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_53_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_54)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_54] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_54_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_55)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_55] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_55_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_56)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_56] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_56_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_57)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_57] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_57_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_58)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_58] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_58_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_59)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_59] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_59_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_60)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_60] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_60_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_61)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_61] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_61_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_62)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_62] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_62_TOUCH_PARAMS, 
+        #endif
+        #if defined (${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_63)
+        [${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_63] = ${module.driver.touch.requires.ctsu::module.driver.ctsu.name}_INDEX_63_TOUCH_PARAMS, 
+        #endif
+        };
+        
+        uint64_t ${module.driver.touch.p_binary_result} = 0;
+        
+        uint8_t ${module.driver.touch.name}_buffer[${module.driver.touch.requires.ctsu::module.driver.ctsu.mode}_NUM*sizeof(sensor_info_t)];
+        
+        touch_cfg_t const ${module.driver.touch.name}_cfg =
+        {
+            .p_ctsu = &amp;${module.driver.touch.requires.ctsu::module.driver.ctsu.name},
+            .p_common = &amp;${module.driver.touch.name}_common_parameter,
+            .p_sensor = &amp;${module.driver.touch.name}_sensor_parameter[0],
+            .p_binary_result = (uint8_t*)&amp;${module.driver.touch.p_binary_result},
+            .p_callback = ${module.driver.touch.p_callback},
+            .num_ignored = 0,
+            .p_ignored = NULL,
+            .buffer = {
+                .p_start = &amp;${module.driver.touch.name}_buffer[0],
+                .size = sizeof(${module.driver.touch.name}_buffer),
+            },
+            .custom =
+            {
+                .p_filter = NULL,
+                .p_touch_detect = NULL,
+                .p_filter_instance = NULL,
+                .num_filter_instances = 0,
+            },
+        };
+        
+        touch_instance_ctrl_t ${module.driver.touch.name}_ctrl;
+        
+        touch_instance_t const ${module.driver.touch.name} = 
+        {
+            .p_ctrl = &amp;${module.driver.touch.name}_ctrl,
+            .p_cfg  = &amp;${module.driver.touch.name}_cfg,
+            .p_api  = &amp;g_touch_on_touch,
+        };
+        
+        #endif /* (DATA_SOURCE == DATA_SOURCE_SSPCONFIG) */
+
+        </declarations>
+        <functions>
+        </functions>
+        <init>
+
+        </init>
+    </module>
+    <!-- TOUCH Driver XML END here-->
+</synergyModuleDescription>

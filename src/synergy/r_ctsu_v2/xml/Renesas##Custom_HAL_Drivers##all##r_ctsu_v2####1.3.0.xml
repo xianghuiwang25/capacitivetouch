@@ -1,0 +1,1530 @@
+<?xml version="1.0" ?>
+<synergyModuleDescription>
+    <!-- CTSU Driver XML START here-->
+    <config id="config.driver.ctsu_v2" path="ssp_cfg/driver/r_ctsu_cfg.h" version="0">
+        <property default="config.driver.ctsu_v2.param_checking_enable.default" display="Parameter Checking Enable" id="config.driver.ctsu_v2.param_checking_enable">
+            <option display="Default(BSP)" id="config.driver.ctsu_v2.param_checking_enable.default" value="BSP_CFG_PARAM_CHECKING_ENABLE"/>
+            <option display="Enabled" id="config.driver.ctsu_v2.param_checking_enable.enabled" value="1"/>
+            <option display="Disabled" id="config.driver.ctsu_v2.param_checking_enable.disabled" value="0"/>
+        </property>
+        <property default="config.driver.ctsu_v2.correction.disabled" display="Sensor ICO Variation Correction" id="config.driver.ctsu_v2.correction">
+            <!-- <option display="Enabled" id="config.driver.ctsu_v2.param_checking_enable.enabled" value="1"/> -->
+            <option display="Disabled" id="config.driver.ctsu_v2.param_checking_enable.disabled" value="0"/>
+        </property>
+        <property default="config.driver.ctsu_v2.calibration.enabled" display="Sensor ICO Calibration Capability" id="config.driver.ctsu_v2.calibration">
+            <option display="Enabled" id="config.driver.ctsu_v2.param_checking_enable.enabled" value="1"/>
+            <!-- <option display="Disabled" id="config.driver.ctsu_v2.param_checking_enable.disabled" value="0"/> -->
+        </property>
+        <property default="board.icu.common.irq.disabled" display="Write Interrupt Priority" id="config.driver.ctsu_v2.write_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <property default="board.icu.common.irq.disabled" display="Read Interrupt Priority" id="config.driver.ctsu_v2.read_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <property default="board.icu.common.irq.disabled" display="End Interrupt Priority" id="config.driver.ctsu_v2.end_ipl">
+            <option display="Priority 0 (highest)" id="board.icu.common.irq.priority0" value="(0)" />
+            <option display="Priority 1" id="board.icu.common.irq.priority1" value="(1)" />
+            <option display="Priority 2" id="board.icu.common.irq.priority2" value="(2)" />
+            <option display="Priority 3 (CM4: valid, CM0+: lowest - not valid if using ThreadX)" id="board.icu.common.irq.priority3" value="(3)" />
+            <option display="Priority 4 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority4" value="(4)" />
+            <option display="Priority 5 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority5" value="(5)" />
+            <option display="Priority 6 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority6" value="(6)" />
+            <option display="Priority 7 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority7" value="(7)" />
+            <option display="Priority 8 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority8" value="(8)" />
+            <option display="Priority 9 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority9" value="(9)" />
+            <option display="Priority 10 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority10" value="(10)" />
+            <option display="Priority 11 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority11" value="(11)" />
+            <option display="Priority 12 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority12" value="(12)" />
+            <option display="Priority 13 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority13" value="(13)" />
+            <option display="Priority 14 (CM4: valid, CM0+: invalid)" id="board.icu.common.irq.priority14" value="(14)" />
+            <option display="Priority 15 (CM4: lowest - not valid if using ThreadX, CM0+: invalid)" id="board.icu.common.irq.priority15" value="(15)" />
+            <option display="Disabled" id="board.icu.common.irq.disabled" value="(BSP_IRQ_DISABLED)" />
+        </property>
+        <content> 
+            /**
+             * Specify whether to include code for API parameter checking. Valid settings include:
+             *    - 1 : Includes parameter checking
+             *    - 0 : Compiles out parameter checking
+             */
+             #define CTSU_CFG_PARAM_CHECKING_ENABLE         (${config.driver.ctsu_v2.param_checking_enable})
+             
+        #define CTSU_CFG_WRITE_IPL                      (${config.driver.ctsu_v2.write_ipl})
+        #define CTSU_CFG_READ_IPL                       (${config.driver.ctsu_v2.read_ipl})
+        #define CTSU_CFG_END_IPL                        (${config.driver.ctsu_v2.end_ipl})
+        
+        #define CTSU_CFG_INTERRUPT_PRIORITY_LEVEL       (CTSU_CFG_WRITE_IPL|CTSU_CFG_READ_IPL|CTSU_CFG_END_IPL)
+        
+        #define CTSU_CFG_CALIBRATION_ENABLE             (${config.driver.ctsu_v2.calibration})
+        
+        #define CTSU_CFG_ENABLE_CORRECTION              (${config.driver.ctsu_v2.correction})
+        </content>
+    </config>
+    <module config="config.driver.ctsu_v2" display="Driver|Input|${module.driver.ctsu.name} CTSU V2 HAL Driver on r_ctsu" id="module.driver.ctsu_on_ctsu" common="100" version="1">
+        <constraint display="Unique name required for each instance">
+            "${interface.driver.ctsu_v2.${module.driver.ctsu.name}}" === "1"
+        </constraint>
+        <constraint display="Requires CTSU Interrupt (Write) enabled">
+            "${config.driver.ctsu_v2.write_ipl}" != "board.icu.common.irq.disabled"
+        </constraint>
+        <constraint display="Requires CTSU Interrupt (Read) enabled">
+            "${config.driver.ctsu_v2.read_ipl}" != "board.icu.common.irq.disabled"
+        </constraint>
+        <constraint display="Requires CTSU Interrupt (End) enabled">
+            "${config.driver.ctsu_v2.end_ipl}" != "board.icu.common.irq.disabled"
+        </constraint>
+        <constraint display="Requires CTSU Write Interrupt priority to match CTSU Read Interrupt priority">
+            "${config.driver.ctsu_v2.write_ipl}" === "${config.driver.ctsu_v2.read_ipl}"
+        </constraint>
+        <constraint display="Requires CTSU Read Interrupt priority to match CTSU End Interrupt priority">
+            "${config.driver.ctsu_v2.read_ipl}" === "${config.driver.ctsu_v2.end_ipl}"
+        </constraint>
+        <constraint display="Requires CTSU End Interrupt priority to match CTSU Write Interrupt priority">
+            "${config.driver.ctsu_v2.end_ipl}" === "${config.driver.ctsu_v2.write_ipl}"
+        </constraint>
+
+        <provides interface="interface.driver.ctsu_v2" />
+        <provides interface="interface.driver.ctsu_v2_on_ctsu" />
+        <provides interface="interface.driver.ctsu_v2.${module.driver.ctsu.name}" />
+        
+        <property default="g_ctsu${_instance}" display="Name (ctsu_instance_t)" id="module.driver.ctsu.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.ctsu.name}")</constraint>
+        </property>
+        
+        <property default="module.driver.ctsu.pclkb_div.div_1" display="PCLKB Divisor" id="module.driver.ctsu.pclkb_div">
+            <option display="Divide by 1" id="module.driver.ctsu.pclkb_div.div_1" value="0"/>
+            <option display="Divide by 2" id="module.driver.ctsu.pclkb_div.div_2" value="1"/>
+            <option display="Divide by 4" id="module.driver.ctsu.pclkb_div.div_4" value="2"/>
+        </property>
+        
+        <property default="module.driver.ctsu.mode.mutual0" display="Measurement Method" id="module.driver.ctsu.mode">
+            <option display="Mutual Capacitance (id MUTUAL0)" id="module.driver.ctsu.mode.mutual0" value="MUTUAL0"/>
+            <option display="Mutual Capacitance (id MUTUAL1)" id="module.driver.ctsu.mode.mutual1" value="MUTUAL1"/>
+            <option display="Mutual Capacitance (id MUTUAL2)" id="module.driver.ctsu.mode.mutual2" value="MUTUAL2"/>
+            <option display="Mutual Capacitance (id MUTUAL3)" id="module.driver.ctsu.mode.mutual3" value="MUTUAL3"/>
+            <option display="Mutual Capacitance (id MUTUAL4)" id="module.driver.ctsu.mode.mutual4" value="MUTUAL4"/>
+            <option display="Mutual Capacitance (id MUTUAL5)" id="module.driver.ctsu.mode.mutual5" value="MUTUAL5"/>
+            <option display="Mutual Capacitance (id MUTUAL6)" id="module.driver.ctsu.mode.mutual6" value="MUTUAL6"/>
+            <option display="Mutual Capacitance (id MUTUAL7)" id="module.driver.ctsu.mode.mutual7" value="MUTUAL7"/>
+            <option display="Self Capacitance (id SELF)" id="module.driver.ctsu.mode.self" value="SELF"/>
+        </property> 
+        
+        
+        <property default="module.driver.ctsu.txvsel.vcc" display="Transmit Pin Power Supply" id="module.driver.ctsu.txvsel">
+            <option display="From Vcc" id="module.driver.ctsu.txvsel.vcc" value="0"/>
+            <option display="Interal logic power supply" id="module.driver.ctsu.txvsel.internal" value="1"/>
+        </property>
+        
+        <property default="module.driver.ctsu.ctsusoff.enabled" display="High-pass noise reduction function" id="module.driver.ctsu.ctsusoff">
+            <option display="Enabled" id="module.driver.ctsu.ctsusoff.enabled" value="0"/>
+            <option display="Disabled" id="module.driver.ctsu.ctsusoff.disabled" value="1"/>
+        </property>
+        
+        <property default="module.driver.data.workbench" display="CTSU Information Buffers and Settings" id="module.driver.ctsu.data">
+            <option display="Provided by Workbench6" id="module.driver.data.workbench" value="0"/>
+            <option display="Initialized to through Configurator" id="module.driver.data.generated" value="1"/>
+        </property>
+        <property default="g_ctsu${_instance}_common_sfrs" display="CTSU Settings (Common to all sensors)" id="module.driver.ctsu.p_ctsu_settings">
+            <constraint display="Name must be a valid C symbol"> testSymbol("${module.driver.ctsu.p_ctsu_settings}")</constraint>
+        </property>
+        <property default="g_ctsu${_instance}_sensor_settings" display="CTSU Settings (per sensor)" id="module.driver.ctsu.p_sensor_settings">
+            <constraint display="Valid C symbol pointing to SSC, SO0, and SO1 values from Workbench6">testSymbol("${module.driver.ctsu.p_sensor_settings}")</constraint>
+        </property>
+        <property default="g_ctsu${_instance}_data_buffer" display="CTSU Output Buffer Location" id="module.driver.ctsu.p_sensor_data">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.ctsu.p_sensor_data}")</constraint>
+        </property>
+        <property default="4000000" display="PCLKB Frequency (fix to Workbench6 Input)" id="module.driver.ctsu.pclkb_hz">
+            <constraint display="Value must be greater than 4MHz">testInteger("${module.driver.ctsu.pclkb_hz}")  &amp;&amp; ("${module.driver.ctsu.pclkb_hz}" &gt;= 4000000)</constraint>
+        </property>
+        <property default="NULL" display="Callback Function" id="module.driver.ctsu.p_callback">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.ctsu.p_callback}")</constraint>
+        </property>
+        
+        
+        <property default="module.driver.ctsu.ts00.unused" display="TS00 Pin Mode" id="module.driver.ctsu.ts00">
+            <option display="Not Used" id="module.driver.ctsu.ts00.unused" value="TS_MODE_UNUSED"/>
+            <option display="Receive" id="module.driver.ctsu.ts00.receive" value="TS_MODE_RECEIVE"/>
+            <option display="Transmit" id="module.driver.ctsu.ts00.transmit" value="TS_MODE_TRANSMIT"/>
+        </property>
+        <property default="module.driver.ctsu.ts01.unused" display="TS01 Pin Mode" id="module.driver.ctsu.ts01">
+            <option display="Not Used" id="module.driver.ctsu.ts01.unused" value="TS_MODE_UNUSED"/>
+            <option display="Receive" id="module.driver.ctsu.ts01.receive" value="TS_MODE_RECEIVE"/>
+            <option display="Transmit" id="module.driver.ctsu.ts01.transmit" value="TS_MODE_TRANSMIT"/>
+        </property>
+        <property default="module.driver.ctsu.ts02.unused" display="TS02 Pin Mode" id="module.driver.ctsu.ts02">
+            <option display="Not Used" id="module.driver.ctsu.ts02.unused" value="TS_MODE_UNUSED"/>
+            <option display="Receive" id="module.driver.ctsu.ts02.receive" value="TS_MODE_RECEIVE"/>
+            <option display="Transmit" id="module.driver.ctsu.ts02.transmit" value="TS_MODE_TRANSMIT"/>
+        </property>
+        <property default="module.driver.ctsu.ts03.unused" display="TS03 Pin Mode" id="module.driver.ctsu.ts03">
+            <option display="Not Used" id="module.driver.ctsu.ts03.unused" value="TS_MODE_UNUSED"/>
+            <option display="Receive" id="module.driver.ctsu.ts03.receive" value="TS_MODE_RECEIVE"/>
+            <option display="Transmit" id="module.driver.ctsu.ts03.transmit" value="TS_MODE_TRANSMIT"/>
+        </property>
+        <property default="module.driver.ctsu.ts04.unused" display="TS04 Pin Mode" id="module.driver.ctsu.ts04">
+            <option display="Not Used" id="module.driver.ctsu.ts04.unused" value="TS_MODE_UNUSED"/>
+            <option display="Receive" id="module.driver.ctsu.ts04.receive" value="TS_MODE_RECEIVE"/>
+            <option display="Transmit" id="module.driver.ctsu.ts04.transmit" value="TS_MODE_TRANSMIT"/>
+        </property>
+        <property default="module.driver.ctsu.ts05.unused" display="TS05 Pin Mode" id="module.driver.ctsu.ts05">
+            <option display="Not Used" id="module.driver.ctsu.ts05.unused" value="TS_MODE_UNUSED"/>
+            <option display="Receive" id="module.driver.ctsu.ts05.receive" value="TS_MODE_RECEIVE"/>
+            <option display="Transmit" id="module.driver.ctsu.ts05.transmit" value="TS_MODE_TRANSMIT"/>
+        </property>
+        <property default="module.driver.ctsu.ts06.unused" display="TS06 Pin Mode" id="module.driver.ctsu.ts06">
+            <option display="Not Used" id="module.driver.ctsu.ts06.unused" value="TS_MODE_UNUSED"/>
+            <option display="Receive" id="module.driver.ctsu.ts06.receive" value="TS_MODE_RECEIVE"/>
+            <option display="Transmit" id="module.driver.ctsu.ts06.transmit" value="TS_MODE_TRANSMIT"/>
+        </property>
+        <property default="module.driver.ctsu.ts07.unused" display="TS07 Pin Mode" id="module.driver.ctsu.ts07">
+            <option display="Not Used" id="module.driver.ctsu.ts07.unused" value="TS_MODE_UNUSED"/>
+            <option display="Receive" id="module.driver.ctsu.ts07.receive" value="TS_MODE_RECEIVE"/>
+            <option display="Transmit" id="module.driver.ctsu.ts07.transmit" value="TS_MODE_TRANSMIT"/>
+        </property>
+        <property default="module.driver.ctsu.ts08.unused" display="TS08 Pin Mode" id="module.driver.ctsu.ts08">
+            <option display="Not Used" id="module.driver.ctsu.ts08.unused" value="TS_MODE_UNUSED"/>
+            <option display="Receive" id="module.driver.ctsu.ts08.receive" value="TS_MODE_RECEIVE"/>
+            <option display="Transmit" id="module.driver.ctsu.ts08.transmit" value="TS_MODE_TRANSMIT"/>
+        </property>
+        <property default="module.driver.ctsu.ts09.unused" display="TS09 Pin Mode" id="module.driver.ctsu.ts09">
+            <option display="Not Used" id="module.driver.ctsu.ts09.unused" value="TS_MODE_UNUSED"/>
+            <option display="Receive" id="module.driver.ctsu.ts09.receive" value="TS_MODE_RECEIVE"/>
+            <option display="Transmit" id="module.driver.ctsu.ts09.transmit" value="TS_MODE_TRANSMIT"/>
+        </property>
+        <property default="module.driver.ctsu.ts10.unused" display="TS10 Pin Mode" id="module.driver.ctsu.ts10">
+            <option display="Not Used" id="module.driver.ctsu.ts10.unused" value="TS_MODE_UNUSED"/>
+            <option display="Receive" id="module.driver.ctsu.ts10.receive" value="TS_MODE_RECEIVE"/>
+            <option display="Transmit" id="module.driver.ctsu.ts10.transmit" value="TS_MODE_TRANSMIT"/>
+        </property>
+        <property default="module.driver.ctsu.ts11.unused" display="TS11 Pin Mode" id="module.driver.ctsu.ts11">
+            <option display="Not Used" id="module.driver.ctsu.ts11.unused" value="TS_MODE_UNUSED"/>
+            <option display="Receive" id="module.driver.ctsu.ts11.receive" value="TS_MODE_RECEIVE"/>
+            <option display="Transmit" id="module.driver.ctsu.ts11.transmit" value="TS_MODE_TRANSMIT"/>
+        </property>
+        <property default="module.driver.ctsu.ts12.unused" display="TS12 Pin Mode" id="module.driver.ctsu.ts12">
+            <option display="Not Used" id="module.driver.ctsu.ts12.unused" value="TS_MODE_UNUSED"/>
+            <option display="Receive" id="module.driver.ctsu.ts12.receive" value="TS_MODE_RECEIVE"/>
+            <option display="Transmit" id="module.driver.ctsu.ts12.transmit" value="TS_MODE_TRANSMIT"/>
+        </property>
+        <property default="module.driver.ctsu.ts13.unused" display="TS13 Pin Mode" id="module.driver.ctsu.ts13">
+            <option display="Not Used" id="module.driver.ctsu.ts13.unused" value="TS_MODE_UNUSED"/>
+            <option display="Receive" id="module.driver.ctsu.ts13.receive" value="TS_MODE_RECEIVE"/>
+            <option display="Transmit" id="module.driver.ctsu.ts13.transmit" value="TS_MODE_TRANSMIT"/>
+        </property>
+        <property default="module.driver.ctsu.ts14.unused" display="TS14 Pin Mode" id="module.driver.ctsu.ts14">
+            <option display="Not Used" id="module.driver.ctsu.ts14.unused" value="TS_MODE_UNUSED"/>
+            <option display="Receive" id="module.driver.ctsu.ts14.receive" value="TS_MODE_RECEIVE"/>
+            <option display="Transmit" id="module.driver.ctsu.ts14.transmit" value="TS_MODE_TRANSMIT"/>
+        </property>
+        <property default="module.driver.ctsu.ts15.unused" display="TS15 Pin Mode" id="module.driver.ctsu.ts15">
+            <option display="Not Used" id="module.driver.ctsu.ts15.unused" value="TS_MODE_UNUSED"/>
+            <option display="Receive" id="module.driver.ctsu.ts15.receive" value="TS_MODE_RECEIVE"/>
+            <option display="Transmit" id="module.driver.ctsu.ts15.transmit" value="TS_MODE_TRANSMIT"/>
+        </property>
+        <property default="module.driver.ctsu.ts16.unused" display="TS16 Pin Mode" id="module.driver.ctsu.ts16">
+            <option display="Not Used" id="module.driver.ctsu.ts16.unused" value="TS_MODE_UNUSED"/>
+            <option display="Receive" id="module.driver.ctsu.ts16.receive" value="TS_MODE_RECEIVE"/>
+            <option display="Transmit" id="module.driver.ctsu.ts16.transmit" value="TS_MODE_TRANSMIT"/>
+        </property>
+        <property default="module.driver.ctsu.ts17.unused" display="TS17 Pin Mode" id="module.driver.ctsu.ts17">
+            <option display="Not Used" id="module.driver.ctsu.ts17.unused" value="TS_MODE_UNUSED"/>
+            <option display="Receive" id="module.driver.ctsu.ts17.receive" value="TS_MODE_RECEIVE"/>
+            <option display="Transmit" id="module.driver.ctsu.ts17.transmit" value="TS_MODE_TRANSMIT"/>
+        </property>
+        <property default="module.driver.ctsu.ts18.unused" display="TS18 Pin Mode" id="module.driver.ctsu.ts18">
+            <option display="Not Used" id="module.driver.ctsu.ts18.unused" value="TS_MODE_UNUSED"/>
+            <option display="Receive" id="module.driver.ctsu.ts18.receive" value="TS_MODE_RECEIVE"/>
+            <option display="Transmit" id="module.driver.ctsu.ts18.transmit" value="TS_MODE_TRANSMIT"/>
+        </property>
+        <property default="module.driver.ctsu.ts19.unused" display="TS19 Pin Mode" id="module.driver.ctsu.ts19">
+            <option display="Not Used" id="module.driver.ctsu.ts19.unused" value="TS_MODE_UNUSED"/>
+            <option display="Receive" id="module.driver.ctsu.ts19.receive" value="TS_MODE_RECEIVE"/>
+            <option display="Transmit" id="module.driver.ctsu.ts19.transmit" value="TS_MODE_TRANSMIT"/>
+        </property>
+        <property default="module.driver.ctsu.ts20.unused" display="TS20 Pin Mode" id="module.driver.ctsu.ts20">
+            <option display="Not Used" id="module.driver.ctsu.ts20.unused" value="TS_MODE_UNUSED"/>
+            <option display="Receive" id="module.driver.ctsu.ts20.receive" value="TS_MODE_RECEIVE"/>
+            <option display="Transmit" id="module.driver.ctsu.ts20.transmit" value="TS_MODE_TRANSMIT"/>
+        </property>
+        <property default="module.driver.ctsu.ts21.unused" display="TS21 Pin Mode" id="module.driver.ctsu.ts21">
+            <option display="Not Used" id="module.driver.ctsu.ts21.unused" value="TS_MODE_UNUSED"/>
+            <option display="Receive" id="module.driver.ctsu.ts21.receive" value="TS_MODE_RECEIVE"/>
+            <option display="Transmit" id="module.driver.ctsu.ts21.transmit" value="TS_MODE_TRANSMIT"/>
+        </property>
+        <property default="module.driver.ctsu.ts22.unused" display="TS22 Pin Mode" id="module.driver.ctsu.ts22">
+            <option display="Not Used" id="module.driver.ctsu.ts22.unused" value="TS_MODE_UNUSED"/>
+            <option display="Receive" id="module.driver.ctsu.ts22.receive" value="TS_MODE_RECEIVE"/>
+            <option display="Transmit" id="module.driver.ctsu.ts22.transmit" value="TS_MODE_TRANSMIT"/>
+        </property>
+        <property default="module.driver.ctsu.ts23.unused" display="TS23 Pin Mode" id="module.driver.ctsu.ts23">
+            <option display="Not Used" id="module.driver.ctsu.ts23.unused" value="TS_MODE_UNUSED"/>
+            <option display="Receive" id="module.driver.ctsu.ts23.receive" value="TS_MODE_RECEIVE"/>
+            <option display="Transmit" id="module.driver.ctsu.ts23.transmit" value="TS_MODE_TRANSMIT"/>
+        </property>
+        <property default="module.driver.ctsu.ts24.unused" display="TS24 Pin Mode" id="module.driver.ctsu.ts24">
+            <option display="Not Used" id="module.driver.ctsu.ts24.unused" value="TS_MODE_UNUSED"/>
+            <option display="Receive" id="module.driver.ctsu.ts24.receive" value="TS_MODE_RECEIVE"/>
+            <option display="Transmit" id="module.driver.ctsu.ts24.transmit" value="TS_MODE_TRANSMIT"/>
+        </property>
+        <property default="module.driver.ctsu.ts25.unused" display="TS25 Pin Mode" id="module.driver.ctsu.ts25">
+            <option display="Not Used" id="module.driver.ctsu.ts25.unused" value="TS_MODE_UNUSED"/>
+            <option display="Receive" id="module.driver.ctsu.ts25.receive" value="TS_MODE_RECEIVE"/>
+            <option display="Transmit" id="module.driver.ctsu.ts25.transmit" value="TS_MODE_TRANSMIT"/>
+        </property>
+        <property default="module.driver.ctsu.ts26.unused" display="TS26 Pin Mode" id="module.driver.ctsu.ts26">
+            <option display="Not Used" id="module.driver.ctsu.ts26.unused" value="TS_MODE_UNUSED"/>
+            <option display="Receive" id="module.driver.ctsu.ts26.receive" value="TS_MODE_RECEIVE"/>
+            <option display="Transmit" id="module.driver.ctsu.ts26.transmit" value="TS_MODE_TRANSMIT"/>
+        </property>
+        <property default="module.driver.ctsu.ts27.unused" display="TS27 Pin Mode" id="module.driver.ctsu.ts27">
+            <option display="Not Used" id="module.driver.ctsu.ts27.unused" value="TS_MODE_UNUSED"/>
+            <option display="Receive" id="module.driver.ctsu.ts27.receive" value="TS_MODE_RECEIVE"/>
+            <option display="Transmit" id="module.driver.ctsu.ts27.transmit" value="TS_MODE_TRANSMIT"/>
+        </property>
+        <property default="module.driver.ctsu.ts28.unused" display="TS28 Pin Mode" id="module.driver.ctsu.ts28">
+            <option display="Not Used" id="module.driver.ctsu.ts28.unused" value="TS_MODE_UNUSED"/>
+            <option display="Receive" id="module.driver.ctsu.ts28.receive" value="TS_MODE_RECEIVE"/>
+            <option display="Transmit" id="module.driver.ctsu.ts28.transmit" value="TS_MODE_TRANSMIT"/>
+        </property>
+        <property default="module.driver.ctsu.ts29.unused" display="TS29 Pin Mode" id="module.driver.ctsu.ts29">
+            <option display="Not Used" id="module.driver.ctsu.ts29.unused" value="TS_MODE_UNUSED"/>
+            <option display="Receive" id="module.driver.ctsu.ts29.receive" value="TS_MODE_RECEIVE"/>
+            <option display="Transmit" id="module.driver.ctsu.ts29.transmit" value="TS_MODE_TRANSMIT"/>
+        </property>
+        <property default="module.driver.ctsu.ts30.unused" display="TS30 Pin Mode" id="module.driver.ctsu.ts30">
+            <option display="Not Used" id="module.driver.ctsu.ts30.unused" value="TS_MODE_UNUSED"/>
+            <option display="Receive" id="module.driver.ctsu.ts30.receive" value="TS_MODE_RECEIVE"/>
+            <option display="Transmit" id="module.driver.ctsu.ts30.transmit" value="TS_MODE_TRANSMIT"/>
+        </property>
+        <property default="module.driver.ctsu.ts31.unused" display="TS31 Pin Mode" id="module.driver.ctsu.ts31">
+            <option display="Not Used" id="module.driver.ctsu.ts31.unused" value="TS_MODE_UNUSED"/>
+            <option display="Receive" id="module.driver.ctsu.ts31.receive" value="TS_MODE_RECEIVE"/>
+            <option display="Transmit" id="module.driver.ctsu.ts31.transmit" value="TS_MODE_TRANSMIT"/>
+        </property>
+        <property default="module.driver.ctsu.ts32.unused" display="TS32 Pin Mode" id="module.driver.ctsu.ts32">
+            <option display="Not Used" id="module.driver.ctsu.ts32.unused" value="TS_MODE_UNUSED"/>
+            <option display="Receive" id="module.driver.ctsu.ts32.receive" value="TS_MODE_RECEIVE"/>
+            <option display="Transmit" id="module.driver.ctsu.ts32.transmit" value="TS_MODE_TRANSMIT"/>
+        </property>
+        <property default="module.driver.ctsu.ts33.unused" display="TS33 Pin Mode" id="module.driver.ctsu.ts33">
+            <option display="Not Used" id="module.driver.ctsu.ts33.unused" value="TS_MODE_UNUSED"/>
+            <option display="Receive" id="module.driver.ctsu.ts33.receive" value="TS_MODE_RECEIVE"/>
+            <option display="Transmit" id="module.driver.ctsu.ts33.transmit" value="TS_MODE_TRANSMIT"/>
+        </property>
+        <property default="module.driver.ctsu.ts34.unused" display="TS34 Pin Mode" id="module.driver.ctsu.ts34">
+            <option display="Not Used" id="module.driver.ctsu.ts34.unused" value="TS_MODE_UNUSED"/>
+            <option display="Receive" id="module.driver.ctsu.ts34.receive" value="TS_MODE_RECEIVE"/>
+            <option display="Transmit" id="module.driver.ctsu.ts34.transmit" value="TS_MODE_TRANSMIT"/>
+        </property>
+        <property default="module.driver.ctsu.ts35.unused" display="TS35 Pin Mode" id="module.driver.ctsu.ts35">
+            <option display="Not Used" id="module.driver.ctsu.ts35.unused" value="TS_MODE_UNUSED"/>
+            <option display="Receive" id="module.driver.ctsu.ts35.receive" value="TS_MODE_RECEIVE"/>
+            <option display="Transmit" id="module.driver.ctsu.ts35.transmit" value="TS_MODE_TRANSMIT"/>
+        </property>
+        
+        <property default="module.driver.ctsu.sep1.none" display=" " id="module.driver.ctsu.sep1">
+            <option display=" " id="module.driver.ctsu.sep1.none" value="0"/>
+        </property>
+        
+        <header>
+        
+        /* Include the generated headers (when using Tuned data provided by Workbench6) */
+		#define DATA_SOURCE_WORKBENCH	(0)
+		#define DATA_SOURCE_SSPCONFIG	(1)
+		
+		#define DATA_SOURCE 			(${module.driver.ctsu.data})
+		
+        #if (DATA_SOURCE == DATA_SOURCE_SSPCONFIG)
+        #define TS_MODE_UNUSED          (0)
+        #define TS_MODE_RECEIVE         (1)
+        #define TS_MODE_TRANSMIT        (2)
+        
+        #define CTSU_CFG_MODE_SELF     (0)
+        #define CTSU_CFG_MODE_MUTUAL   (1)
+        #define CTSU_CFG_MODE_MUTUAL0  (CTSU_CFG_MODE_MUTUAL)
+        #define CTSU_CFG_MODE_MUTUAL1  (CTSU_CFG_MODE_MUTUAL)
+        #define CTSU_CFG_MODE_MUTUAL2  (CTSU_CFG_MODE_MUTUAL)
+        #define CTSU_CFG_MODE_MUTUAL3  (CTSU_CFG_MODE_MUTUAL)
+        #define CTSU_CFG_MODE_MUTUAL4  (CTSU_CFG_MODE_MUTUAL)
+        #define CTSU_CFG_MODE_MUTUAL5  (CTSU_CFG_MODE_MUTUAL)
+        #define CTSU_CFG_MODE_MUTUAL6  (CTSU_CFG_MODE_MUTUAL)
+        #define CTSU_CFG_MODE_MUTUAL7  (CTSU_CFG_MODE_MUTUAL)
+        
+        #define CTSU_CFG_MODE    (CTSU_CFG_MODE_${module.driver.ctsu.mode})
+        
+        #define ${module.driver.ctsu.mode}_TS0    (${module.driver.ctsu.ts00})
+        #define ${module.driver.ctsu.mode}_TS1    (${module.driver.ctsu.ts01})
+        #define ${module.driver.ctsu.mode}_TS2    (${module.driver.ctsu.ts02})
+        #define ${module.driver.ctsu.mode}_TS3    (${module.driver.ctsu.ts03})
+        #define ${module.driver.ctsu.mode}_TS4    (${module.driver.ctsu.ts04})
+        #define ${module.driver.ctsu.mode}_TS5    (${module.driver.ctsu.ts05})
+        #define ${module.driver.ctsu.mode}_TS6    (${module.driver.ctsu.ts06})
+        #define ${module.driver.ctsu.mode}_TS7    (${module.driver.ctsu.ts07})
+        #define ${module.driver.ctsu.mode}_TS8    (${module.driver.ctsu.ts08})
+        #define ${module.driver.ctsu.mode}_TS9    (${module.driver.ctsu.ts09})
+        #define ${module.driver.ctsu.mode}_TS10    (${module.driver.ctsu.ts10})
+        #define ${module.driver.ctsu.mode}_TS11    (${module.driver.ctsu.ts11})
+        #define ${module.driver.ctsu.mode}_TS12    (${module.driver.ctsu.ts12})
+        #define ${module.driver.ctsu.mode}_TS13    (${module.driver.ctsu.ts13})
+        #define ${module.driver.ctsu.mode}_TS14    (${module.driver.ctsu.ts14})
+        #define ${module.driver.ctsu.mode}_TS15    (${module.driver.ctsu.ts15})
+        #define ${module.driver.ctsu.mode}_TS16    (${module.driver.ctsu.ts16})
+        #define ${module.driver.ctsu.mode}_TS17    (${module.driver.ctsu.ts17})
+        #define ${module.driver.ctsu.mode}_TS18    (${module.driver.ctsu.ts18})
+        #define ${module.driver.ctsu.mode}_TS19    (${module.driver.ctsu.ts19})
+        #define ${module.driver.ctsu.mode}_TS20    (${module.driver.ctsu.ts20})
+        #define ${module.driver.ctsu.mode}_TS21    (${module.driver.ctsu.ts21})
+        #define ${module.driver.ctsu.mode}_TS22    (${module.driver.ctsu.ts22})
+        #define ${module.driver.ctsu.mode}_TS23    (${module.driver.ctsu.ts23})
+        #define ${module.driver.ctsu.mode}_TS24    (${module.driver.ctsu.ts24})
+        #define ${module.driver.ctsu.mode}_TS25    (${module.driver.ctsu.ts25})
+        #define ${module.driver.ctsu.mode}_TS26    (${module.driver.ctsu.ts26})
+        #define ${module.driver.ctsu.mode}_TS27    (${module.driver.ctsu.ts27})
+        #define ${module.driver.ctsu.mode}_TS28    (${module.driver.ctsu.ts28})
+        #define ${module.driver.ctsu.mode}_TS29    (${module.driver.ctsu.ts29})
+        #define ${module.driver.ctsu.mode}_TS30    (${module.driver.ctsu.ts30})
+        #define ${module.driver.ctsu.mode}_TS31    (${module.driver.ctsu.ts31})
+        #define ${module.driver.ctsu.mode}_TS32    (${module.driver.ctsu.ts32})
+        #define ${module.driver.ctsu.mode}_TS33    (${module.driver.ctsu.ts33})
+        #define ${module.driver.ctsu.mode}_TS34    (${module.driver.ctsu.ts34})
+        #define ${module.driver.ctsu.mode}_TS35    (${module.driver.ctsu.ts35})
+        
+        #if (${module.driver.ctsu.mode}_TS0==TS_MODE_RECEIVE)
+        #define EN_${module.driver.ctsu.mode}_TS0                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS0                 (0)
+        #elif (${module.driver.ctsu.mode}_TS0==TS_MODE_TRANSMIT)
+        #define EN_${module.driver.ctsu.mode}_TS0                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS0                 (1)
+        #else
+        #define EN_${module.driver.ctsu.mode}_TS0                 (0)
+        #define TR_${module.driver.ctsu.mode}_TS0                 (0)
+        #endif
+        
+        #if (${module.driver.ctsu.mode}_TS1==TS_MODE_RECEIVE)
+        #define EN_${module.driver.ctsu.mode}_TS1                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS1                 (0)
+        #elif (${module.driver.ctsu.mode}_TS1==TS_MODE_TRANSMIT)
+        #define EN_${module.driver.ctsu.mode}_TS1                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS1                 (1)
+        #else
+        #define EN_${module.driver.ctsu.mode}_TS1                 (0)
+        #define TR_${module.driver.ctsu.mode}_TS1                 (0)
+        #endif
+        
+        #if (${module.driver.ctsu.mode}_TS2==TS_MODE_RECEIVE)
+        #define EN_${module.driver.ctsu.mode}_TS2                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS2                 (0)
+        #elif (${module.driver.ctsu.mode}_TS2==TS_MODE_TRANSMIT)
+        #define EN_${module.driver.ctsu.mode}_TS2                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS2                 (1)
+        #else
+        #define EN_${module.driver.ctsu.mode}_TS2                 (0)
+        #define TR_${module.driver.ctsu.mode}_TS2                 (0)
+        #endif
+        
+        #if (${module.driver.ctsu.mode}_TS3==TS_MODE_RECEIVE)
+        #define EN_${module.driver.ctsu.mode}_TS3                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS3                 (0)
+        #elif (${module.driver.ctsu.mode}_TS3==TS_MODE_TRANSMIT)
+        #define EN_${module.driver.ctsu.mode}_TS3                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS3                 (1)
+        #else
+        #define EN_${module.driver.ctsu.mode}_TS3                 (0)
+        #define TR_${module.driver.ctsu.mode}_TS3                 (0)
+        #endif
+        
+        #if (${module.driver.ctsu.mode}_TS4==TS_MODE_RECEIVE)
+        #define EN_${module.driver.ctsu.mode}_TS4                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS4                 (0)
+        #elif (${module.driver.ctsu.mode}_TS4==TS_MODE_TRANSMIT)
+        #define EN_${module.driver.ctsu.mode}_TS4                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS4                 (1)
+        #else
+        #define EN_${module.driver.ctsu.mode}_TS4                 (0)
+        #define TR_${module.driver.ctsu.mode}_TS4                 (0)
+        #endif
+        
+        #if (${module.driver.ctsu.mode}_TS5==TS_MODE_RECEIVE)
+        #define EN_${module.driver.ctsu.mode}_TS5                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS5                 (0)
+        #elif (${module.driver.ctsu.mode}_TS5==TS_MODE_TRANSMIT)
+        #define EN_${module.driver.ctsu.mode}_TS5                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS5                 (1)
+        #else
+        #define EN_${module.driver.ctsu.mode}_TS5                 (0)
+        #define TR_${module.driver.ctsu.mode}_TS5                 (0)
+        #endif
+        
+        #if (${module.driver.ctsu.mode}_TS6==TS_MODE_RECEIVE)
+        #define EN_${module.driver.ctsu.mode}_TS6                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS6                 (0)
+        #elif (${module.driver.ctsu.mode}_TS6==TS_MODE_TRANSMIT)
+        #define EN_${module.driver.ctsu.mode}_TS6                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS6                 (1)
+        #else
+        #define EN_${module.driver.ctsu.mode}_TS6                 (0)
+        #define TR_${module.driver.ctsu.mode}_TS6                 (0)
+        #endif
+        
+        #if (${module.driver.ctsu.mode}_TS7==TS_MODE_RECEIVE)
+        #define EN_${module.driver.ctsu.mode}_TS7                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS7                 (0)
+        #elif (${module.driver.ctsu.mode}_TS7==TS_MODE_TRANSMIT)
+        #define EN_${module.driver.ctsu.mode}_TS7                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS7                 (1)
+        #else
+        #define EN_${module.driver.ctsu.mode}_TS7                 (0)
+        #define TR_${module.driver.ctsu.mode}_TS7                 (0)
+        #endif
+        
+        #if (${module.driver.ctsu.mode}_TS8==TS_MODE_RECEIVE)
+        #define EN_${module.driver.ctsu.mode}_TS8                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS8                 (0)
+        #elif (${module.driver.ctsu.mode}_TS8==TS_MODE_TRANSMIT)
+        #define EN_${module.driver.ctsu.mode}_TS8                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS8                 (1)
+        #else
+        #define EN_${module.driver.ctsu.mode}_TS8                 (0)
+        #define TR_${module.driver.ctsu.mode}_TS8                 (0)
+        #endif
+        
+        #if (${module.driver.ctsu.mode}_TS9==TS_MODE_RECEIVE)
+        #define EN_${module.driver.ctsu.mode}_TS9                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS9                 (0)
+        #elif (${module.driver.ctsu.mode}_TS9==TS_MODE_TRANSMIT)
+        #define EN_${module.driver.ctsu.mode}_TS9                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS9                 (1)
+        #else
+        #define EN_${module.driver.ctsu.mode}_TS9                 (0)
+        #define TR_${module.driver.ctsu.mode}_TS9                 (0)
+        #endif
+        
+        #if (${module.driver.ctsu.mode}_TS10==TS_MODE_RECEIVE)
+        #define EN_${module.driver.ctsu.mode}_TS10                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS10                 (0)
+        #elif (${module.driver.ctsu.mode}_TS10==TS_MODE_TRANSMIT)
+        #define EN_${module.driver.ctsu.mode}_TS10                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS10                 (1)
+        #else
+        #define EN_${module.driver.ctsu.mode}_TS10                 (0)
+        #define TR_${module.driver.ctsu.mode}_TS10                 (0)
+        #endif
+        
+        #if (${module.driver.ctsu.mode}_TS11==TS_MODE_RECEIVE)
+        #define EN_${module.driver.ctsu.mode}_TS11                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS11                 (0)
+        #elif (${module.driver.ctsu.mode}_TS11==TS_MODE_TRANSMIT)
+        #define EN_${module.driver.ctsu.mode}_TS11                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS11                 (1)
+        #else
+        #define EN_${module.driver.ctsu.mode}_TS11                 (0)
+        #define TR_${module.driver.ctsu.mode}_TS11                 (0)
+        #endif
+        
+        #if (${module.driver.ctsu.mode}_TS12==TS_MODE_RECEIVE)
+        #define EN_${module.driver.ctsu.mode}_TS12                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS12                 (0)
+        #elif (${module.driver.ctsu.mode}_TS12==TS_MODE_TRANSMIT)
+        #define EN_${module.driver.ctsu.mode}_TS12                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS12                 (1)
+        #else
+        #define EN_${module.driver.ctsu.mode}_TS12                 (0)
+        #define TR_${module.driver.ctsu.mode}_TS12                 (0)
+        #endif
+        
+        #if (${module.driver.ctsu.mode}_TS13==TS_MODE_RECEIVE)
+        #define EN_${module.driver.ctsu.mode}_TS13                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS13                 (0)
+        #elif (${module.driver.ctsu.mode}_TS13==TS_MODE_TRANSMIT)
+        #define EN_${module.driver.ctsu.mode}_TS13                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS13                 (1)
+        #else
+        #define EN_${module.driver.ctsu.mode}_TS13                 (0)
+        #define TR_${module.driver.ctsu.mode}_TS13                 (0)
+        #endif
+        
+        #if (${module.driver.ctsu.mode}_TS14==TS_MODE_RECEIVE)
+        #define EN_${module.driver.ctsu.mode}_TS14                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS14                 (0)
+        #elif (${module.driver.ctsu.mode}_TS14==TS_MODE_TRANSMIT)
+        #define EN_${module.driver.ctsu.mode}_TS14                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS14                 (1)
+        #else
+        #define EN_${module.driver.ctsu.mode}_TS14                 (0)
+        #define TR_${module.driver.ctsu.mode}_TS14                 (0)
+        #endif
+        
+        #if (${module.driver.ctsu.mode}_TS15==TS_MODE_RECEIVE)
+        #define EN_${module.driver.ctsu.mode}_TS15                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS15                 (0)
+        #elif (${module.driver.ctsu.mode}_TS15==TS_MODE_TRANSMIT)
+        #define EN_${module.driver.ctsu.mode}_TS15                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS15                 (1)
+        #else
+        #define EN_${module.driver.ctsu.mode}_TS15                 (0)
+        #define TR_${module.driver.ctsu.mode}_TS15                 (0)
+        #endif
+        
+        #if (${module.driver.ctsu.mode}_TS16==TS_MODE_RECEIVE)
+        #define EN_${module.driver.ctsu.mode}_TS16                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS16                 (0)
+        #elif (${module.driver.ctsu.mode}_TS16==TS_MODE_TRANSMIT)
+        #define EN_${module.driver.ctsu.mode}_TS16                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS16                 (1)
+        #else
+        #define EN_${module.driver.ctsu.mode}_TS16                 (0)
+        #define TR_${module.driver.ctsu.mode}_TS16                 (0)
+        #endif
+        
+        #if (${module.driver.ctsu.mode}_TS17==TS_MODE_RECEIVE)
+        #define EN_${module.driver.ctsu.mode}_TS17                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS17                 (0)
+        #elif (${module.driver.ctsu.mode}_TS17==TS_MODE_TRANSMIT)
+        #define EN_${module.driver.ctsu.mode}_TS17                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS17                 (1)
+        #else
+        #define EN_${module.driver.ctsu.mode}_TS17                 (0)
+        #define TR_${module.driver.ctsu.mode}_TS17                 (0)
+        #endif
+        
+        #if (${module.driver.ctsu.mode}_TS18==TS_MODE_RECEIVE)
+        #define EN_${module.driver.ctsu.mode}_TS18                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS18                 (0)
+        #elif (${module.driver.ctsu.mode}_TS18==TS_MODE_TRANSMIT)
+        #define EN_${module.driver.ctsu.mode}_TS18                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS18                 (1)
+        #else
+        #define EN_${module.driver.ctsu.mode}_TS18                 (0)
+        #define TR_${module.driver.ctsu.mode}_TS18                 (0)
+        #endif
+        
+        #if (${module.driver.ctsu.mode}_TS19==TS_MODE_RECEIVE)
+        #define EN_${module.driver.ctsu.mode}_TS19                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS19                 (0)
+        #elif (${module.driver.ctsu.mode}_TS19==TS_MODE_TRANSMIT)
+        #define EN_${module.driver.ctsu.mode}_TS19                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS19                 (1)
+        #else
+        #define EN_${module.driver.ctsu.mode}_TS19                 (0)
+        #define TR_${module.driver.ctsu.mode}_TS19                 (0)
+        #endif
+        
+        #if (${module.driver.ctsu.mode}_TS20==TS_MODE_RECEIVE)
+        #define EN_${module.driver.ctsu.mode}_TS20                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS20                 (0)
+        #elif (${module.driver.ctsu.mode}_TS20==TS_MODE_TRANSMIT)
+        #define EN_${module.driver.ctsu.mode}_TS20                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS20                 (1)
+        #else
+        #define EN_${module.driver.ctsu.mode}_TS20                 (0)
+        #define TR_${module.driver.ctsu.mode}_TS20                 (0)
+        #endif
+        
+        #if (${module.driver.ctsu.mode}_TS21==TS_MODE_RECEIVE)
+        #define EN_${module.driver.ctsu.mode}_TS21                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS21                 (0)
+        #elif (${module.driver.ctsu.mode}_TS21==TS_MODE_TRANSMIT)
+        #define EN_${module.driver.ctsu.mode}_TS21                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS21                 (1)
+        #else
+        #define EN_${module.driver.ctsu.mode}_TS21                 (0)
+        #define TR_${module.driver.ctsu.mode}_TS21                 (0)
+        #endif
+        
+        #if (${module.driver.ctsu.mode}_TS22==TS_MODE_RECEIVE)
+        #define EN_${module.driver.ctsu.mode}_TS22                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS22                 (0)
+        #elif (${module.driver.ctsu.mode}_TS22==TS_MODE_TRANSMIT)
+        #define EN_${module.driver.ctsu.mode}_TS22                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS22                 (1)
+        #else
+        #define EN_${module.driver.ctsu.mode}_TS22                 (0)
+        #define TR_${module.driver.ctsu.mode}_TS22                 (0)
+        #endif
+        
+        #if (${module.driver.ctsu.mode}_TS23==TS_MODE_RECEIVE)
+        #define EN_${module.driver.ctsu.mode}_TS23                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS23                 (0)
+        #elif (${module.driver.ctsu.mode}_TS23==TS_MODE_TRANSMIT)
+        #define EN_${module.driver.ctsu.mode}_TS23                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS23                 (1)
+        #else
+        #define EN_${module.driver.ctsu.mode}_TS23                 (0)
+        #define TR_${module.driver.ctsu.mode}_TS23                 (0)
+        #endif
+        
+        #if (${module.driver.ctsu.mode}_TS24==TS_MODE_RECEIVE)
+        #define EN_${module.driver.ctsu.mode}_TS24                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS24                 (0)
+        #elif (${module.driver.ctsu.mode}_TS24==TS_MODE_TRANSMIT)
+        #define EN_${module.driver.ctsu.mode}_TS24                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS24                 (1)
+        #else
+        #define EN_${module.driver.ctsu.mode}_TS24                 (0)
+        #define TR_${module.driver.ctsu.mode}_TS24                 (0)
+        #endif
+        
+        #if (${module.driver.ctsu.mode}_TS25==TS_MODE_RECEIVE)
+        #define EN_${module.driver.ctsu.mode}_TS25                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS25                 (0)
+        #elif (${module.driver.ctsu.mode}_TS25==TS_MODE_TRANSMIT)
+        #define EN_${module.driver.ctsu.mode}_TS25                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS25                 (1)
+        #else
+        #define EN_${module.driver.ctsu.mode}_TS25                 (0)
+        #define TR_${module.driver.ctsu.mode}_TS25                 (0)
+        #endif
+        
+        #if (${module.driver.ctsu.mode}_TS26==TS_MODE_RECEIVE)
+        #define EN_${module.driver.ctsu.mode}_TS26                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS26                 (0)
+        #elif (${module.driver.ctsu.mode}_TS26==TS_MODE_TRANSMIT)
+        #define EN_${module.driver.ctsu.mode}_TS26                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS26                 (1)
+        #else
+        #define EN_${module.driver.ctsu.mode}_TS26                 (0)
+        #define TR_${module.driver.ctsu.mode}_TS26                 (0)
+        #endif
+        
+        #if (${module.driver.ctsu.mode}_TS27==TS_MODE_RECEIVE)
+        #define EN_${module.driver.ctsu.mode}_TS27                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS27                 (0)
+        #elif (${module.driver.ctsu.mode}_TS27==TS_MODE_TRANSMIT)
+        #define EN_${module.driver.ctsu.mode}_TS27                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS27                 (1)
+        #else
+        #define EN_${module.driver.ctsu.mode}_TS27                 (0)
+        #define TR_${module.driver.ctsu.mode}_TS27                 (0)
+        #endif
+        
+        #if (${module.driver.ctsu.mode}_TS28==TS_MODE_RECEIVE)
+        #define EN_${module.driver.ctsu.mode}_TS28                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS28                 (0)
+        #elif (${module.driver.ctsu.mode}_TS28==TS_MODE_TRANSMIT)
+        #define EN_${module.driver.ctsu.mode}_TS28                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS28                 (1)
+        #else
+        #define EN_${module.driver.ctsu.mode}_TS28                 (0)
+        #define TR_${module.driver.ctsu.mode}_TS28                 (0)
+        #endif
+        
+        #if (${module.driver.ctsu.mode}_TS29==TS_MODE_RECEIVE)
+        #define EN_${module.driver.ctsu.mode}_TS29                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS29                 (0)
+        #elif (${module.driver.ctsu.mode}_TS29==TS_MODE_TRANSMIT)
+        #define EN_${module.driver.ctsu.mode}_TS29                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS29                 (1)
+        #else
+        #define EN_${module.driver.ctsu.mode}_TS29                 (0)
+        #define TR_${module.driver.ctsu.mode}_TS29                 (0)
+        #endif
+        
+        #if (${module.driver.ctsu.mode}_TS30==TS_MODE_RECEIVE)
+        #define EN_${module.driver.ctsu.mode}_TS30                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS30                 (0)
+        #elif (${module.driver.ctsu.mode}_TS30==TS_MODE_TRANSMIT)
+        #define EN_${module.driver.ctsu.mode}_TS30                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS30                 (1)
+        #else
+        #define EN_${module.driver.ctsu.mode}_TS30                 (0)
+        #define TR_${module.driver.ctsu.mode}_TS30                 (0)
+        #endif
+        
+        #if (${module.driver.ctsu.mode}_TS31==TS_MODE_RECEIVE)
+        #define EN_${module.driver.ctsu.mode}_TS31                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS31                 (0)
+        #elif (${module.driver.ctsu.mode}_TS31==TS_MODE_TRANSMIT)
+        #define EN_${module.driver.ctsu.mode}_TS31                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS31                 (1)
+        #else
+        #define EN_${module.driver.ctsu.mode}_TS31                 (0)
+        #define TR_${module.driver.ctsu.mode}_TS31                 (0)
+        #endif
+        
+        #if (${module.driver.ctsu.mode}_TS32==TS_MODE_RECEIVE)
+        #define EN_${module.driver.ctsu.mode}_TS32                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS32                 (0)
+        #elif (${module.driver.ctsu.mode}_TS32==TS_MODE_TRANSMIT)
+        #define EN_${module.driver.ctsu.mode}_TS32                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS32                 (1)
+        #else
+        #define EN_${module.driver.ctsu.mode}_TS32                 (0)
+        #define TR_${module.driver.ctsu.mode}_TS32                 (0)
+        #endif
+        
+        #if (${module.driver.ctsu.mode}_TS33==TS_MODE_RECEIVE)
+        #define EN_${module.driver.ctsu.mode}_TS33                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS33                 (0)
+        #elif (${module.driver.ctsu.mode}_TS33==TS_MODE_TRANSMIT)
+        #define EN_${module.driver.ctsu.mode}_TS33                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS33                 (1)
+        #else
+        #define EN_${module.driver.ctsu.mode}_TS33                 (0)
+        #define TR_${module.driver.ctsu.mode}_TS33                 (0)
+        #endif
+        
+        #if (${module.driver.ctsu.mode}_TS34==TS_MODE_RECEIVE)
+        #define EN_${module.driver.ctsu.mode}_TS34                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS34                 (0)
+        #elif (${module.driver.ctsu.mode}_TS34==TS_MODE_TRANSMIT)
+        #define EN_${module.driver.ctsu.mode}_TS34                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS34                 (1)
+        #else
+        #define EN_${module.driver.ctsu.mode}_TS34                 (0)
+        #define TR_${module.driver.ctsu.mode}_TS34                 (0)
+        #endif
+        
+        #if (${module.driver.ctsu.mode}_TS35==TS_MODE_RECEIVE)
+        #define EN_${module.driver.ctsu.mode}_TS35                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS35                 (0)
+        #elif (${module.driver.ctsu.mode}_TS35==TS_MODE_TRANSMIT)
+        #define EN_${module.driver.ctsu.mode}_TS35                 (1)
+        #define TR_${module.driver.ctsu.mode}_TS35                 (1)
+        #else
+        #define EN_${module.driver.ctsu.mode}_TS35                 (0)
+        #define TR_${module.driver.ctsu.mode}_TS35                 (0)
+        #endif
+        
+        /*****    CTSUCHAC - CTSU Channel Enable Control Register    **********************************************************/
+        #define CTSUCHAC0_${module.driver.ctsu.mode}_ENABLE_TS  ((EN_${module.driver.ctsu.mode}_TS7&lt;&lt;7)|(EN_${module.driver.ctsu.mode}_TS6&lt;&lt;6)|(EN_${module.driver.ctsu.mode}_TS5&lt;&lt;5)|(EN_${module.driver.ctsu.mode}_TS4&lt;&lt;4)|(EN_${module.driver.ctsu.mode}_TS3&lt;&lt;3)|(EN_${module.driver.ctsu.mode}_TS2&lt;&lt;2)|(EN_${module.driver.ctsu.mode}_TS1&lt;&lt;1)|(EN_${module.driver.ctsu.mode}_TS0&lt;&lt;0))
+        #define CTSUCHAC1_${module.driver.ctsu.mode}_ENABLE_TS  ((EN_${module.driver.ctsu.mode}_TS15&lt;&lt;7)|(EN_${module.driver.ctsu.mode}_TS14&lt;&lt;6)|(EN_${module.driver.ctsu.mode}_TS13&lt;&lt;5)|(EN_${module.driver.ctsu.mode}_TS12&lt;&lt;4)|(EN_${module.driver.ctsu.mode}_TS11&lt;&lt;3)|(EN_${module.driver.ctsu.mode}_TS10&lt;&lt;2)|(EN_${module.driver.ctsu.mode}_TS9&lt;&lt;1)|(EN_${module.driver.ctsu.mode}_TS8&lt;&lt;0))
+        #define CTSUCHAC2_${module.driver.ctsu.mode}_ENABLE_TS  ((EN_${module.driver.ctsu.mode}_TS23&lt;&lt;7)|(EN_${module.driver.ctsu.mode}_TS22&lt;&lt;6)|(EN_${module.driver.ctsu.mode}_TS21&lt;&lt;5)|(EN_${module.driver.ctsu.mode}_TS20&lt;&lt;4)|(EN_${module.driver.ctsu.mode}_TS19&lt;&lt;3)|(EN_${module.driver.ctsu.mode}_TS18&lt;&lt;2)|(EN_${module.driver.ctsu.mode}_TS17&lt;&lt;1)|(EN_${module.driver.ctsu.mode}_TS16&lt;&lt;0))
+        #define CTSUCHAC3_${module.driver.ctsu.mode}_ENABLE_TS  ((EN_${module.driver.ctsu.mode}_TS31&lt;&lt;7)|(EN_${module.driver.ctsu.mode}_TS30&lt;&lt;6)|(EN_${module.driver.ctsu.mode}_TS29&lt;&lt;5)|(EN_${module.driver.ctsu.mode}_TS28&lt;&lt;4)|(EN_${module.driver.ctsu.mode}_TS27&lt;&lt;3)|(EN_${module.driver.ctsu.mode}_TS26&lt;&lt;2)|(EN_${module.driver.ctsu.mode}_TS25&lt;&lt;1)|(EN_${module.driver.ctsu.mode}_TS24&lt;&lt;0))
+        #define CTSUCHAC4_${module.driver.ctsu.mode}_ENABLE_TS  ((EN_${module.driver.ctsu.mode}_TS35&lt;&lt;3)|(EN_${module.driver.ctsu.mode}_TS34&lt;&lt;2)|(EN_${module.driver.ctsu.mode}_TS33&lt;&lt;1)|(EN_${module.driver.ctsu.mode}_TS32&lt;&lt;0))
+        
+        /*****    CTSUCHAC - CTSU Channel Transmit/Receive Control Register    ************************************************/
+        #define CTSUCHTRC0_${module.driver.ctsu.mode}_TRANSMIT_TS   ((TR_${module.driver.ctsu.mode}_TS7&lt;&lt;7)|(TR_${module.driver.ctsu.mode}_TS6&lt;&lt;6)|(TR_${module.driver.ctsu.mode}_TS5&lt;&lt;5)|(TR_${module.driver.ctsu.mode}_TS4&lt;&lt;4)|(TR_${module.driver.ctsu.mode}_TS3&lt;&lt;3)|(TR_${module.driver.ctsu.mode}_TS2&lt;&lt;2)|(TR_${module.driver.ctsu.mode}_TS1&lt;&lt;1)|(TR_${module.driver.ctsu.mode}_TS0&lt;&lt;0))
+        #define CTSUCHTRC1_${module.driver.ctsu.mode}_TRANSMIT_TS   ((TR_${module.driver.ctsu.mode}_TS15&lt;&lt;7)|(TR_${module.driver.ctsu.mode}_TS14&lt;&lt;6)|(TR_${module.driver.ctsu.mode}_TS13&lt;&lt;5)|(TR_${module.driver.ctsu.mode}_TS12&lt;&lt;4)|(TR_${module.driver.ctsu.mode}_TS11&lt;&lt;3)|(TR_${module.driver.ctsu.mode}_TS10&lt;&lt;2)|(TR_${module.driver.ctsu.mode}_TS9&lt;&lt;1)|(TR_${module.driver.ctsu.mode}_TS8&lt;&lt;0))
+        #define CTSUCHTRC2_${module.driver.ctsu.mode}_TRANSMIT_TS   ((TR_${module.driver.ctsu.mode}_TS23&lt;&lt;7)|(TR_${module.driver.ctsu.mode}_TS22&lt;&lt;6)|(TR_${module.driver.ctsu.mode}_TS21&lt;&lt;5)|(TR_${module.driver.ctsu.mode}_TS20&lt;&lt;4)|(TR_${module.driver.ctsu.mode}_TS19&lt;&lt;3)|(TR_${module.driver.ctsu.mode}_TS18&lt;&lt;2)|(TR_${module.driver.ctsu.mode}_TS17&lt;&lt;1)|(TR_${module.driver.ctsu.mode}_TS16&lt;&lt;0))
+        #define CTSUCHTRC3_${module.driver.ctsu.mode}_TRANSMIT_TS   ((TR_${module.driver.ctsu.mode}_TS31&lt;&lt;7)|(TR_${module.driver.ctsu.mode}_TS30&lt;&lt;6)|(TR_${module.driver.ctsu.mode}_TS29&lt;&lt;5)|(TR_${module.driver.ctsu.mode}_TS28&lt;&lt;4)|(TR_${module.driver.ctsu.mode}_TS27&lt;&lt;3)|(TR_${module.driver.ctsu.mode}_TS26&lt;&lt;2)|(TR_${module.driver.ctsu.mode}_TS25&lt;&lt;1)|(TR_${module.driver.ctsu.mode}_TS24&lt;&lt;0))
+        #define CTSUCHTRC4_${module.driver.ctsu.mode}_TRANSMIT_TS   ((TR_${module.driver.ctsu.mode}_TS35&lt;&lt;3)|(TR_${module.driver.ctsu.mode}_TS34&lt;&lt;2)|(TR_${module.driver.ctsu.mode}_TS33&lt;&lt;1)|(TR_${module.driver.ctsu.mode}_TS32&lt;&lt;0))
+        
+        /*****    CTSUCR0 - CTSU control register 0    ************************************************************************/
+        #define ${module.driver.ctsu.mode}_CTSUTXVSEL               (${module.driver.ctsu.txvsel})
+        
+        /*****    CTSUCR1 - CTSU channel register 1    ************************************************************************/
+        #define ${module.driver.ctsu.mode}_PCLK                     (${module.driver.ctsu.pclkb_div})
+        
+        /*****    CTSUSDPRS - CTSU Sensor drive pulse spectrum diffusion set register    **************************************/
+        #define ${module.driver.ctsu.mode}_CTSUPRRATIO              (3)
+
+        #define ${module.driver.ctsu.mode}_CTSUPRMODE               (2)
+
+        #define ${module.driver.ctsu.mode}_CTSUSOFF                 (${module.driver.ctsu.ctsusoff})
+        
+        /*****    CTSU Channel Verification    *******************************************************************************/
+        #define ${module.driver.ctsu.mode}_ENABLE_NUM               (EN_${module.driver.ctsu.mode}_TS0 + EN_${module.driver.ctsu.mode}_TS1 + EN_${module.driver.ctsu.mode}_TS2 + EN_${module.driver.ctsu.mode}_TS3 + \
+                                                                     EN_${module.driver.ctsu.mode}_TS4 + EN_${module.driver.ctsu.mode}_TS5 + EN_${module.driver.ctsu.mode}_TS6 + EN_${module.driver.ctsu.mode}_TS7 + \
+                                                                     EN_${module.driver.ctsu.mode}_TS8 + EN_${module.driver.ctsu.mode}_TS9 + EN_${module.driver.ctsu.mode}_TS10 + EN_${module.driver.ctsu.mode}_TS11 + \
+                                                                     EN_${module.driver.ctsu.mode}_TS12 + EN_${module.driver.ctsu.mode}_TS13 + EN_${module.driver.ctsu.mode}_TS14 + EN_${module.driver.ctsu.mode}_TS15 + \
+                                                                     EN_${module.driver.ctsu.mode}_TS16 + EN_${module.driver.ctsu.mode}_TS17 + EN_${module.driver.ctsu.mode}_TS18 + EN_${module.driver.ctsu.mode}_TS19 + \
+                                                                     EN_${module.driver.ctsu.mode}_TS20 + EN_${module.driver.ctsu.mode}_TS21 + EN_${module.driver.ctsu.mode}_TS22 + EN_${module.driver.ctsu.mode}_TS23 + \
+                                                                     EN_${module.driver.ctsu.mode}_TS24 + EN_${module.driver.ctsu.mode}_TS25 + EN_${module.driver.ctsu.mode}_TS26 + EN_${module.driver.ctsu.mode}_TS27 + \
+                                                                     EN_${module.driver.ctsu.mode}_TS28 + EN_${module.driver.ctsu.mode}_TS29 + EN_${module.driver.ctsu.mode}_TS30 + EN_${module.driver.ctsu.mode}_TS31 + \
+                                                                     EN_${module.driver.ctsu.mode}_TS32 + EN_${module.driver.ctsu.mode}_TS33 + EN_${module.driver.ctsu.mode}_TS34 + EN_${module.driver.ctsu.mode}_TS35)
+                                                                     
+        #define ${module.driver.ctsu.mode}_TRANSMIT_NUM             (TR_${module.driver.ctsu.mode}_TS0 + TR_${module.driver.ctsu.mode}_TS1 + TR_${module.driver.ctsu.mode}_TS2 + TR_${module.driver.ctsu.mode}_TS3 + \
+                                                                     TR_${module.driver.ctsu.mode}_TS4 + TR_${module.driver.ctsu.mode}_TS5 + TR_${module.driver.ctsu.mode}_TS6 + TR_${module.driver.ctsu.mode}_TS7 + \
+                                                                     TR_${module.driver.ctsu.mode}_TS8 + TR_${module.driver.ctsu.mode}_TS9 + TR_${module.driver.ctsu.mode}_TS10 + TR_${module.driver.ctsu.mode}_TS11 + \
+                                                                     TR_${module.driver.ctsu.mode}_TS12 + TR_${module.driver.ctsu.mode}_TS13 + TR_${module.driver.ctsu.mode}_TS14 + TR_${module.driver.ctsu.mode}_TS15 + \
+                                                                     TR_${module.driver.ctsu.mode}_TS16 + TR_${module.driver.ctsu.mode}_TS17 + TR_${module.driver.ctsu.mode}_TS18 + TR_${module.driver.ctsu.mode}_TS19 + \
+                                                                     TR_${module.driver.ctsu.mode}_TS20 + TR_${module.driver.ctsu.mode}_TS21 + TR_${module.driver.ctsu.mode}_TS22 + TR_${module.driver.ctsu.mode}_TS23 + \
+                                                                     TR_${module.driver.ctsu.mode}_TS24 + TR_${module.driver.ctsu.mode}_TS25 + TR_${module.driver.ctsu.mode}_TS26 + TR_${module.driver.ctsu.mode}_TS27 + \
+                                                                     TR_${module.driver.ctsu.mode}_TS28 + TR_${module.driver.ctsu.mode}_TS29 + TR_${module.driver.ctsu.mode}_TS30 + TR_${module.driver.ctsu.mode}_TS31 + \
+                                                                     TR_${module.driver.ctsu.mode}_TS32 + TR_${module.driver.ctsu.mode}_TS33 + TR_${module.driver.ctsu.mode}_TS34 + TR_${module.driver.ctsu.mode}_TS35)
+                                                                     
+        #define ${module.driver.ctsu.mode}_RECEIVE_NUM              ((${module.driver.ctsu.mode}_ENABLE_NUM) - ${module.driver.ctsu.mode}_TRANSMIT_NUM)
+        
+        #if !defined(_0_CTSUATUNE0_NORMAL)
+        #define _0_CTSUATUNE0_NORMAL             (0)        /* Normal operating mode                                          */
+        #endif
+        
+        #if !defined(_1_CTSUATUNE0_LOW)
+        #define _1_CTSUATUNE0_LOW                (1)        /* Low-voltage operating mode                                     */
+        #endif
+        
+        #if !defined(SELF_CTSUATUNE0)
+        #define SELF_CTSUATUNE0                  (_0_CTSUATUNE0_NORMAL)
+        #endif
+        
+        #if !defined(MUTUAL0_CTSUATUNE0)
+        #define MUTUAL0_CTSUATUNE0               (_0_CTSUATUNE0_NORMAL)
+        #endif
+        
+        #if !defined(MUTUAL1_CTSUATUNE0)
+        #define MUTUAL1_CTSUATUNE0               (_0_CTSUATUNE0_NORMAL)
+        #endif
+        
+        #if !defined(MUTUAL2_CTSUATUNE0)
+        #define MUTUAL2_CTSUATUNE0               (_0_CTSUATUNE0_NORMAL)
+        #endif
+        
+        #if !defined(MUTUAL3_CTSUATUNE0)
+        #define MUTUAL3_CTSUATUNE0               (_0_CTSUATUNE0_NORMAL)
+        #endif
+        
+        #if !defined(MUTUAL4_CTSUATUNE0)
+        #define MUTUAL4_CTSUATUNE0               (_0_CTSUATUNE0_NORMAL)
+        #endif
+        
+        #if !defined(MUTUAL5_CTSUATUNE0)
+        #define MUTUAL5_CTSUATUNE0               (_0_CTSUATUNE0_NORMAL)
+        #endif
+        
+        #if !defined(MUTUAL6_CTSUATUNE0)
+        #define MUTUAL6_CTSUATUNE0               (_0_CTSUATUNE0_NORMAL)
+        #endif
+        
+        #if !defined(MUTUAL7_CTSUATUNE0)
+        #define MUTUAL7_CTSUATUNE0               (_0_CTSUATUNE0_NORMAL)
+        #endif
+        
+        #if !defined(_0_CTSUATUNE1_NORMAL)
+        #define _0_CTSUATUNE1_NORMAL             (0)        /* Normal output                                                  */
+        #endif
+        
+        #if !defined(_1_CTSUATUNE1_HIGH)
+        #define _1_CTSUATUNE1_HIGH               (1)        /* High-current output                                            */
+        #endif
+        
+        #if !defined(SELF_CTSUATUNE1)
+        #define SELF_CTSUATUNE1                  (_0_CTSUATUNE1_NORMAL)
+        #endif
+        
+        #if !defined(MUTUAL0_CTSUATUNE1)
+        #define MUTUAL0_CTSUATUNE1               (_1_CTSUATUNE1_HIGH)
+        #endif
+        
+        #if !defined(MUTUAL1_CTSUATUNE1)
+        #define MUTUAL1_CTSUATUNE1               (_1_CTSUATUNE1_HIGH)
+        #endif
+        
+        #if !defined(MUTUAL2_CTSUATUNE1)
+        #define MUTUAL2_CTSUATUNE1               (_1_CTSUATUNE1_HIGH)
+        #endif
+        
+        #if !defined(MUTUAL3_CTSUATUNE1)
+        #define MUTUAL3_CTSUATUNE1               (_1_CTSUATUNE1_HIGH)
+        #endif
+        
+        #if !defined(MUTUAL4_CTSUATUNE1)
+        #define MUTUAL4_CTSUATUNE1               (_1_CTSUATUNE1_HIGH)
+        #endif
+        
+        #if !defined(MUTUAL5_CTSUATUNE1)
+        #define MUTUAL5_CTSUATUNE1               (_1_CTSUATUNE1_HIGH)
+        #endif
+        
+        #if !defined(MUTUAL6_CTSUATUNE1)
+        #define MUTUAL6_CTSUATUNE1               (_1_CTSUATUNE1_HIGH)
+        #endif
+        
+        #if !defined(MUTUAL7_CTSUATUNE1)
+        #define MUTUAL7_CTSUATUNE1               (_1_CTSUATUNE1_HIGH)
+        #endif
+        
+        /*****    Address 000A 0903h CTSU Sensor wait time register    ********************************************************/
+        #define _00010000_CTSUSST_RECOMMEND      (16)       /* The value of these bits should be fixed to 00010000b           */
+
+        
+        /*****    Address 000A 0910h CTSU Channel send and receive control register 0 *****************************************/
+        #if !defined(_00_CTSUSSMOD)
+        #define _00_CTSUSSMOD                    (0)        /* These bits should be set to 00b.                               */
+        #endif
+        
+        #if !defined(_11_CTSUSSCNT)
+        #define _11_CTSUSSCNT                    (3)        /* These bits should be set to 11b.                               */
+        #endif
+        
+        #if (CTSU_CFG_MODE==CTSU_CFG_MODE_SELF)
+        #define SENSOR_COUNT    (${module.driver.ctsu.mode}_ENABLE_NUM)
+        #define MULTIPLIER      (1)
+        
+        #if (${module.driver.ctsu.mode}_TRANSMIT_NUM > 0)
+        #error "Cannot Use TS Pins as Transmission. Check CTSUCHTRCn settings and TS Pin Settings. Atleast one pin in CTSU V2 HAL Driver Pin Mode should be transmit."
+        #endif
+        
+        #else
+        #define SENSOR_COUNT    (${module.driver.ctsu.mode}_RECEIVE_NUM * ${module.driver.ctsu.mode}_TRANSMIT_NUM)
+        #define MULTIPLIER      (2)
+        #endif
+        
+        #if (SENSOR_COUNT==0)
+        #error "Sensor Count cannot be zero. Check CTSU V2 HAL Driver Pin Modes."
+        #endif
+        
+        #if defined(${module.driver.ctsu.mode}_NUM)
+        #undef ${module.driver.ctsu.mode}_NUM
+        #endif
+        
+        #define ${module.driver.ctsu.mode}_NUM  (SENSOR_COUNT)
+        #define ${module.driver.ctsu.mode}_KEY_NUM  (SENSOR_COUNT)
+        
+        #define ${module.driver.ctsu.mode}_WR_SIZE  (SENSOR_COUNT*3)
+        #define ${module.driver.ctsu.mode}_RD_SIZE  (SENSOR_COUNT*MULTIPLIER*2)
+        
+        #if (CTSU_CFG_MODE==CTSU_CFG_MODE_SELF)
+        #define CTSUMD_SFR    (1)
+        #else
+        #define CTSUMD_SFR    (3)
+        #endif
+        #if !defined(SF_CTSU_TUNING_CFG_H_)
+        /** Buffer for CTSU sensor measurement output (provided by Workbench6) */
+        extern uint16_t ${module.driver.ctsu.p_sensor_data}[${module.driver.ctsu.mode}_RD_SIZE];
+
+        /** CTSU Settings for each sensor (provided by Workbench6) */
+        extern ctsu_sensor_setting_t ${module.driver.ctsu.p_sensor_settings}[${module.driver.ctsu.mode}_NUM];
+        #else
+        /** Buffer for CTSU sensor measurement output (provided by Workbench6) */
+        extern uint16_t ${module.driver.ctsu.p_sensor_data}[];
+
+        /** CTSU Settings for each sensor (provided by Workbench6) */
+        extern ctsu_sensor_setting_t ${module.driver.ctsu.p_sensor_settings}[];
+        #endif
+        /** CTSU configuration */
+        extern const ctsu_cfg_t ${module.driver.ctsu.name}_cfg;
+        
+        /** CTSU SFRs common to all sensors (in a configuration) */
+        extern ctsu_const_sfrs_t ${module.driver.ctsu.p_ctsu_settings};
+
+#ifndef ${module.driver.ctsu.p_callback}
+        void ${module.driver.ctsu.p_callback}(ctsu_callback_arg_t const * const p_arg);
+#endif
+		#endif /* (DATA_SOURCE == DATA_SOURCE_SSPCONFIG) */
+		
+        extern ctsu_instance_t const ${module.driver.ctsu.name};
+
+        </header>
+        <includes>
+        #include &quot;r_ctsu.h&quot;
+        /* Include the headers for the CTSU API */
+        #include &quot;r_ctsu_api.h&quot;
+        </includes>
+        <declarations>
+
+        #if !defined(SYNERGY_NOT_DEFINED_INDEX)
+        #define SYNERGY_NOT_DEFINED_INDEX (0xFFFFFFFF)
+        #endif
+
+        #if (DATA_SOURCE == DATA_SOURCE_SSPCONFIG)
+        /* Uninitialized Buffers and Settings */
+        uint16_t ${module.driver.ctsu.p_sensor_data}[${module.driver.ctsu.mode}_RD_SIZE];
+        ctsu_sensor_setting_t ${module.driver.ctsu.p_sensor_settings}[${module.driver.ctsu.mode}_NUM] = 
+        {
+        #if defined(${module.driver.ctsu.name}_INDEX_0)
+        [0] = ${module.driver.ctsu.name}_INDEX_0_CTSU_SFRS,       
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_1)
+        [1] = ${module.driver.ctsu.name}_INDEX_1_CTSU_SFRS,       
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_2)
+        [2] = ${module.driver.ctsu.name}_INDEX_2_CTSU_SFRS,       
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_3)
+        [3] = ${module.driver.ctsu.name}_INDEX_3_CTSU_SFRS,       
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_4)
+        [4] = ${module.driver.ctsu.name}_INDEX_4_CTSU_SFRS,       
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_5)
+        [5] = ${module.driver.ctsu.name}_INDEX_5_CTSU_SFRS,       
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_6)
+        [6] = ${module.driver.ctsu.name}_INDEX_6_CTSU_SFRS,       
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_7)
+        [7] = ${module.driver.ctsu.name}_INDEX_7_CTSU_SFRS,       
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_8)
+        [8] = ${module.driver.ctsu.name}_INDEX_8_CTSU_SFRS,       
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_9)
+        [9] = ${module.driver.ctsu.name}_INDEX_9_CTSU_SFRS,       
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_10)
+        [10] = ${module.driver.ctsu.name}_INDEX_10_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_11)
+        [11] = ${module.driver.ctsu.name}_INDEX_11_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_12)
+        [12] = ${module.driver.ctsu.name}_INDEX_12_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_13)
+        [13] = ${module.driver.ctsu.name}_INDEX_13_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_14)
+        [14] = ${module.driver.ctsu.name}_INDEX_14_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_15)
+        [15] = ${module.driver.ctsu.name}_INDEX_15_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_16)
+        [16] = ${module.driver.ctsu.name}_INDEX_16_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_17)
+        [17] = ${module.driver.ctsu.name}_INDEX_17_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_18)
+        [18] = ${module.driver.ctsu.name}_INDEX_18_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_19)
+        [19] = ${module.driver.ctsu.name}_INDEX_19_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_20)
+        [20] = ${module.driver.ctsu.name}_INDEX_20_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_21)
+        [21] = ${module.driver.ctsu.name}_INDEX_21_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_22)
+        [22] = ${module.driver.ctsu.name}_INDEX_22_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_23)
+        [23] = ${module.driver.ctsu.name}_INDEX_23_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_24)
+        [24] = ${module.driver.ctsu.name}_INDEX_24_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_25)
+        [25] = ${module.driver.ctsu.name}_INDEX_25_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_26)
+        [26] = ${module.driver.ctsu.name}_INDEX_26_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_27)
+        [27] = ${module.driver.ctsu.name}_INDEX_27_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_28)
+        [28] = ${module.driver.ctsu.name}_INDEX_28_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_29)
+        [29] = ${module.driver.ctsu.name}_INDEX_29_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_30)
+        [30] = ${module.driver.ctsu.name}_INDEX_30_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_31)
+        [31] = ${module.driver.ctsu.name}_INDEX_31_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_32)
+        [32] = ${module.driver.ctsu.name}_INDEX_32_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_33)
+        [33] = ${module.driver.ctsu.name}_INDEX_33_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_34)
+        [34] = ${module.driver.ctsu.name}_INDEX_34_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_35)
+        [35] = ${module.driver.ctsu.name}_INDEX_35_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_36)
+        [36] = ${module.driver.ctsu.name}_INDEX_36_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_37)
+        [37] = ${module.driver.ctsu.name}_INDEX_37_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_38)
+        [38] = ${module.driver.ctsu.name}_INDEX_38_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_39)
+        [39] = ${module.driver.ctsu.name}_INDEX_39_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_40)
+        [40] = ${module.driver.ctsu.name}_INDEX_40_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_41)
+        [41] = ${module.driver.ctsu.name}_INDEX_41_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_42)
+        [42] = ${module.driver.ctsu.name}_INDEX_42_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_43)
+        [43] = ${module.driver.ctsu.name}_INDEX_43_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_44)
+        [44] = ${module.driver.ctsu.name}_INDEX_44_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_45)
+        [45] = ${module.driver.ctsu.name}_INDEX_45_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_46)
+        [46] = ${module.driver.ctsu.name}_INDEX_46_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_47)
+        [47] = ${module.driver.ctsu.name}_INDEX_47_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_48)
+        [48] = ${module.driver.ctsu.name}_INDEX_48_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_49)
+        [49] = ${module.driver.ctsu.name}_INDEX_49_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_50)
+        [50] = ${module.driver.ctsu.name}_INDEX_50_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_51)
+        [51] = ${module.driver.ctsu.name}_INDEX_51_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_52)
+        [52] = ${module.driver.ctsu.name}_INDEX_52_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_53)
+        [53] = ${module.driver.ctsu.name}_INDEX_53_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_54)
+        [54] = ${module.driver.ctsu.name}_INDEX_54_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_55)
+        [55] = ${module.driver.ctsu.name}_INDEX_55_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_56)
+        [56] = ${module.driver.ctsu.name}_INDEX_56_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_57)
+        [57] = ${module.driver.ctsu.name}_INDEX_57_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_58)
+        [58] = ${module.driver.ctsu.name}_INDEX_58_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_59)
+        [59] = ${module.driver.ctsu.name}_INDEX_59_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_60)
+        [60] = ${module.driver.ctsu.name}_INDEX_60_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_61)
+        [61] = ${module.driver.ctsu.name}_INDEX_61_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_62)
+        [62] = ${module.driver.ctsu.name}_INDEX_62_CTSU_SFRS,      
+        #endif
+        #if defined(${module.driver.ctsu.name}_INDEX_63)
+        [63] = ${module.driver.ctsu.name}_INDEX_63_CTSU_SFRS,      
+        #endif
+        };
+        
+        #undef SYNERGY_NOT_DEFINED_INDEX
+        
+        ctsu_const_sfrs_t ${module.driver.ctsu.p_ctsu_settings} = 
+        {
+        #if (CTSU_CFG_MODE==CTSU_CFG_MODE_SELF)
+                .ctsucr0.byte     = 0,
+        #else
+                .ctsucr0.byte     = ${module.driver.ctsu.mode}_CTSUTXVSEL&lt;&lt;7,
+        #endif
+                .ctsucr1.byte     = ((CTSUMD_SFR&lt;&lt;6)|(${module.driver.ctsu.mode}_PCLK&lt;&lt;4)|(${module.driver.ctsu.mode}_CTSUATUNE1&lt;&lt;3)|(${module.driver.ctsu.mode}_CTSUATUNE0&lt;&lt;2)|(1&lt;&lt;1)|(1&lt;&lt;0)),
+                .ctsusdprs.byte   = ((${module.driver.ctsu.mode}_CTSUSOFF&lt;&lt;6)|(${module.driver.ctsu.mode}_CTSUPRMODE&lt;&lt;4)|(${module.driver.ctsu.mode}_CTSUPRRATIO&lt;&lt;0)),
+                .ctsusst.byte     = (_00010000_CTSUSST_RECOMMEND),
+                .ctsuchac0.byte   = CTSUCHAC0_${module.driver.ctsu.mode}_ENABLE_TS,
+                .ctsuchac1.byte   = CTSUCHAC1_${module.driver.ctsu.mode}_ENABLE_TS,
+                .ctsuchac2.byte   = CTSUCHAC2_${module.driver.ctsu.mode}_ENABLE_TS,
+                .ctsuchac3.byte   = CTSUCHAC3_${module.driver.ctsu.mode}_ENABLE_TS,
+                .ctsuchac4.byte   = CTSUCHAC4_${module.driver.ctsu.mode}_ENABLE_TS,
+        #if (CTSU_CFG_MODE==CTSU_CFG_MODE_MUTUAL)
+                .ctsuchtrc0.byte  = CTSUCHTRC0_${module.driver.ctsu.mode}_TRANSMIT_TS,
+                .ctsuchtrc1.byte  = CTSUCHTRC1_${module.driver.ctsu.mode}_TRANSMIT_TS,
+                .ctsuchtrc2.byte  = CTSUCHTRC2_${module.driver.ctsu.mode}_TRANSMIT_TS,
+                .ctsuchtrc3.byte  = CTSUCHTRC3_${module.driver.ctsu.mode}_TRANSMIT_TS,
+                .ctsuchtrc4.byte  = CTSUCHTRC4_${module.driver.ctsu.mode}_TRANSMIT_TS,
+        #endif
+                .ctsudclkc.byte   = ((_11_CTSUSSCNT&lt;&lt;4)|(_00_CTSUSSMOD&lt;&lt;0)),
+        };
+        
+        ctsu_cfg_t const ${module.driver.ctsu.name}_cfg =
+        {
+            .p_ctsu_settings    =   &amp;${module.driver.ctsu.p_ctsu_settings},
+            .p_sensor_settings  =   &amp;${module.driver.ctsu.p_sensor_settings}[0],
+            .p_sensor_data    =     &amp;${module.driver.ctsu.p_sensor_data}[0],
+            .pclkb_hz    =  ${module.driver.ctsu.pclkb_hz},
+            .p_callback =   ${module.driver.ctsu.p_callback},
+        };
+        
+        ctsu_instance_ctrl_t ${module.driver.ctsu.name}_ctrl;
+        
+        ctsu_instance_t const ${module.driver.ctsu.name} = 
+        {
+            .p_ctrl = &amp;${module.driver.ctsu.name}_ctrl,
+            .p_cfg = &amp;${module.driver.ctsu.name}_cfg,
+            .p_api = &amp;g_ctsu_on_ctsu,
+        };
+		
+		#endif /* (DATA_SOURCE == DATA_SOURCE_SSPCONFIG) */
+
+        </declarations>
+        <functions>
+        </functions>
+        <init>
+
+        </init>
+    </module>
+    <!-- CTSU Driver XML END here-->
+
+    <!-- CTSU Sensor XML START here-->
+    <config id="config.driver.ctsu_sensor" path="ssp_cfg/driver/r_ctsu_sensor_config.h" version="0">
+    <content>
+    </content>
+    </config>
+    <module config="config.driver.ctsu_sensor" display="Driver|Input|${module.driver.ctsu_sensor.name} Capacitive Touch Sensor on r_ctsu_v2" id="module.driver.ctsu_sensor_on_ctsu" common="100" version="1">
+        <constraint display="Unique Symbolic Name required for each instance">
+            "${interface.driver.ctsu_sensor.${module.driver.ctsu_sensor.name}}" === "1"
+        </constraint>
+
+        <requires id="module.driver.ctsu_sensor.requires.ctsu" interface="interface.driver.ctsu_v2" display="Add CTSU HAL Driver">
+			<override property="module.driver.ctsu.data" value="module.driver.data.generated"/>
+		</requires>
+        
+        <provides interface="interface.driver.ctsu_sensor" />
+        <provides interface="interface.driver.ctsu_sensor.${module.driver.ctsu_sensor.name}" />
+        
+        <property default="CTSU_SENSOR_${_instance}" display="Symbolic Name" id="module.driver.ctsu_sensor.name">
+            <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.ctsu_sensor.name}")</constraint>
+        </property>
+        <property default="${_instance}" display="Sensor Index" id="module.driver.ctsu_sensor.index">
+            <constraint display="Value must be a non-negative integer">testInteger("${module.driver.ctsu_sensor.index}")  &amp;&amp; ("${module.driver.ctsu_sensor.index}" &gt;= 0) &amp;&amp; ("${module.driver.ctsu_sensor.index}" &lt; 64)</constraint>
+        </property>
+        
+        <!-- <property default="module.driver.ctsu_sensor.freq.500kHz" display="Operation Frequency" id="module.driver.ctsu_sensor.freq">
+            <option display="4MHz" id="module.driver.ctsu_sensor.freq.4MHz" value="4000000"/>
+            <option display="2MHz" id="module.driver.ctsu_sensor.freq.2MHz" value="2000000"/>
+            <option display="1MHz" id="module.driver.ctsu_sensor.freq.1MHz" value="1000000"/>
+            <option display="500kHz" id="module.driver.ctsu_sensor.freq.500kHz" value="500000"/>
+        </property> -->
+        <property default="module.driver.ctsu_sensor.rx.none" display="Receive Channel (required)" id="module.driver.ctsu_sensor.rx">
+            <option display="None" id="module.driver.ctsu_sensor.rx.none" value="37"/>
+            <option display="TS-00" id="module.driver.ctsu_sensor.rx.00" value="0"/>
+            <option display="TS-01" id="module.driver.ctsu_sensor.rx.01" value="1"/>
+            <option display="TS-02" id="module.driver.ctsu_sensor.rx.02" value="2"/>
+            <option display="TS-03" id="module.driver.ctsu_sensor.rx.03" value="3"/>
+            <option display="TS-04" id="module.driver.ctsu_sensor.rx.04" value="4"/>
+            <option display="TS-05" id="module.driver.ctsu_sensor.rx.05" value="5"/>
+            <option display="TS-06" id="module.driver.ctsu_sensor.rx.06" value="6"/>
+            <option display="TS-07" id="module.driver.ctsu_sensor.rx.07" value="7"/>
+            <option display="TS-08" id="module.driver.ctsu_sensor.rx.08" value="8"/>
+            <option display="TS-09" id="module.driver.ctsu_sensor.rx.09" value="9"/>
+            <option display="TS-10" id="module.driver.ctsu_sensor.rx.10" value="10"/>
+            <option display="TS-11" id="module.driver.ctsu_sensor.rx.11" value="11"/>
+            <option display="TS-12" id="module.driver.ctsu_sensor.rx.12" value="12"/>
+            <option display="TS-13" id="module.driver.ctsu_sensor.rx.13" value="13"/>
+            <option display="TS-14" id="module.driver.ctsu_sensor.rx.14" value="14"/>
+            <option display="TS-15" id="module.driver.ctsu_sensor.rx.15" value="15"/>
+            <option display="TS-16" id="module.driver.ctsu_sensor.rx.16" value="16"/>
+            <option display="TS-17" id="module.driver.ctsu_sensor.rx.17" value="17"/>
+            <option display="TS-18" id="module.driver.ctsu_sensor.rx.18" value="18"/>
+            <option display="TS-19" id="module.driver.ctsu_sensor.rx.19" value="19"/>
+            <option display="TS-20" id="module.driver.ctsu_sensor.rx.20" value="20"/>
+            <option display="TS-21" id="module.driver.ctsu_sensor.rx.21" value="21"/>
+            <option display="TS-22" id="module.driver.ctsu_sensor.rx.22" value="22"/>
+            <option display="TS-23" id="module.driver.ctsu_sensor.rx.23" value="23"/>
+            <option display="TS-24" id="module.driver.ctsu_sensor.rx.24" value="24"/>
+            <option display="TS-25" id="module.driver.ctsu_sensor.rx.25" value="25"/>
+            <option display="TS-26" id="module.driver.ctsu_sensor.rx.26" value="26"/>
+            <option display="TS-27" id="module.driver.ctsu_sensor.rx.27" value="27"/>
+            <option display="TS-28" id="module.driver.ctsu_sensor.rx.28" value="28"/>
+            <option display="TS-29" id="module.driver.ctsu_sensor.rx.29" value="29"/>
+            <option display="TS-30" id="module.driver.ctsu_sensor.rx.30" value="30"/>
+            <option display="TS-31" id="module.driver.ctsu_sensor.rx.31" value="31"/>
+            <option display="TS-32" id="module.driver.ctsu_sensor.rx.32" value="32"/>
+            <option display="TS-33" id="module.driver.ctsu_sensor.rx.33" value="33"/>
+            <option display="TS-34" id="module.driver.ctsu_sensor.rx.34" value="34"/>
+            <option display="TS-35" id="module.driver.ctsu_sensor.rx.35" value="35"/>
+            <option display="TS-36" id="module.driver.ctsu_sensor.rx.36" value="36"/>
+        </property>
+        <property default="module.driver.ctsu_sensor.tx.none" display="Transmit Channel" id="module.driver.ctsu_sensor.tx">
+            <option display="None" id="module.driver.ctsu_sensor.rx.none" value="37"/>
+            <option display="TS-00" id="module.driver.ctsu_sensor.tx.00" value="0"/>
+            <option display="TS-01" id="module.driver.ctsu_sensor.tx.01" value="1"/>
+            <option display="TS-02" id="module.driver.ctsu_sensor.tx.02" value="2"/>
+            <option display="TS-03" id="module.driver.ctsu_sensor.tx.03" value="3"/>
+            <option display="TS-04" id="module.driver.ctsu_sensor.tx.04" value="4"/>
+            <option display="TS-05" id="module.driver.ctsu_sensor.tx.05" value="5"/>
+            <option display="TS-06" id="module.driver.ctsu_sensor.tx.06" value="6"/>
+            <option display="TS-07" id="module.driver.ctsu_sensor.tx.07" value="7"/>
+            <option display="TS-08" id="module.driver.ctsu_sensor.tx.08" value="8"/>
+            <option display="TS-09" id="module.driver.ctsu_sensor.tx.09" value="9"/>
+            <option display="TS-10" id="module.driver.ctsu_sensor.tx.10" value="10"/>
+            <option display="TS-11" id="module.driver.ctsu_sensor.tx.11" value="11"/>
+            <option display="TS-12" id="module.driver.ctsu_sensor.tx.12" value="12"/>
+            <option display="TS-13" id="module.driver.ctsu_sensor.tx.13" value="13"/>
+            <option display="TS-14" id="module.driver.ctsu_sensor.tx.14" value="14"/>
+            <option display="TS-15" id="module.driver.ctsu_sensor.tx.15" value="15"/>
+            <option display="TS-16" id="module.driver.ctsu_sensor.tx.16" value="16"/>
+            <option display="TS-17" id="module.driver.ctsu_sensor.tx.17" value="17"/>
+            <option display="TS-18" id="module.driver.ctsu_sensor.tx.18" value="18"/>
+            <option display="TS-19" id="module.driver.ctsu_sensor.tx.19" value="19"/>
+            <option display="TS-20" id="module.driver.ctsu_sensor.tx.20" value="20"/>
+            <option display="TS-21" id="module.driver.ctsu_sensor.tx.21" value="21"/>
+            <option display="TS-22" id="module.driver.ctsu_sensor.tx.22" value="22"/>
+            <option display="TS-23" id="module.driver.ctsu_sensor.tx.23" value="23"/>
+            <option display="TS-24" id="module.driver.ctsu_sensor.tx.24" value="24"/>
+            <option display="TS-25" id="module.driver.ctsu_sensor.tx.25" value="25"/>
+            <option display="TS-26" id="module.driver.ctsu_sensor.tx.26" value="26"/>
+            <option display="TS-27" id="module.driver.ctsu_sensor.tx.27" value="27"/>
+            <option display="TS-28" id="module.driver.ctsu_sensor.tx.28" value="28"/>
+            <option display="TS-29" id="module.driver.ctsu_sensor.tx.29" value="29"/>
+            <option display="TS-30" id="module.driver.ctsu_sensor.tx.30" value="30"/>
+            <option display="TS-31" id="module.driver.ctsu_sensor.tx.31" value="31"/>
+            <option display="TS-32" id="module.driver.ctsu_sensor.tx.32" value="32"/>
+            <option display="TS-33" id="module.driver.ctsu_sensor.tx.33" value="33"/>
+            <option display="TS-34" id="module.driver.ctsu_sensor.tx.34" value="34"/>
+            <option display="TS-35" id="module.driver.ctsu_sensor.tx.35" value="35"/>
+            <option display="TS-36" id="module.driver.ctsu_sensor.tx.36" value="36"/>
+        </property>
+        <property default="0" display="Spectrum Diffusion Setting (CTSUSSDIV)" id="module.driver.ctsu_sensor.ctsussdiv">
+            <constraint display="Value must be in range (0-16)">testInteger("${module.driver.ctsu_sensor.ctsussdiv}")  &amp;&amp; ("${module.driver.ctsu_sensor.ctsussdiv}" &gt;= 0) &amp;&amp; ("${module.driver.ctsu_sensor.ctsussdiv}" &lt; 16)</constraint>
+        </property>
+        <property default="0" display="Measurement Count (CTSUSNUM)" id="module.driver.ctsu_sensor.ctsusnum">
+            <constraint display="Value must be in range (0-64)">testInteger("${module.driver.ctsu_sensor.ctsusnum}")  &amp;&amp; ("${module.driver.ctsu_sensor.ctsusnum}" &gt;= 0) &amp;&amp; ("${module.driver.ctsu_sensor.ctsusnum}" &lt; 64)</constraint>
+        </property>
+        <property default="0" display="ICO Gain Adjust (CTSUICOG)" id="module.driver.ctsu_sensor.ctsuicog">
+            <constraint display="Value must be in range (0-3)">testInteger("${module.driver.ctsu_sensor.ctsuicog}")  &amp;&amp; ("${module.driver.ctsu_sensor.ctsuicog}" &gt;= 0) &amp;&amp; ("${module.driver.ctsu_sensor.ctsuicog}" &lt; 4)</constraint>
+        </property>
+        <property default="0" display="Base Clock Setting (CTSUSDPA)" id="module.driver.ctsu_sensor.ctsusdpa">
+            <constraint display="Value must be in range (0-31)">testInteger("${module.driver.ctsu_sensor.ctsusdpa}")  &amp;&amp; ("${module.driver.ctsu_sensor.ctsusdpa}" &gt;= 0) &amp;&amp; ("${module.driver.ctsu_sensor.ctsusdpa}" &lt; 32)</constraint>
+        </property>
+        <property default="0" display="Reference ICO Adjust (CTSURICOA)" id="module.driver.ctsu_sensor.ctsuricoa">
+            <constraint display="Value must be in range (0-255)">testInteger("${module.driver.ctsu_sensor.ctsuricoa}")  &amp;&amp; ("${module.driver.ctsu_sensor.ctsuricoa}" &gt;= 0) &amp;&amp; ("${module.driver.ctsu_sensor.ctsuricoa}" &lt; 256)</constraint>
+        </property>
+        <property default="1" display="Sensor ICO Offset (CTSUSO)" id="module.driver.ctsu_sensor.ctsuso">
+            <constraint display="Value must be in range (0-1023)">testInteger("${module.driver.ctsu_sensor.ctsuso}")  &amp;&amp; ("${module.driver.ctsu_sensor.ctsuso}" &gt;= 0) &amp;&amp; ("${module.driver.ctsu_sensor.ctsuso}" &lt; 1024)</constraint>
+        </property>
+        
+        <property default="module.driver.ctsu_sensor.sep1.none" display="TOUCH DETECTION PARAMETERS" id="module.driver.ctsu_sensor.sep1">
+            <option display=" " id="module.driver.ctsu_sensor.sep1.none" value="0"/>
+        </property>
+        
+        <property default="1000" display="Touch Threshold" id="module.driver.ctsu_sensor.threshold">
+            <constraint display="Value must be in range (0-55536)">testInteger("${module.driver.ctsu_sensor.threshold}")  &amp;&amp; ("${module.driver.ctsu_sensor.threshold}" &gt;= 0) &amp;&amp; ("${module.driver.ctsu_sensor.threshold}" &lt; 55536)</constraint>
+        </property>
+        <property default="100" display="Touch Hysteresis" id="module.driver.ctsu_sensor.hysteresis">
+            <constraint display="Value must be in range (0-1000)">testInteger("${module.driver.ctsu_sensor.hysteresis}")  &amp;&amp; ("${module.driver.ctsu_sensor.hysteresis}" &gt;= 0) &amp;&amp; ("${module.driver.ctsu_sensor.hysteresis}" &lt; "${module.driver.ctsu_sensor.threshold}")</constraint>
+        </property>
+        <property default="3" display="Delay-To-Touch" id="module.driver.ctsu_sensor.dtouch">
+            <constraint display="Value must be in range (0-255)">testInteger("${module.driver.ctsu_sensor.dtouch}")  &amp;&amp; ("${module.driver.ctsu_sensor.dtouch}" &gt;= 0) &amp;&amp; ("${module.driver.ctsu_sensor.dtouch}" &lt; 256)</constraint>
+        </property>
+        <property default="3" display="Delay-To-Release" id="module.driver.ctsu_sensor.drelease">
+            <constraint display="Value must be in range (0-255)">testInteger("${module.driver.ctsu_sensor.drelease}")  &amp;&amp; ("${module.driver.ctsu_sensor.drelease}" &gt;= 0) &amp;&amp; ("${module.driver.ctsu_sensor.drelease}" &lt; 256)</constraint>
+        </property>
+        
+        <property default="module.driver.ctsu_sensor.sep2.none" display="DRIFT COMPENSATION PARAMETERS" id="module.driver.ctsu_sensor.sep2">
+            <option display="---------------------------------" id="module.driver.ctsu_sensor.sep2.none" value="0"/>
+        </property>
+        
+        <property default="1000" display="Drift Compensation Interval" id="module.driver.ctsu_sensor.drift">
+            <constraint display="Value must be in range (0-55536)">testInteger("${module.driver.ctsu_sensor.drift}")  &amp;&amp; ("${module.driver.ctsu_sensor.drift}" &gt;= 0) &amp;&amp; ("${module.driver.ctsu_sensor.drift}" &lt; 55536)</constraint>
+        </property>
+        <property default="0" display="Drift Compensation Acceleration" id="module.driver.ctsu_sensor.dr_accel">
+            <constraint display="Value must be in range (0-255)">testInteger("${module.driver.ctsu_sensor.dr_accel}")  &amp;&amp; ("${module.driver.ctsu_sensor.dr_accel}" &gt;= 0) &amp;&amp; ("${module.driver.ctsu_sensor.dr_accel}" &lt; 256)</constraint>
+        </property>
+        <property default="0" display="Drift Compensation Deceleration" id="module.driver.ctsu_sensor.dr_decel">
+            <constraint display="Value must be in range (0-255)">testInteger("${module.driver.ctsu_sensor.dr_decel}")  &amp;&amp; ("${module.driver.ctsu_sensor.dr_decel}" &gt;= 0) &amp;&amp; ("${module.driver.ctsu_sensor.dr_decel}" &lt; 256)</constraint>
+        </property>
+        
+        <property default="module.driver.ctsu_sensor.sep3.none" display="RUN-TIME OFFSET CURRENT ADJUSTMENT PARAMETERS" id="module.driver.ctsu_sensor.sep3">
+            <option display="---------------------------------" id="module.driver.ctsu_sensor.sep3.none" value="0"/>
+        </property>
+        
+        <property default="1000" display="Offset Current Adjustment Interval" id="module.driver.ctsu_sensor.offset_interval">
+            <constraint display="Value must be in range (0-65534; Disabled: 65536)">testInteger("${module.driver.ctsu_sensor.offset_interval}")  &amp;&amp; ("${module.driver.ctsu_sensor.offset_interval}" &gt;= 0) &amp;&amp; ("${module.driver.ctsu_sensor.offset_interval}" &lt; 55536)</constraint>
+        </property>
+        <property default="100" display="Adjustment Threshold Trigger" id="module.driver.ctsu_sensor.offset_thresh">
+            <constraint display="Value must be less than Touch Threshold.">testInteger("${module.driver.ctsu_sensor.offset_thresh}")  &amp;&amp; ("${module.driver.ctsu_sensor.offset_thresh}" &gt;= 0) &amp;&amp; ("${module.driver.ctsu_sensor.offset_thresh}" &lt; "${module.driver.ctsu_sensor.threshold}")</constraint>
+        </property>
+        
+        
+        <header>
+        #define ${module.driver.ctsu_sensor.name}_TS_RX     (${module.driver.ctsu_sensor.rx})
+        #define ${module.driver.ctsu_sensor.name}_TS_TX     (${module.driver.ctsu_sensor.tx})
+        #define ${module.driver.ctsu_sensor.requires.ctsu::module.driver.ctsu.name}_INDEX_${module.driver.ctsu_sensor.index}     (${module.driver.ctsu_sensor.index})
+        #define ${module.driver.ctsu_sensor.name}_FREQ      (${module.driver.ctsu_sensor.freq})
+        
+        #define ${module.driver.ctsu_sensor.name}_CTSUSSDIV (${module.driver.ctsu_sensor.ctsussdiv})
+        #define ${module.driver.ctsu_sensor.name}_CTSUSO    (${module.driver.ctsu_sensor.ctsuso})
+        #define ${module.driver.ctsu_sensor.name}_CTSUSNUM  (${module.driver.ctsu_sensor.ctsusnum})
+        #define ${module.driver.ctsu_sensor.name}_CTSURICOA (${module.driver.ctsu_sensor.ctsuricoa})
+        #define ${module.driver.ctsu_sensor.name}_CTSUSDPA  (${module.driver.ctsu_sensor.ctsusdpa})
+        #define ${module.driver.ctsu_sensor.name}_CTSUICOG  (${module.driver.ctsu_sensor.ctsuicog})
+        
+        #define ${module.driver.ctsu_sensor.name}_CTSUSST   (${module.driver.ctsu_sensor.name}_CTSUSSDIV &lt;&lt; 8)
+        #define ${module.driver.ctsu_sensor.name}_CTSUSO0   ((${module.driver.ctsu_sensor.name}_CTSUSNUM &lt;&lt; 10)|${module.driver.ctsu_sensor.name}_CTSUSO)
+        #define ${module.driver.ctsu_sensor.name}_CTSUSO1   ((${module.driver.ctsu_sensor.name}_CTSUICOG &lt;&lt; 13)|(${module.driver.ctsu_sensor.name}_CTSUSDPA &lt;&lt; 8) |${module.driver.ctsu_sensor.name}_CTSURICOA)
+        
+        #define ${module.driver.ctsu_sensor.name}_THRESHOLD     (${module.driver.ctsu_sensor.threshold})
+        #define ${module.driver.ctsu_sensor.name}_HYSTERESIS    (${module.driver.ctsu_sensor.hysteresis})
+        #define ${module.driver.ctsu_sensor.name}_DELAY_2_T     (${module.driver.ctsu_sensor.dtouch})
+        #define ${module.driver.ctsu_sensor.name}_DELAY_2_R     (${module.driver.ctsu_sensor.drelease})
+        
+        #define ${module.driver.ctsu_sensor.name}_DRIFT_RATE    (${module.driver.ctsu_sensor.drift})
+        #define ${module.driver.ctsu_sensor.name}_RATE_PLUS     (${module.driver.ctsu_sensor.dr_accel})
+        #define ${module.driver.ctsu_sensor.name}_RATE_MINUS    (${module.driver.ctsu_sensor.dr_decel})
+        
+        #define ${module.driver.ctsu_sensor.name}_ADJ_INTERVAL  (${module.driver.ctsu_sensor.offset_interval})
+        #define ${module.driver.ctsu_sensor.name}_ADJ_THRESHOLD (${module.driver.ctsu_sensor.offset_thresh})
+
+        #define ${module.driver.ctsu_sensor.name}_CTSU_SFRS       {${module.driver.ctsu_sensor.name}_CTSUSST, ${module.driver.ctsu_sensor.name}_CTSUSO0, ${module.driver.ctsu_sensor.name}_CTSUSO1}
+        #define ${module.driver.ctsu_sensor.requires.ctsu::module.driver.ctsu.name}_INDEX_${module.driver.ctsu_sensor.index}_CTSU_SFRS    ${module.driver.ctsu_sensor.name}_CTSU_SFRS
+        #define ${module.driver.ctsu_sensor.name}_TOUCH_PARAMS    {${module.driver.ctsu_sensor.name}_THRESHOLD,${module.driver.ctsu_sensor.name}_HYSTERESIS,${module.driver.ctsu_sensor.name}_DELAY_2_T,${module.driver.ctsu_sensor.name}_DELAY_2_R,${module.driver.ctsu_sensor.name}_DRIFT_RATE,${module.driver.ctsu_sensor.name}_RATE_PLUS,${module.driver.ctsu_sensor.name}_RATE_MINUS,${module.driver.ctsu_sensor.name}_ADJ_INTERVAL,${module.driver.ctsu_sensor.name}_ADJ_THRESHOLD,}
+        #define ${module.driver.ctsu_sensor.requires.ctsu::module.driver.ctsu.name}_INDEX_${module.driver.ctsu_sensor.index}_TOUCH_PARAMS    ${module.driver.ctsu_sensor.name}_TOUCH_PARAMS
+        
+        #if !defined(${module.driver.ctsu_sensor.requires.ctsu::module.driver.ctsu.name}_RX_${module.driver.ctsu_sensor.rx}_TX_${module.driver.ctsu_sensor.tx})
+        #define ${module.driver.ctsu_sensor.requires.ctsu::module.driver.ctsu.name}_RX_${module.driver.ctsu_sensor.rx}_TX_${module.driver.ctsu_sensor.tx}   (1)
+        #else
+        #error "Combination with TS${module.driver.ctsu_sensor.rx} as receive and TS${module.driver.ctsu_sensor.tx} as transmit is already in use with a Capacitive Touch Sensor on r_ctsu_v2 which uses ${module.driver.ctsu_sensor.requires.ctsu::module.driver.ctsu.name}"
+        #endif
+        
+        #if (${module.driver.ctsu_sensor.name}_TS_RX &gt; 35)
+        #error "Check TS for ${module.driver.ctsu_sensor.name}_TS_RX"
+        #elif (${module.driver.ctsu_sensor.requires.ctsu::module.driver.ctsu.mode}_TS${module.driver.ctsu_sensor.rx}!=1)
+        #error "Check TS for ${module.driver.ctsu_sensor.name}_TS_RX"
+        #endif
+        
+        #if (${module.driver.ctsu_sensor.name}_TS_TX &lt; 36)
+        #if (${module.driver.ctsu_sensor.requires.ctsu::module.driver.ctsu.mode}_TS${module.driver.ctsu_sensor.tx}!=2)
+        #error "Check TS for ${module.driver.ctsu_sensor.name}_TS_TX"
+        #endif
+        #endif
+        </header>
+        <includes>
+        
+        </includes>
+        <declarations>
+        
+        </declarations>
+        <init>
+        
+        </init>
+    </module>
+    <!-- CTSU Sensor XML END here-->
+</synergyModuleDescription>

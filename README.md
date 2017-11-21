@@ -52,7 +52,7 @@ To setup the CTSU pins:
 1. Open the SSP Configuration Perspective in e2studio using the menu *Window > Perspective > Other Perspectives > Other*
 2. Open configuration.xml by double clicking on it in the Project Explorer.
 3. Browse to the CTSU using *Pins (tab) > Pin Selection Column > Peripherals > Input: CTSU > CTSU*
-4. When working with your own project, you have to setup the TS pins. If the DK-S124 was selected as the BSP, the pins used should be pre-configured.
+4. When working with a custom project, setup the TS pins as needed by the system (refer hardware schematic). If the DK-S124 was selected as the BSP, the pins used should be pre-configured.
 
 ![Example pins setup for DK-S124](./images/PIN_DKS124.PNG)
 
@@ -354,7 +354,7 @@ Acquire the software tools from the Synergy Gallery then follow the steps below.
 
 1. Install the e2studio Integrate Solution Development Environment. Note the installation path.
 2. Install the Synergy Software Package v1.3.0; or later versions. You may have to provide the installation path from step 1.
-3. Copy the downloaded **Renesas.r_ctsu_v2.1.3.0.pack** and Renesas.r_touch_v2.1.3.0.pack pack files to the `internal\projectgen\arm\Packs` folder in e2studio.
+3. Copy the downloaded **Renesas.r_ctsu_v2.1.3.0.pack** and **Renesas.r_touch_v2.1.3.0.pack** files to the `internal\projectgen\arm\Packs` folder in e2studio installation.
 
 ## Creating a New Synergy C Project ##
 1. Start e2studio and specify a Workspace Location. Select **OK**.

@@ -1,0 +1,331 @@
+Synergy Configuration
+  Board "Custom User Board (Any Device)"
+  R7FS3A77C3A01CFB
+    part_number: R7FS3A77C3A01CFB
+    rom_size_bytes: 1048576
+    ram_size_bytes: 196608
+    data_flash_size_bytes: 16384
+    package_style: LQFP
+    package_pins: 144
+    
+  S3A7
+    series: 3
+    
+  S3A7 Family
+    OFS0 register settings: Select fields below
+         IWDT Start Mode: IWDT is Disabled
+         IWDT Timeout Period: 2048 cycles
+         IWDT Dedicated Clock Frequency Divisor: 128
+         IWDT Window End Position:  0% (no window end position)
+         IWDT Window Start Position: 100% (no window start position)
+         IWDT Reset Interrupt Request Select: Reset is enabled
+         IWDT Stop Control: Stop counting when in Sleep, Snooze mode, Software Standby, or Deep Software Standby mode
+         WDT Start Mode Select: Stop WDT after a reset (register-start mode)
+         WDT Timeout Period: 16384 cycles
+         WDT Clock Frequency Division Ratio: 128
+         WDT Window End Position:  0% (no window end position)
+         WDT Window Start Position: 100% (no window start position)
+         WDT Reset Interrupt Request: Reset
+         WDT Stop Control: Stop counting when entering Sleep mode
+    OFS1 register settings: Select fields below
+         Voltage Detection 0 Circuit Start: Voltage monitor 0 reset is disabled after reset
+         Voltage Detection 0 Level: 1.90 V
+         HOCO OScillation Enable: HOCO oscillation is disabled after reset
+    MPU - Enable or disable PC Region 0: Disabled
+    MPU - PC0 Start: 0x000FFFFC
+    MPU - PC0 End: 0x000FFFFF
+    MPU - Enable or disable PC Region 1: Disabled
+    MPU - PC1 Start: 0x000FFFFC
+    MPU - PC1 End: 0x000FFFFF
+    MPU - Enable or disable Memory Region 0: Disabled
+    MPU - Memory Region 0 Start: 0x000FFFFC
+    MPU - Memory Region 0 End: 0x000FFFFF
+    
+  Synergy Common
+    Main stack size (bytes): 0x1000
+    Process stack size (bytes): 0
+    Heap size (bytes) - A minimum of 4K (0x1000) is required if standard library functions are to be used.: 0x1000
+    MCU Vcc (mV): 3300
+    Parameter checking: Enabled
+    Assert Failures: Return SSP_ERR_ASSERTION
+    Error Log: No Error Log
+    ID code 1: 0xFFFFFFFF
+    ID code 2: 0xFFFFFFFF
+    ID code 3: 0xFFFFFFFF
+    ID code 4: 0xFFFFFFFF
+    
+  Clocks
+    XTAL 12000000Hz
+    HOCO 24MHz
+    PLL Div /2
+    PLL Mul x8
+    Clock Src: PLL
+    ICLK Div /1
+    PCLKA Div /1
+    PCLKB Div /2
+    PCLKC Div /1
+    PCLKD Div /1
+    BCLK Div /2
+    BCK/2
+    FCLK Div /2
+    
+  Pin Configurations
+    R7FS3A77C3A01CFB.pincfg -> g_bsp_pin_cfg
+      AVCC0 127 ADC_AVCC0 - - - - - - 
+      AVSS0 128 ADC_AVSS0 - - - - - - 
+      P000 140 - - - Disabled - - "ADC0: AN00; CMP0: IVCMP0; CMP0: IVREF0; CTSU0: TS21; IRQ0: IRQ06; OPAMP0: AMP+" 
+      P001 139 - - - Disabled - - "ADC0: AN01; CMP0: IVCMP1; CMP0: IVREF1; CTSU0: TS22; IRQ0: IRQ07; OPAMP0: AMP-" 
+      P002 138 - - - Disabled - - "ADC0: AN02; CMP0: IVCMP2; CMP0: IVREF2; IRQ0: IRQ08; OPAMP0: AMPO" 
+      P003 137 - - - Disabled - - "ADC0: AN03; CMP0: IVCMP3; CMP0: IVREF3; OPAMP1: AMPO" 
+      P004 136 - - - Disabled - - "ADC0: AN04; CMP0: IVCMP0; IRQ0: IRQ09; OPAMP2: AMPO" 
+      P005 135 - - - Disabled - - "ADC0: AN05; CMP0: IVREF0; CTSU0: TS26; IRQ0: IRQ10; OPAMP3: AMP+" 
+      P006 134 - - - Disabled - - "ADC0: AN06; CMP0: IVREF4; CTSU0: TS27; IRQ0: IRQ11; OPAMP3: AMP-" 
+      P007 133 - - - Disabled - - "ADC0: AN07; CMP0: IVCMP4; OPAMP3: AMPO" 
+      P008 132 - - - Disabled - - "ADC0: AN08; CTSU0: TS29; IRQ0: IRQ12" 
+      P009 131 - - - Disabled - - "ADC0: AN09; IRQ0: IRQ13" 
+      P010 130 - - - Disabled - - "ADC: VREFH0; ADC0: AN10; CTSU0: TS30; IRQ0: IRQ14; OPAMP2: AMP-" 
+      P011 129 - - - Disabled - - "ADC: VREFL0; ADC0: AN11; CTSU0: TS31; IRQ0: IRQ15; OPAMP2: AMP+" 
+      P012 126 - - - Disabled - - "ADC: VREFH; ADC0: AN12; OPAMP1: AMP-" 
+      P013 125 - - - Disabled - - "ADC: VREFL; ADC0: AN13; OPAMP1: AMP+" 
+      P014 124 - - - Disabled - - "ADC0: AN14; CMP0: IVREF5; DAC120: DA" 
+      P015 123 - - - Disabled - - "ADC0: AN15; CMP0: IVCMP5; DAC121: DA; IRQ0: IRQ13" 
+      P100 108 - - - Disabled - - "ADC0: AN27; AGT0: AGTIO; BUS0: D0; CMP0: CMPIN0; IIC1: SCL; IRQ0: IRQ02; KINT0: KRM0; POEG0: GTETRG; SCI0: RXD_MISO; SCI0: SCL; SCI1: SCK; SLCDC0: VL1; SPI0: MISO" 
+      P101 107 - - - Disabled - - "ADC0: AN26; AGT0: AGTEE; BUS0: D1; CMP0: CMPREF0; IIC1: SDA; IRQ0: IRQ01; KINT0: KRM1; POEG1: GTETRG; SCI0: SDA; SCI0: TXD_MOSI; SCI1: CTS_RTS_SS; SLCDC0: VL2; SPI0: MOSI" 
+      P102 106 - - - Disabled - - "ADC0: ADTRG; ADC0: AN25; AGT0: AGTO; BUS0: D2; CMP0: CMPIN1; GPT2: GTIOCB; KINT0: KRM2; OPS0: GTOWLO; SCI0: SCK; SLCDC0: VL3; SPI0: RSPCK" 
+      P103 105 - - - Disabled - - "ADC0: AN24; BUS0: D3; CMP0: CMPREF1; GPT2: GTIOCA; KINT0: KRM3; OPS0: GTOWUP; SCI0: CTS_RTS_SS; SLCDC0: VL4; SPI0: SSL0" 
+      P104 104 - - - Disabled - - "BUS0: D4; IRQ0: IRQ01; KINT0: KRM4; POEG1: GTETRG; SLCDC0: COM0; SPI0: SSL1" 
+      P105 103 - - - Disabled - - "BUS0: D5; IRQ0: IRQ00; KINT0: KRM5; POEG0: GTETRG; SLCDC0: COM1; SPI0: SSL2" 
+      P106 102 - - - Disabled - - "BUS0: D6; GPT8: GTIOCB; KINT0: KRM6; SLCDC0: COM2; SPI0: SSL3" 
+      P107 101 - - - Disabled - - "BUS0: D7; GPT8: GTIOCA; KINT0: KRM7; SLCDC0: COM3" 
+      P108 73 DEBUG0_TMS Low - "Peripheral mode" CMOS None "DEBUG0: SWDIO; DEBUG0: TMS; GPT0: GTIOCB; SCI9: CTS_RTS_SS; SPI1: SSL0" 
+      P109 74 DEBUG0_TDO Low - "Peripheral mode" CMOS None "CGC0: CLKOUT; DEBUG0: SWO; DEBUG0: TDO; GPT1: GTIOCA; OPS0: GTOVUP; SCI9: SDA; SCI9: TXD_MOSI; SPI1: MOSI" 
+      P110 75 DEBUG0_TDI Low None "Peripheral mode" CMOS None "CMP0: VCOUT; DEBUG0: TDI; GPT1: GTIOCB; IRQ0: IRQ03; OPS0: GTOVLO; SCI2: CTS_RTS_SS; SCI9: RXD_MISO; SCI9: SCL; SPI1: MISO" 
+      P111 76 - - - Disabled - - "BUS0: A05; GPT3: GTIOCA; IRQ0: IRQ04; SCI2: SCK; SCI9: SCK; SLCDC0: CAPH; SPI1: RSPCK" 
+      P112 77 - - - Disabled - - "BUS0: A04; GPT3: GTIOCB; SCI2: SDA; SCI2: TXD_MOSI; SLCDC0: CAPL; SSI0: SSISCK" 
+      P113 78 - - - Disabled - - "BUS0: A03; SCI2: RXD_MISO; SCI2: SCL; SLCDC0: COM4; SLCDC0: SEG00; SSI0: SSIWS" 
+      P114 79 - - - Disabled - - "BUS0: A02; SLCDC0: SEG24; SSI0: SSIRXD" 
+      P115 80 - - - Disabled - - "BUS0: A01; SLCDC0: SEG25; SSI0: SSITXD" 
+      P200 57 - - - Disabled - - "IRQ0: NMI" 
+      P201 56 - - - Disabled - - - 
+      P202 46 - - - Disabled - - "BUS0: WR1_BC1; CAN0: CRX; GPT5: GTIOCB; IRQ0: IRQ03; SCI2: SCK; SCI9: RXD_MISO; SCI9: SCL; SDHI0: DAT6; SLCDC0: SEG21; SPI1: MISO" 
+      P203 45 - - - Disabled - - "BUS0: A19; CAN0: CTX; CTSU0: TSCAP; GPT5: GTIOCA; IRQ0: IRQ02; SCI2: CTS_RTS_SS; SCI9: SDA; SCI9: TXD_MOSI; SDHI0: DAT5; SLCDC0: SEG22; SPI1: MOSI" 
+      P204 44 - - - Disabled - - "AGT1: AGTIO; BUS0: A18; CAC0: CACREF; CTSU0: TS00; GPT4: GTIOCB; IIC0: SCL; OPS0: GTIW; SCI4: SCK; SCI9: SCK; SDHI0: DAT4; SLCDC0: SEG23; SPI1: RSPCK; SSI1: SSISCK; USBFS0: OVRCURB" 
+      P205 43 CTSU0_TSCAP Low None "Peripheral mode" CMOS None "AGT1: AGTO; BUS0: A16; CGC0: CLKOUT; CTSU0: TSCAP; GPT4: GTIOCA; IIC1: SCL; IRQ0: IRQ01; OPS0: GTIV; SCI4: SDA; SCI4: TXD_MOSI; SCI9: CTS_RTS_SS; SDHI0: DAT3; SPI1: SSL0; SSI1: SSIWS; USBFS0: OVRCURA" 
+      P206 42 - - - Disabled - - "BUS0: WAIT; CTSU0: TS01; IIC1: SDA; IRQ0: IRQ00; OPS0: GTIU; SCI4: RXD_MISO; SCI4: SCL; SDHI0: DAT2; SPI1: SSL1; SSI1: SSIDATA; USBFS0: VBUSEN" 
+      P212 20 - - - Disabled - - "AGT1: AGTEE; CGC0: EXTAL; IRQ0: IRQ03; POEG3: GTETRG; SCI1: RXD_MISO; SCI1: SCL" 
+      P213 19 - - - Disabled - - "CGC0: XTAL; IRQ0: IRQ02; POEG2: GTETRG; SCI1: SDA; SCI1: TXD_MOSI" 
+      P214 17 - - - Disabled - - "CGC0: XCOUT" 
+      P215 16 - - - Disabled - - "CGC0: XCIN" 
+      P300 72 DEBUG0_TCK Low - "Peripheral mode" CMOS None "DEBUG0: SWCLK; DEBUG0: TCK; GPT0: GTIOCA; SPI1: SSL1" 
+      P301 71 - - - Disabled - - "BUS0: A06; GPT4: GTIOCB; IRQ0: IRQ06; OPS0: GTOULO; SCI2: RXD_MISO; SCI2: SCL; SLCDC0: COM5; SLCDC0: SEG01; SPI1: SSL2" 
+      P302 70 - - - Disabled - - "BUS0: A07; GPT4: GTIOCA; IRQ0: IRQ05; OPS0: GTOUUP; SCI2: SDA; SCI2: TXD_MOSI; SLCDC0: COM6; SLCDC0: SEG02; SPI1: SSL3" 
+      P303 69 - - - Disabled - - "BUS0: A08; GPT7: GTIOCB; SLCDC0: COM7; SLCDC0: SEG03" 
+      P304 66 - - - Disabled - - "BUS0: A09; GPT7: GTIOCA; IRQ0: IRQ09; SLCDC0: SEG17" 
+      P305 65 - - - Disabled - - "BUS0: A10; IRQ0: IRQ08; SLCDC0: SEG16" 
+      P306 64 - - - Disabled - - "BUS0: A11; SLCDC0: SEG15" 
+      P307 63 - - - Disabled - - "BUS0: A12; SLCDC0: SEG14" 
+      P308 62 - - - Disabled - - "BUS0: A13; SLCDC0: SEG13" 
+      P309 61 - - - Disabled - - "BUS0: A14; SLCDC0: SEG12" 
+      P310 60 - - - Disabled - - "BUS0: A15; SLCDC0: SEG11" 
+      P311 59 - - - Disabled - - "BUS0: CS2; SLCDC0: SEG10" 
+      P312 58 - - - Disabled - - "BUS0: CS3; SLCDC0: SEG09" 
+      P313 47 - - - Disabled - - "BUS0: A20; SDHI0: DAT7; SLCDC0: SEG20" 
+      P314 48 - - - Disabled - - "BUS0: A21; SLCDC0: SEG04" 
+      P315 49 - - - Disabled - - "BUS0: A22; SLCDC0: SEG05" 
+      P400 1 - - - Disabled - - "CTSU0: TS20; GPT6: GTIOCA; IIC0: SCL; IRQ0: IRQ00; SCI4: SCK; SSI: AUDIO_CLK" 
+      P401 2 - - - Disabled - - "CAN0: CTX; CTSU0: TS19; GPT6: GTIOCB; IIC0: SDA; IRQ0: IRQ05; POEG0: GTETRG; SCI4: CTS_RTS_SS" 
+      P402 3 - - - Disabled - - "AGT0: AGTIO; AGT1: AGTIO; CAN0: CRX; CTSU0: TS18; IRQ0: IRQ04; RTC0: RTCIC0" 
+      P403 4 - - - Disabled - - "AGT0: AGTIO; AGT1: AGTIO; CTSU0: TS17; GPT3: GTIOCA; RTC0: RTCIC1; SSI0: SSISCK" 
+      P404 5 - - - Disabled - - "CTSU0: TS16; GPT3: GTIOCB; RTC0: RTCIC2; SSI0: SSIWS" 
+      P405 6 - - - Disabled - - "CTSU0: TS15; GPT1: GTIOCA; SSI0: SSITXD" 
+      P406 7 - - - Disabled - - "CTSU0: TS14; GPT1: GTIOCB; SSI0: SSIRXD" 
+      P407 36 - - - Disabled - - "ADC0: ADTRG; CTSU0: TS03; IIC0: SDA; RTC0: RTCOUT; SCI4: CTS_RTS_SS; SPI1: SSL3; USBFS0: VBUS" 
+      P408 35 - - - Disabled - - "CTSU0: TS04; IRQ0: IRQ07; OPS0: GTOWLO; SCI3: RXD_MISO; SCI3: SCL; USBFS0: ID" 
+      P409 34 - - - Disabled - - "CTSU0: TS05; IRQ0: IRQ06; OPS0: GTOWUP; SCI3: SDA; SCI3: TXD_MOSI; USBFS0: EXICEN" 
+      P410 33 - - - Disabled - - "AGT1: AGTOB; CTSU0: TS06; GPT9: GTIOCB; IRQ0: IRQ05; OPS0: GTOVLO; SCI0: RXD_MISO; SCI0: SCL; SCI3: SCK; SDHI0: DAT1; SPI0: MISO" 
+      P411 32 - - - Disabled - - "AGT1: AGTOA; CTSU0: TS07; GPT9: GTIOCA; IRQ0: IRQ04; OPS0: GTOVUP; SCI0: SDA; SCI0: TXD_MOSI; SCI3: CTS_RTS_SS; SDHI0: DAT0; SPI0: MOSI" 
+      P412 31 - - - Disabled - - "CTSU0: TS08; OPS0: GTOULO; SCI0: SCK; SDHI0: CMD; SPI0: RSPCK" 
+      P413 30 - - - Disabled - - "CTSU0: TS09; OPS0: GTOUUP; SCI0: CTS_RTS_SS; SDHI0: CLK; SPI0: SSL0" 
+      P414 29 - - - Disabled - - "CTSU0: TS10; SDHI0: WP; SPI0: SSL1" 
+      P415 28 - - - Disabled - - "CTSU0: TS11; SPI0: SSL2" 
+      P500 113 - - - Disabled - - "ADC0: AN16; AGT0: AGTOA; OPS0: GTIU; QSPI0: QSPCLK; SLCDC0: SEG48; USBFS0: VBUSEN" 
+      P501 114 - - - Disabled - - "ADC0: AN17; AGT0: AGTOB; IRQ0: IRQ11; OPS0: GTIV; QSPI0: QSSL; SLCDC0: SEG49; USBFS0: OVRCURA" 
+      P502 115 - - - Disabled - - "ADC0: AN18; IRQ0: IRQ12; OPS0: GTIW; QSPI0: QIO0; SLCDC0: SEG50; USBFS0: OVRCURB" 
+      P503 116 - - - Disabled - - "ADC0: AN19; POEG2: GTETRG; QSPI0: QIO1; SLCDC0: SEG51; USBFS0: EXICEN" 
+      P504 117 - - - Disabled - - "ADC0: AN20; POEG3: GTETRG; QSPI0: QIO2; USBFS0: ID" 
+      P505 118 - - - Disabled - - "ADC0: AN21; IRQ0: IRQ14; QSPI0: QIO3" 
+      P506 119 - - - Disabled - - "ADC0: AN22; IRQ0: IRQ15" 
+      P507 120 - - - Disabled - - "ADC0: AN23" 
+      P511 144 - - - Disabled - - "CAN0: CRX; GPT0: GTIOCB; IIC2: SDA; IRQ0: IRQ15; SCI4: RXD_MISO; SCI4: SCL" 
+      P512 143 - - - Disabled - - "CAN0: CTX; GPT0: GTIOCA; IIC2: SCL; IRQ0: IRQ14; SCI4: SDA; SCI4: TXD_MOSI" 
+      P600 98 - - - Disabled - - "BUS0: RD; SLCDC0: SEG41" 
+      P601 97 - - - Disabled - - "BUS0: WR_WR0; SLCDC0: SEG40" 
+      P602 96 - - - Disabled - - "BUS0: BCLK; SLCDC0: SEG39" 
+      P603 95 - - - Disabled - - "BUS0: D13; SLCDC0: SEG38" 
+      P604 94 - - - Disabled - - "BUS0: D12; SLCDC0: SEG37" 
+      P605 93 - - - Disabled - - "BUS0: D11; SLCDC0: SEG36" 
+      P606 92 - - - Disabled - - "SLCDC0: SEG35" 
+      P608 83 - - - Disabled - - "BUS0: A00_BC0; SLCDC0: SEG28" 
+      P609 84 - - - Disabled - - "BUS0: CS1; SLCDC0: SEG29" 
+      P610 85 - - - Disabled - - "BUS0: CS0; SLCDC0: SEG30" 
+      P611 86 - - - Disabled - - "SLCDC0: SEG31" 
+      P612 87 - - - Disabled - - "BUS0: D8; SLCDC0: SEG32" 
+      P613 88 - - - Disabled - - "BUS0: D9; SLCDC0: SEG33" 
+      P614 89 - - - Disabled - - "BUS0: D10; SLCDC0: SEG34" 
+      P700 8 - - - Disabled - - "CTSU0: TS32; GPT5: GTIOCA" 
+      P701 9 - - - Disabled - - "CTSU0: TS33; GPT5: GTIOCB" 
+      P702 10 - - - Disabled - - "CTSU0: TS34; GPT6: GTIOCA" 
+      P703 11 - - - Disabled - - "GPT6: GTIOCB" 
+      P704 12 - - - Disabled - - - 
+      P705 13 - - - Disabled - - - 
+      P708 27 - - - Disabled - - "CAC0: CACREF; CTSU0: TS12; IRQ0: IRQ11; SCI1: RXD_MISO; SCI1: SCL; SPI0: SSL3" 
+      P709 26 - - - Disabled - - "CTSU0: TS13; IRQ0: IRQ10; SCI1: SDA; SCI1: TXD_MOSI" 
+      P710 25 - - - Disabled - - "CTSU0: TS35; SCI1: SCK" 
+      P711 24 - - - Disabled - - "SCI1: CTS_RTS_SS" 
+      P712 23 - - - Disabled - - "GPT2: GTIOCB" 
+      P713 22 - - - Disabled - - "GPT2: GTIOCA" 
+      P800 109 - - - Disabled - - "BUS0: D14; SLCDC0: SEG44" 
+      P801 110 - - - Disabled - - "BUS0: D15; SLCDC0: SEG45" 
+      P802 111 - - - Disabled - - "SLCDC0: SEG46" 
+      P803 112 - - - Disabled - - "SLCDC0: SEG47" 
+      P804 100 - - - Disabled - - "SLCDC0: SEG43" 
+      P805 99 - - - Disabled - - "SLCDC0: SEG42" 
+      P806 81 - - - Disabled - - "SLCDC0: SEG26" 
+      P807 82 - - - Disabled - - "SLCDC0: SEG27" 
+      P808 67 - - - Disabled - - "SLCDC0: SEG18" 
+      P809 68 - - - Disabled - - "SLCDC0: SEG19" 
+      P900 50 - - - Disabled - - "BUS0: A23; SLCDC0: SEG06" 
+      P901 51 - - - Disabled - - "SLCDC0: SEG07" 
+      P902 52 - - - Disabled - - "SLCDC0: SEG08" 
+      RES 55 - - - - - - - 
+      USBDM 38 USBFS0_USBDM - - - - - - 
+      USBDP 39 USBFS0_USBDP - - - - - - 
+      VBAT 14 - - - - - - - 
+      VCC 121 - - - - - - - 
+      VCC 90 - - - - - - - 
+      VCC 21 - - - - - - - 
+      VCC 142 - - - - - - - 
+      VCC 54 - - - - - - - 
+      VCCUSB 40 USBFS0_VCCUSB - - - - - - 
+      VCCUSBLDO 41 USBFS0_VCCUSBLDO - - - - - - 
+      VCL 15 - - - - - - - 
+      VSS 122 - - - - - - - 
+      VSS 18 - - - - - - - 
+      VSS 91 - - - - - - - 
+      VSS 141 - - - - - - - 
+      VSS 53 - - - - - - - 
+      VSSUSB 37 USBFS0_VSSUSB - - - - - - 
+      
+  Module "FMI Driver on r_fmi"
+    Parameter Checking: Default (BSP)
+    SSP MCU Information Symbol Name: g_fmi_data
+    Part Number Mask: 0xFE00
+    
+  Module "I/O Port Driver on r_ioport"
+    Parameter Checking: Default (BSP)
+    
+  Module "ELC Driver on r_elc"
+    Parameter Checking: Default (BSP)
+    
+  Module "CGC Driver on r_cgc"
+    Parameter Checking: Default (BSP)
+    Main Oscillator Wait Time: 8163 cycles
+    Main Oscillator Clock Source: Crystal or Resonator
+    Oscillator Stop Detect: Enabled
+    Subclock Drive: Standard (12.5pf)
+    Low Voltage Mode: Disable
+    
+  Module "Timer Driver on r_gpt"
+    Parameter Checking: Default (BSP)
+    
+  Module "UART Driver on r_sci_uart"
+    External RTS Operation: Disable
+    Reception: Enable
+    Transmission: Enable
+    Parameter Checking: Default (BSP)
+    
+  HAL
+    Instance "g_fmi FMI Driver on r_fmi"
+      Name: g_fmi
+      
+    Instance "g_ioport I/O Port Driver on r_ioport"
+      Name [Fixed]: g_ioport
+      
+    Instance "g_elc ELC Driver on r_elc"
+      Name [Fixed]: g_elc
+      
+    Instance "g_cgc CGC Driver on r_cgc"
+      Name [Fixed]: g_cgc
+      
+    Instance "g_timer0 Timer Driver on r_gpt"
+      Name: g_timer0
+      Channel: 0
+      Mode: Periodic
+      Period Value: 10
+      Period Unit: Milliseconds
+      Duty Cycle Value: 50
+      Duty Cycle Unit: Unit Raw Counts
+      Auto Start: True
+      GTIOCA Output Enabled: False
+      GTIOCA Stop Level: Pin Level Low
+      GTIOCB Output Enabled: False
+      GTIOCB Stop Level: Pin Level Low
+      Callback: NULL
+      Interrupt Priority: Disabled
+      
+    Instance "g_uart0 UART Driver on r_sci_uart"
+      Name: g_uart0
+      Channel: 0
+      Baud Rate: 9600
+      Data Bits: 8bits
+      Parity: None
+      Stop Bits: 1bit
+      CTS/RTS Selection: RTS (CTS is disabled)
+      Name of UART callback function to be defined by user: user_uart_callback
+      Name of UART callback function for the RTS external pin control to be defined by user: NULL
+      Clock Source: Internal Clock
+      Baudrate Clock Output from SCK pin: Disable
+      Start bit detection: Falling Edge
+      Noise Cancel: Disable
+      Bit Rate Modulation Enable: Enable
+      Receive FIFO Trigger Level: Max
+      Receive Interrupt Priority: Priority 1
+      Transmit Interrupt Priority: Priority 1
+      Transmit End Interrupt Priority: Priority 1
+      Error Interrupt Priority: Priority 1
+      
+      Instance "g_transfer0 Transfer Driver on r_dtc Event SCI0 TXI"
+        Name: g_transfer0
+        Mode: Normal
+        Transfer Size: 1 Byte
+        Destination Address Mode: Fixed
+        Source Address Mode: Incremented
+        Repeat Area (Unused in Normal Mode): Source
+        Interrupt Frequency: After all transfers have completed
+        Destination Pointer: NULL
+        Source Pointer: NULL
+        Number of Transfers: 0
+        Number of Blocks (Valid only in Block Mode): 0
+        Activation Source (Must enable IRQ): Event SCI0 TXI
+        Auto Enable: False
+        Callback (Only valid with Software start): NULL
+        ELC Software Event Interrupt Priority: Disabled
+        
+      Instance "g_transfer1 Transfer Driver on r_dtc Event SCI0 RXI"
+        Name: g_transfer1
+        Mode: Normal
+        Transfer Size: 1 Byte
+        Destination Address Mode: Incremented
+        Source Address Mode: Fixed
+        Repeat Area (Unused in Normal Mode): Destination
+        Interrupt Frequency: After all transfers have completed
+        Destination Pointer: NULL
+        Source Pointer: NULL
+        Number of Transfers: 0
+        Number of Blocks (Valid only in Block Mode): 0
+        Activation Source (Must enable IRQ): Event SCI0 RXI
+        Auto Enable: False
+        Callback (Only valid with Software start): NULL
+        ELC Software Event Interrupt Priority: Disabled
+        
+  Messaging

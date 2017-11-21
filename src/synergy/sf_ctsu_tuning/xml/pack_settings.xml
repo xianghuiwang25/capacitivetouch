@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="userpacksettings">
+	<item value="1.1" key="userpacksettings_version"/>
+	<section name="packtype_user_components">
+		<item value="1" key="componentsindex"/>
+		<section name="component0">
+			<item value="Renesas##Custom_HAL_Drivers##all##sf_ctsu_tuning####1.3.0" key="componentkey"/>
+			<item value="" key="CONDITON_PARENT_PACK"/>
+			<item value="all" key="Cgroup"/>
+			<item value="" key="Cvariant"/>
+			<item value="" key="description"/>
+			<item value="Renesas" key="Cvendor"/>
+			<item value="" key="Capiversion"/>
+			<item value="Custom_HAL_Drivers" key="Cclass"/>
+			<item value="true" key="isusercreated"/>
+			<item value="" key="condition"/>
+			<item value="1.3.0" key="Cversion"/>
+			<item value="8" key="componentfilesindex"/>
+			<item value="sf_ctsu_tuning" key="Csub"/>
+			<section name="componentfile4">
+				<item value="" key="condition"/>
+				<item value="" key="CONDITON_PARENT_PACK"/>
+				<item value="" key="select"/>
+				<item value="" key="src"/>
+				<item value="synergy/sf_ctsu_tuning/src/framework/sf_ctsu_tuning.c" key="name"/>
+				<item value="source" key="category"/>
+				<item value="" key="attr"/>
+				<item value="1.0.0" key="version"/>
+				<item value="C:/Users/onkar.raut/Documents/2017H1/Firmware/whirlpool-synergy-safety-touch/dev_ctsu_sspv1p3p0/synergy/sf_ctsu_tuning/src/framework/sf_ctsu_tuning.c" key="ORIGINAL_FILE_SOURCE"/>
+			</section>
+			<section name="componentfile3">
+				<item value="" key="condition"/>
+				<item value="" key="CONDITON_PARENT_PACK"/>
+				<item value="" key="select"/>
+				<item value="" key="src"/>
+				<item value="synergy/sf_ctsu_tuning/src/framework/deps/r_serial_control.h" key="name"/>
+				<item value="source" key="category"/>
+				<item value="" key="attr"/>
+				<item value="1.0.0" key="version"/>
+				<item value="C:/Users/onkar.raut/Documents/2017H1/Firmware/whirlpool-synergy-safety-touch/dev_ctsu_sspv1p3p0/synergy/sf_ctsu_tuning/src/framework/deps/r_serial_control.h" key="ORIGINAL_FILE_SOURCE"/>
+			</section>
+			<section name="componentfile2">
+				<item value="" key="condition"/>
+				<item value="" key="CONDITON_PARENT_PACK"/>
+				<item value="" key="select"/>
+				<item value="" key="src"/>
+				<item value="synergy/sf_ctsu_tuning/src/framework/deps/r_serial_control.c" key="name"/>
+				<item value="source" key="category"/>
+				<item value="" key="attr"/>
+				<item value="1.0.0" key="version"/>
+				<item value="C:/Users/onkar.raut/Documents/2017H1/Firmware/whirlpool-synergy-safety-touch/dev_ctsu_sspv1p3p0/synergy/sf_ctsu_tuning/src/framework/deps/r_serial_control.c" key="ORIGINAL_FILE_SOURCE"/>
+			</section>
+			<section name="componentfile1">
+				<item value="" key="condition"/>
+				<item value="" key="CONDITON_PARENT_PACK"/>
+				<item value="" key="select"/>
+				<item value="" key="src"/>
+				<item value="synergy/sf_ctsu_tuning/inc/framework/instances/sf_ctsu_tuning.h" key="name"/>
+				<item value="source" key="category"/>
+				<item value="" key="attr"/>
+				<item value="1.0.0" key="version"/>
+				<item value="C:/Users/onkar.raut/Documents/2017H1/Firmware/whirlpool-synergy-safety-touch/dev_ctsu_sspv1p3p0/synergy/sf_ctsu_tuning/inc/framework/instances/sf_ctsu_tuning.h" key="ORIGINAL_FILE_SOURCE"/>
+			</section>
+			<section name="componentfile7">
+				<item value="" key="condition"/>
+				<item value="" key="CONDITON_PARENT_PACK"/>
+				<item value="" key="select"/>
+				<item value="" key="src"/>
+				<item value="synergy/sf_ctsu_tuning/inc/framework/instances" key="name"/>
+				<item value="include" key="category"/>
+				<item value="" key="attr"/>
+				<item value="" key="version"/>
+			</section>
+			<section name="componentfile6">
+				<item value="" key="condition"/>
+				<item value="" key="CONDITON_PARENT_PACK"/>
+				<item value="" key="select"/>
+				<item value="" key="src"/>
+				<item value="synergy/sf_ctsu_tuning/inc/framework/api" key="name"/>
+				<item value="include" key="category"/>
+				<item value="" key="attr"/>
+				<item value="" key="version"/>
+			</section>
+			<section name="componentfile5">
+				<item value="" key="condition"/>
+				<item value="" key="CONDITON_PARENT_PACK"/>
+				<item value="" key="select"/>
+				<item value="" key="src"/>
+				<item value="synergy/sf_ctsu_tuning/src/framework/sf_ctsu_tuning_private.h" key="name"/>
+				<item value="source" key="category"/>
+				<item value="" key="attr"/>
+				<item value="1.0.0" key="version"/>
+				<item value="C:/Users/onkar.raut/Documents/2017H1/Firmware/whirlpool-synergy-safety-touch/dev_ctsu_sspv1p3p0/synergy/sf_ctsu_tuning/src/framework/sf_ctsu_tuning_private.h" key="ORIGINAL_FILE_SOURCE"/>
+			</section>
+			<section name="componentfile0">
+				<item value="" key="condition"/>
+				<item value="" key="CONDITON_PARENT_PACK"/>
+				<item value="" key="select"/>
+				<item value="" key="src"/>
+				<item value="synergy/sf_ctsu_tuning/inc/framework/api/sf_ctsu_tuning_api.h" key="name"/>
+				<item value="source" key="category"/>
+				<item value="" key="attr"/>
+				<item value="1.0.0" key="version"/>
+				<item value="C:/Users/onkar.raut/Documents/2017H1/Firmware/whirlpool-synergy-safety-touch/dev_ctsu_sspv1p3p0/synergy/sf_ctsu_tuning/inc/framework/api/sf_ctsu_tuning_api.h" key="ORIGINAL_FILE_SOURCE"/>
+			</section>
+		</section>
+	</section>
+	<section name="packtype_bsp">
+		<item value="SRCTEMPLATE_LEAVE" key="forcetemplate"/>
+		<item value="" key="bspboardnamesolid"/>
+		<item value="board." key="bspboardid"/>
+		<item value="" key="bspboardname"/>
+	</section>
+	<section name="packdetails">
+		<item value="" key="packlicenseinfo"/>
+		<item value="sf_ctsu_tuning" key="packname"/>
+		<item value="" key="packurl"/>
+		<item value="1.3.0" key="packversion"/>
+		<item value="0" key="packtype"/>
+		<item value="Framework to Tune the Capacitive Touch Sensing Unit" key="packdescription"/>
+		<item value="onkar.raut@renesas.com" key="packcontact"/>
+		<item value="Renesas" key="packvendor"/>
+		<item value="C:\Users\onkar.raut\Documents\2017H1\Firmware\whirlpool-synergy-safety-touch\r_ctsu_pack_file" key="packlocation"/>
+	</section>
+	<section name="packtype_bsp_components">
+		<item value="1" key="componentsindex"/>
+		<section name="component0">
+			<item value="false" key="isusercreated"/>
+			<item value="Renesas##BSP##Board######1.3.0" key="componentkey"/>
+			<item value="" key="condition"/>
+			<item value="" key="CONDITON_PARENT_PACK"/>
+			<item value="1.3.0" key="Cversion"/>
+			<item value="Board" key="Cgroup"/>
+			<item value="" key="Cvariant"/>
+			<item value="" key="description"/>
+			<item value="Renesas" key="Cvendor"/>
+			<item value="" key="Csub"/>
+			<item value="" key="Capiversion"/>
+			<item value="BSP" key="Cclass"/>
+		</section>
+	</section>
+	<section name="packtype_user">
+		<list key="usercomponentids">
+			<item value="Renesas##Custom_HAL_Drivers##all##sf_ctsu_tuning####1.3.0"/>
+		</list>
+		<list key="usercomponentthreadids_Renesas##Custom_HAL_Drivers##all##sf_ctsu_tuning####1.3.0">
+		</list>
+	</section>
+	<section name="conditions">
+		<item value="0" key="conditionsindex"/>
+		<list key="conditions">
+			<item value="Renesas.Synergy.1.3.0.pack|Only_CM0_and_GCC"/>
+			<item value="Renesas.Synergy.1.3.0.pack|Only_CM4_and_GCC"/>
+		</list>
+	</section>
+</section>
