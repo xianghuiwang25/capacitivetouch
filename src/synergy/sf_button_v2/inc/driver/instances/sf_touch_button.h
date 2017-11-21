@@ -69,4 +69,10 @@ typedef struct st_touch_button_instance_ctrl_t
     uint16_t debounce_counter;      ///< Variable value for debouncing purposes.
     uint16_t hold_counter;          ///< Variable value for noting the amount of time for which button is spending between press and release.
 } touch_button_instance_ctrl_t;
+
+
+/***********************************************************************************************************************
+Exported global functions (to be accessed by other files)
+***********************************************************************************************************************/
+extern touch_button_api_t const g_touch_button_on_touch_button;
 #endif /* SF_TOUCH_BUTTON_H */

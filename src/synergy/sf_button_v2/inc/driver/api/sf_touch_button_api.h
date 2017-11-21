@@ -140,37 +140,47 @@ typedef struct st_touch_button_control_arg
     size_t size;                        ///< Amount of memory available at the location pointed by @ref st_touch_button_control_arg::p_dest.
 }touch_button_control_arg_t;            ///< Refer @ref st_touch_button_control_arg
 
-/**********************************************************************************************************************/
-/*                          Exported global functions (to be accessed by other files)                                 */
-/**********************************************************************************************************************/
-/**
- * Open a TOUCH Sensor Button with the configuration provided.
- * @param handle Pointer to location where user wants the control block identifier to be stored.
- * @param p_cfg Configuration parameters for button operation.
- * @return TOUCH_BUTTON_SUCCESS, TOUCH_BUTTON_ERR_INVALID_PARAM, TOUCH_BUTTON_ERR_INSUFFICIENT_MEMORY
- */
-touch_button_err_t R_TOUCH_ButtonOpen(touch_button_ctrl_t * const p_ctrl, touch_button_cfg_t const * const btn);
+/** API to configure Touch Sensors as Buttons. */
+typedef struct
+{
+    /**
+     * Open a TOUCH Sensor Button with the configuration provided.
+     * @param handle Pointer to location where user wants the control block identifier to be stored.
+     * @param p_cfg Configuration parameters for button operation.
+     * @return TOUCH_BUTTON_SUCCESS, TOUCH_BUTTON_ERR_INVALID_PARAM, TOUCH_BUTTON_ERR_INSUFFICIENT_MEMORY
+     */
+    touch_button_err_t (*open)(touch_button_ctrl_t * const p_ctrl, touch_button_cfg_t const * const btn);
 
-/**
- * Close a Touch Button Control block.
- * @param hdl Control block identifier for the button.
- * @return TOUCH_BUTTON_SUCCESS, TOUCH_BUTTON_ERR_INVALID_PARAM, TOUCH_BUTTON_ERR_LOCKED
- */
-touch_button_err_t R_TOUCH_ButtonClose(touch_button_ctrl_t * const p_ctrl);
+    /**
+     * Close a Touch Button Control block.
+     * @param hdl Control block identifier for the button.
+     * @return TOUCH_BUTTON_SUCCESS, TOUCH_BUTTON_ERR_INVALID_PARAM, TOUCH_BUTTON_ERR_LOCKED
+     */
+    touch_button_err_t (*close)(touch_button_ctrl_t * const p_ctrl);
 
-/**
- *
- * @param hdl Button Control Block Identifier (returned by a successfull call to R_Touch_Button_Open)
- * @param p_arg Control arguments defining which parameter to get/set.
- * @return TOUCH_BUTTON_SUCCESS, TOUCH_BUTTON_ERR_INVALID_PARAM
- */
-touch_button_err_t R_TOUCH_ButtonControl(touch_button_ctrl_t * const p_ctrl, touch_button_control_arg_t* p_arg);
+    /**
+     *
+     * @param hdl Button Control Block Identifier (returned by a successfull call to R_Touch_Button_Open)
+     * @param p_arg Control arguments defining which parameter to get/set.
+     * @return TOUCH_BUTTON_SUCCESS, TOUCH_BUTTON_ERR_INVALID_PARAM
+     */
+    touch_button_err_t (*control)(touch_button_ctrl_t * const p_ctrl, touch_button_control_arg_t* p_arg);
 
-/**
- * Get the version number for the driver.
- * @return Version number of driver in 32-bits.
- */
-ssp_err_t R_TOUCH_ButtonGetVersion(ssp_version_t * const p_version);
+    /**
+     * Get the version number for the driver.
+     * @return Version number of driver in 32-bits.
+     */
+    ssp_err_t (*versionGet)(ssp_version_t * const p_version);
+
+}touch_button_api_t;
+
+typedef struct
+{
+    touch_button_ctrl_t const * p_ctrl;   ///< Pointer to the control structure for this instance
+    touch_button_cfg_t  const * p_cfg;    ///< Pointer to the configuration structure for this instance
+    touch_button_api_t  const * p_api;    ///< Pointer to the API structure for this instance
+}touch_button_instance_t;
+
 #endif /* SF_TOUCH_BUTTON_API_H_ */
 /*******************************************************************************************************************//**
  * @} (end Touch_Button)

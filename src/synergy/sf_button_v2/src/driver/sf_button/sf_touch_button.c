@@ -105,6 +105,14 @@ static const ssp_version_t touch_button_version =
     .code_version_minor = TOUCH_BUTTON_CODE_VERSION_MINOR,
 };
 
+touch_button_api_t const g_touch_button_on_touch_button =
+{
+  .open  = R_TOUCH_ButtonOpen,
+  .close = R_TOUCH_ButtonClose,
+  .control = R_TOUCH_ButtonControl,
+  .versionGet = R_TOUCH_ButtonGetVersion,
+};
+
 /***********************************************************************************************************************
 * Function Name: R_TOUCH_ButtonGetVersion
 * Description  : Get the version number for the driver.
@@ -590,7 +598,7 @@ static void touch_button_callback(touch_callback_arg_t const * const p_arg)
     {
         /* Lower layer requesting a delay */
         button_arg.event = TOUCH_BUTTON_EVENT_REQUEST_DELAY;
-        button_arg.id = UINT32_MAX;
+        button_arg.id = NULL;
         button_arg.p_context = NULL;
         for(uint32_t itr = 0; itr < NUM_CTRL_BLOCKS; itr++)
         {
