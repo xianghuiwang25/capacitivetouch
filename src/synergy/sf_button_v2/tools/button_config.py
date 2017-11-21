@@ -60,6 +60,11 @@ output_header = """
 
 output_footer = """
 #define CONFIGURATION_COUNT    (%(count)s)
+
+#if CONFIGURATION_COUNT < BUTTON_CFG_MAX_CONTROL_BLOCK_COUNT
+#error "Check BUTTON_CFG_MAX_CONTROL_BLOCK_COUNT value. Please delete this preprocessor after verifying condition."
+#endif
+
 touch_button_instance_t const * const g_all_buttons[CONFIGURATION_COUNT + 1] = 
 {
 #if (CONFIGURATION_COUNT > 0)

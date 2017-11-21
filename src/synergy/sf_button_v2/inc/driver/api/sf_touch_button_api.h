@@ -176,7 +176,7 @@ typedef struct
 
 typedef struct
 {
-    touch_button_ctrl_t const * p_ctrl;   ///< Pointer to the control structure for this instance
+    touch_button_ctrl_t      * p_ctrl;   ///< Pointer to the control structure for this instance
     touch_button_cfg_t  const * p_cfg;    ///< Pointer to the configuration structure for this instance
     touch_button_api_t  const * p_api;    ///< Pointer to the API structure for this instance
 }touch_button_instance_t;

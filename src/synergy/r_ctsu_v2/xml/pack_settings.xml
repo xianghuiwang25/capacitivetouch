@@ -175,7 +175,7 @@
 		<item value="HAL Driver to operate Capacitive Touch Sensing Unit" key="packdescription"/>
 		<item value="onkar.raut@renesas.com" key="packcontact"/>
 		<item value="Renesas" key="packvendor"/>
-		<item value="C:\Users\onkar.raut\Documents\2017H1\Firmware\whirlpool-synergy-safety-touch\r_ctsu_pack_file" key="packlocation"/>
+		<item value="C:\Users\onkar.raut\Documents\2017H2\Firmware\capacitivetouch\deploy" key="packlocation"/>
 	</section>
 	<section name="packtype_bsp_components">
 		<item value="1" key="componentsindex"/>

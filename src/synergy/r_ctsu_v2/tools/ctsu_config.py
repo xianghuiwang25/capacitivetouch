@@ -142,7 +142,7 @@ ctsu_instance_t const %(name)s =
         name = "%(itr)s"
         name = name %{ 'mode': "self" if self.mode==0 else "mutual",
                         'itr': "" if itr==None else str(itr),}
-        self.itr = itr
+        self.itr = 0 if itr == None else itr
         self.name = "g_ctsu"+ name
         self.SST = "(_00010000_CTSUSST_RECOMMEND)"
         self.DCLKC = "((_11_CTSUSSCNT<<4)|(_00_CTSUSSMOD<<0))"

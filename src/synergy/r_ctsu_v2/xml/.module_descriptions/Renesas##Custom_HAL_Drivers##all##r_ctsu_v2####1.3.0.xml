@@ -143,7 +143,7 @@
         
         <property default="module.driver.ctsu.txvsel.vcc" display="Transmit Pin Power Supply" id="module.driver.ctsu.txvsel">
             <option display="From Vcc" id="module.driver.ctsu.txvsel.vcc" value="0"/>
-            <!-- <option display="Interal logic power supply" id="module.driver.ctsu.txvsel.internal" value="_1_CTSUTXVSEL_INTERNAL_POWER"/> -->
+            <option display="Interal logic power supply" id="module.driver.ctsu.txvsel.internal" value="1"/>
         </property>
         
         <property default="module.driver.ctsu.ctsusoff.enabled" display="High-pass noise reduction function" id="module.driver.ctsu.ctsusoff">
@@ -152,16 +152,16 @@
         </property>
         
         <property default="module.driver.data.workbench" display="CTSU Information Buffers and Settings" id="module.driver.ctsu.data">
-            <!-- <option display="Provided by Workbench6" id="module.driver.data.workbench" value="0"/> -->
+            <option display="Provided by Workbench6" id="module.driver.data.workbench" value="0"/>
             <option display="Initialized to through Configurator" id="module.driver.data.generated" value="1"/>
         </property>
-        <property default="g_ctsu${_instance}_common_sfrs" display="CTSU Settings (Common)" id="module.driver.ctsu.p_ctsu_settings">
+        <property default="g_ctsu${_instance}_common_sfrs" display="CTSU Settings (Common to all sensors)" id="module.driver.ctsu.p_ctsu_settings">
             <constraint display="Name must be a valid C symbol"> testSymbol("${module.driver.ctsu.p_ctsu_settings}")</constraint>
         </property>
         <property default="g_ctsu${_instance}_sensor_settings" display="CTSU Settings (per sensor)" id="module.driver.ctsu.p_sensor_settings">
             <constraint display="Valid C symbol pointing to SSC, SO0, and SO1 values from Workbench6">testSymbol("${module.driver.ctsu.p_sensor_settings}")</constraint>
         </property>
-        <property default="g_ctsu${_instance}_data_buffer" display="CTSU Buffer Location" id="module.driver.ctsu.p_sensor_data">
+        <property default="g_ctsu${_instance}_data_buffer" display="CTSU Output Buffer Location" id="module.driver.ctsu.p_sensor_data">
             <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.ctsu.p_sensor_data}")</constraint>
         </property>
         <property default="4000000" display="PCLKB Frequency (fix to Workbench6 Input)" id="module.driver.ctsu.pclkb_hz">
@@ -360,10 +360,12 @@
         <header>
         
         /* Include the generated headers (when using Tuned data provided by Workbench6) */
-        #if (${module.driver.ctsu.data} == 0)
-        #include &quot;r_ctsu_wkbh.h&quot;
-        #endif
-        
+		#define DATA_SOURCE_WORKBENCH	(0)
+		#define DATA_SOURCE_SSPCONFIG	(1)
+		
+		#define DATA_SOURCE 			(${module.driver.ctsu.data})
+		
+        #if (DATA_SOURCE == DATA_SOURCE_SSPCONFIG)
         #define TS_MODE_UNUSED          (0)
         #define TS_MODE_RECEIVE         (1)
         #define TS_MODE_TRANSMIT        (2)
@@ -1019,6 +1021,8 @@
 #ifndef ${module.driver.ctsu.p_callback}
         void ${module.driver.ctsu.p_callback}(ctsu_callback_arg_t const * const p_arg);
 #endif
+		#endif /* (DATA_SOURCE == DATA_SOURCE_SSPCONFIG) */
+		
         extern ctsu_instance_t const ${module.driver.ctsu.name};
 
         </header>
@@ -1033,7 +1037,7 @@
         #define SYNERGY_NOT_DEFINED_INDEX (0xFFFFFFFF)
         #endif
 
-        #if (${module.driver.ctsu.data} == 1)
+        #if (DATA_SOURCE == DATA_SOURCE_SSPCONFIG)
         /* Uninitialized Buffers and Settings */
         uint16_t ${module.driver.ctsu.p_sensor_data}[${module.driver.ctsu.mode}_RD_SIZE];
         ctsu_sensor_setting_t ${module.driver.ctsu.p_sensor_settings}[${module.driver.ctsu.mode}_NUM] = 
@@ -1258,7 +1262,6 @@
         #endif
                 .ctsudclkc.byte   = ((_11_CTSUSSCNT&lt;&lt;4)|(_00_CTSUSSMOD&lt;&lt;0)),
         };
-        #endif
         
         ctsu_cfg_t const ${module.driver.ctsu.name}_cfg =
         {
@@ -1277,6 +1280,8 @@
             .p_cfg = &amp;${module.driver.ctsu.name}_cfg,
             .p_api = &amp;g_ctsu_on_ctsu,
         };
+		
+		#endif /* (DATA_SOURCE == DATA_SOURCE_SSPCONFIG) */
 
         </declarations>
         <functions>
@@ -1297,7 +1302,9 @@
             "${interface.driver.ctsu_sensor.${module.driver.ctsu_sensor.name}}" === "1"
         </constraint>
 
-        <requires id="module.driver.ctsu_sensor.requires.ctsu" interface="interface.driver.ctsu_v2" display="Add CTSU HAL Driver"/>
+        <requires id="module.driver.ctsu_sensor.requires.ctsu" interface="interface.driver.ctsu_v2" display="Add CTSU HAL Driver">
+			<override property="module.driver.ctsu.data" value="module.driver.data.generated"/>
+		</requires>
         
         <provides interface="interface.driver.ctsu_sensor" />
         <provides interface="interface.driver.ctsu_sensor.${module.driver.ctsu_sensor.name}" />
