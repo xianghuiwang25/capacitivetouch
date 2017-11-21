@@ -594,6 +594,8 @@ static void touch_button_callback(touch_callback_arg_t const * const p_arg)
     touch_button_callback_arg_t button_arg;
     touch_event_t event = (touch_event_t)(p_arg->event);
 
+    memset(&button_arg, 0, sizeof(button_arg));
+
     if (TOUCH_EVENT_REQUEST_DELAY == event)
     {
         /* Lower layer requesting a delay */
@@ -603,7 +605,7 @@ static void touch_button_callback(touch_callback_arg_t const * const p_arg)
         for(uint32_t itr = 0; itr < NUM_CTRL_BLOCKS; itr++)
         {
             touch_button_instance_ctrl_t * pctrl = pvt_button_ctrl_blk[itr];
-            if(pctrl->p_callback!=NULL)
+            if (NULL != pctrl->p_callback)
             {
                 /* Found a valid callback to use */
                 pctrl->p_callback(&button_arg);

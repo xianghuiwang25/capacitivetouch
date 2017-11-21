@@ -63,7 +63,7 @@
         
         <header>
          /** SF Touch Button instance */
-        extern sf_touch_button_instance_t ${module.framework.sf_touch_button.name};
+        extern touch_button_instance_t ${module.framework.sf_touch_button.name};
         #ifndef ${module.framework.sf_touch_button.p_callback}_defined
 		#define ${module.framework.sf_touch_button.p_callback}_defined
         /** Declaration of user callback function. This function MUST be defined in the user application.*/
@@ -78,12 +78,13 @@
         touch_button_instance_ctrl_t ${module.framework.sf_touch_button.name}_ctrl;
         touch_button_cfg_t ${module.framework.sf_touch_button.name}_cfg =
         {
-            .button.rx              = ${module.framework.sf_touch_button.requires.ctsu_sensor::module.driver.ctsu_sensor.name}_TS_RX,
             .button.tx              = ${module.framework.sf_touch_button.requires.ctsu_sensor::module.driver.ctsu_sensor.name}_TS_TX,
+            .button.rx              = ${module.framework.sf_touch_button.requires.ctsu_sensor::module.driver.ctsu_sensor.name}_TS_RX,
             .p_touch                = &amp;${module.framework.sf_touch_button.requires.touch::module.driver.touch.name},
-            .enable.release         = ${module.framework.sf_touch_button.release_enable},
-            .enable.press           = ${module.framework.sf_touch_button.press_enable},
-            .enable.hold            = false,
+            .enable.bit.reserved    = 0,
+            .enable.bit.hold            = false,
+            .enable.bit.press           = ${module.framework.sf_touch_button.press_enable},
+			.enable.bit.release         = ${module.framework.sf_touch_button.release_enable},
             .debounce               = ${module.framework.sf_touch_button.debounce},
             .hold_max               = 65535,
             .p_callback             = ${module.framework.sf_touch_button.p_callback},
