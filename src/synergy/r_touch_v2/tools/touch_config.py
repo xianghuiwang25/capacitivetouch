@@ -4,6 +4,7 @@ import os
 import re
 import logging
 import argparse
+import random
 import ctsu_config
 
 license = """
@@ -166,12 +167,11 @@ touch_instance_t const %(name)s =
       <property id=\"module.driver.touch.max_touched_sensors\" value=\"1\"/>
       <property id=\"module.driver.touch.p_callback\" value=\"NULL\"/>
     </module>
-    """
-    
-    xml_requires = """
-    <stack module=\"module.driver.touch_on_touch.%(rand)d\" requires=\"module.framework.sf_touch_button.requires.touch\">
-        %(requires_ctsu)s
-    </stack>
+    <context id=\"_context.%(crand)d\">
+        <stack module=\"module.driver.touch_on_touch.%(rand)d\">
+            <stack module=\"module.driver.ctsu_on_ctsu.%(requires_ctsu)d\" requires=\"module.driver.touch.requires.ctsu\"/>
+        </stack>
+    </context>
     """
     
     configs = [] 
@@ -235,10 +235,42 @@ touch_instance_t const %(name)s =
                 raise;
         return
     
-    def write_xml(self, template = xml_template, output=None, generate=True):
-        self.xml = template % {'rand' :self.rand,
-                               'requires_ctsu':self.ctsu_cfg.xml_requires
+    def write_xml(self, template = xml_template, outfile=None, generate=True):
+        self.xml = []
+        
+        self.ctsu_cfg.write_xml()
+        
+        self.xml.append(self.ctsu_cfg.xml)
+        
+        output = template % {'rand' :self.rand,
+                               'requires_ctsu':self.ctsu_cfg.rand,
+                               'crand':random.randint(10000000,99999999),
+                               'name' : self.name
                                }
+        self.xml.append(output)
+        
+        self.xml = "\n".join(self.xml)
+        
+        
+        if(outfile!=None):
+            try:
+                ## Open file for writing ##
+                outfile = open(outfile, 'w');
+                ## Write out all the information gathered ##
+                outfile.write("""<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>
+                <synergyConfiguration version=\"3\">
+                  <synergyModuleConfiguration>
+                """)
+                outfile.write(self.xml);
+                outfile.write("""
+                  </synergyModuleConfiguration>
+                </synergyConfiguration>
+                """)
+                ## Close the file ##
+                outfile.close();    
+            except IOError:
+                logging.error("Failed to write output to file:%s" % outfile)
+                raise;
         
         return
 
@@ -394,6 +426,7 @@ if __name__ == '__main__':
     parser.add_argument('-r', '--rx', dest='rx', nargs='+', type=int, default=None, help='TS pin numbers to use as Receive Pins for the CTSU.')
     parser.add_argument('-p', '--project', dest='projectPath', help='Specify full path to TouchApi_YYYYMMDDHHMMSS project.')
     parser.add_argument('-n', '--no_cfg', dest='generate', action='store_false', default=True, help='Disable generation of ctsu_cfg_t')
+    parser.add_argument('-x', '--xml', dest='xmlgen', action='store_true', default=False, help='Generate XML for importing to ISDE')
 #     required = parser.add_argument_group('required named arguments')
         
     args = parser.parse_args()
@@ -421,3 +454,5 @@ if __name__ == '__main__':
     
     for touch_cfg in TOUCH.configs:
         touch_cfg.write(TOUCH.template, filename + str(TOUCH.configs.index(touch_cfg)) + file_extension, generate)
+        if args.xmlgen==True:
+            touch_cfg.write_xml(TOUCH.xml_template, "./out.xml")

@@ -86,10 +86,10 @@ class SENSOR(object):
     </module>
     """
     
-    xml_requires = """
+    xml_stack = """
     <context id=\"_context.%(crand)d\">
-        <stack module=\"module.driver.ctsu_sensor_on_ctsu.%(rand)d\" requires=\"module.framework.sf_touch_button.requires.ctsu_sensor\">
-            %(requires_ctsu)s
+        <stack module=\"module.driver.ctsu_sensor_on_ctsu.%(rand)d\">
+            <stack module=\"module.driver.ctsu_on_ctsu.%(requires_ctsu)d\" requires=\"module.driver.ctsu_sensor.requires.ctsu\"/>
         </stack>
     </context>
     """
@@ -125,11 +125,11 @@ class SENSOR(object):
         logging.debug(" Sensor XML output shown below:\n" + self.xml)
         
     def write_requires(self, requires_ctsu):
-        self.xml_requires = SENSOR.xml_requires % {'rand' :self.rand,
+        self.xml_stack = SENSOR.xml_stack % {'rand' :self.rand,
                                             'requires_ctsu' : requires_ctsu,
                                             'crand':random.randint(10000000,99999999),
                                             }
-        logging.debug(" Sensor XML requirement below:\n" + self.xml_requires)
+        logging.debug(" Sensor XML requirement below:\n" + self.xml_stack)
         return
 
 class CTSU(object):
@@ -247,12 +247,8 @@ ctsu_instance_t const %(name)s =
       <property id=\"module.driver.ctsu.sep1\" value=\"module.driver.ctsu.sep1.none\"/>
     </module>
     <context id=\"_context.%(crand)d\">
-        %(context_ctsu)s
+        <stack module=\"module.driver.ctsu_on_ctsu.%(rand)d\"/>
     </context>
-    """
-    
-    xml_requires = """
-        <stack module="module.driver.ctsu_on_ctsu.%(rand)d" requires="module.driver.ctsu_sensor.requires.ctsu"/>
     """
     
     def __init__(self, sensors, pclk, en, itr=None, tx=None, rx=None):
@@ -298,7 +294,6 @@ ctsu_instance_t const %(name)s =
         self.output = None
         self.sensordata = sensors
         self.rand  = random.randint(100000000,9999999999999)
-        self.xml_requires = CTSU.xml_requires % {'rand' :self.rand,}
 
         en.sort();
         if mode==1:
@@ -380,7 +375,6 @@ ctsu_instance_t const %(name)s =
                     logging.error("Cannot use TS%02d" % ch)
             self.num_sensors = len(en)
         
-        logging.info(self.xml_requires)
         logging.info(self.name)
         logging.info(self.CR0)
         logging.info(self.CR1)
@@ -441,7 +435,7 @@ ctsu_instance_t const %(name)s =
                 raise;
         return
     
-    def write_xml(self, template, output=None, generate=True):
+    def write_xml(self, template=xml_template, outfile=None, generate=True):
         
         for pclkbdiv in range(0, 3):
             ctsusdpa = get_ctsusdpa(self.pclk, 500000, pclkbdiv)
@@ -489,7 +483,6 @@ ctsu_instance_t const %(name)s =
                                'ts34':"receive" if (34 in self.rx) else "transmit" if ((self.tx!=None) and(34 in self.tx)) else "unused",
                                'ts35':"receive" if (35 in self.rx) else "transmit" if ((self.tx!=None) and(35 in self.tx)) else "unused",
                                'rand':self.rand,
-                               'context_ctsu' : self.xml_requires,
                                'crand':random.randint(10000000,99999999),
                                }
         
@@ -500,12 +493,32 @@ ctsu_instance_t const %(name)s =
             self.xml.append(self.sensordata[itr].xml)
             
         for itr in range(0, self.num_sensors):
-            self.sensordata[itr].write_requires(self.xml_requires)
-            self.xml.append(self.sensordata[itr].xml_requires)
+            self.sensordata[itr].write_requires(self.rand)
+            self.xml.append(self.sensordata[itr].xml_stack)
             
         self.xml = '\n'.join(self.xml)
         
         logging.info("XML output shown below:\n" + self.xml)
+        
+        if(outfile!=None):
+            try:
+                ## Open file for writing ##
+                outfile = open(outfile, 'w');
+                ## Write out all the information gathered ##
+                outfile.write("""<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>
+                <synergyConfiguration version=\"3\">
+                  <synergyModuleConfiguration>
+                """)
+                outfile.write(self.xml);
+                outfile.write("""
+                  </synergyModuleConfiguration>
+                </synergyConfiguration>
+                """)
+                ## Close the file ##
+                outfile.close();    
+            except IOError:
+                logging.error("Failed to write output to file:%s" % outfile)
+                raise;
         return
     
     def correction(self, corr_del, corr_pri, corr_sec=None):
@@ -860,7 +873,8 @@ if __name__ == '__main__':
     parser.add_argument('-r', '--rx', dest='rx', nargs='+', type=int, help='(optional)Specify TS pin numbers to use as Receive Pins for the CTSU.')
     parser.add_argument('-o', '--output', dest='outfile', default="./output.c", help='Specify full path and file name for C output. E.g.: ./r_ctsu_rx_config_self01.c')
     parser.add_argument('-l', '--log', dest='logfile', help='Specify where logger information should be output.')
-    parser.add_argument('-i', '--input', dest='infile', help='Specify full path to r_ctsu.h. E.g.: ./TouchAPI_XXXX/CTSU/r_ctsu.h')    
+    parser.add_argument('-i', '--input', dest='infile', help='Specify full path to r_ctsu.h. E.g.: ./TouchAPI_XXXX/CTSU/r_ctsu.h')
+    parser.add_argument('-x', '--xml', dest='xmlgen', action='store_true', default=False, help='Generate XML for importing to ISDE')    
 
     parser.add_argument('-g', '--generate', dest='generate', action='store_true', help='Generate Preprocessor values. --input value is ignored.')
     parser.add_argument('-f', '--frequency', dest='freq', nargs='+', type=int, help='Target drive frequency. Provide a common setting or setting for each sensor.')
@@ -897,5 +911,6 @@ if __name__ == '__main__':
     itr = 0;
     for ctsu in CTSU.configs:
         ctsu.write(CTSU.template, filename+ str(itr)+file_extension)
-        ctsu.write_xml(CTSU.xml_template, filename+ str(itr)+file_extension)
+        if args.xmlgen==True:
+            ctsu.write_xml(CTSU.xml_template, "./out.xml")
         itr+=1
