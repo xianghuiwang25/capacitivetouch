@@ -85,6 +85,15 @@ class SENSOR(object):
       <property id=\"module.driver.ctsu_sensor.offset_thresh\" value=\"100\"/>
     </module>
     """
+    
+    xml_requires = """
+    <context id=\"_context.%(crand)d\">
+        <stack module=\"module.driver.ctsu_sensor_on_ctsu.%(rand)d\" requires=\"module.framework.sf_touch_button.requires.ctsu_sensor\">
+            %(requires_ctsu)s
+        </stack>
+    </context>
+    """
+    
     def __init__(self, rx, tx, idx, ssdiv, so, snum, sdpa, ricoa, icog, thr, hys):
         self.rand  = random.randint(100000000,9999999999999)
         self.rx    = rx
@@ -113,7 +122,15 @@ class SENSOR(object):
                                 'hys'  :self.hysteresis,
                                 'rand' :self.rand,
                                }
-        logging.info(" Sensor XML output shown below:\n" + self.xml)
+        logging.debug(" Sensor XML output shown below:\n" + self.xml)
+        
+    def write_requires(self, requires_ctsu):
+        self.xml_requires = SENSOR.xml_requires % {'rand' :self.rand,
+                                            'requires_ctsu' : requires_ctsu,
+                                            'crand':random.randint(10000000,99999999),
+                                            }
+        logging.debug(" Sensor XML requirement below:\n" + self.xml_requires)
+        return
 
 class CTSU(object):
     """ A CTSU configuration instance."""
@@ -179,7 +196,7 @@ ctsu_instance_t const %(name)s =
 	"""
     
     xml_template = """ 
-    <module id=\"module.driver.ctsu_on_ctsu.1725415992\">
+    <module id=\"module.driver.ctsu_on_ctsu.%(rand)d\">
       <property id=\"module.driver.ctsu.name\" value=\"%(name)s\"/>
       <property id=\"module.driver.ctsu.pclkb_div\" value=\"module.driver.ctsu.pclkb_div.div_%(pclkdiv)d\"/>
       <property id=\"module.driver.ctsu.mode\" value=\"module.driver.ctsu.mode.%(id)s\"/>
@@ -229,6 +246,13 @@ ctsu_instance_t const %(name)s =
       <property id=\"module.driver.ctsu.ts35\" value=\"module.driver.ctsu.ts35.%(ts35)s\"/>
       <property id=\"module.driver.ctsu.sep1\" value=\"module.driver.ctsu.sep1.none\"/>
     </module>
+    <context id=\"_context.%(crand)d\">
+        %(context_ctsu)s
+    </context>
+    """
+    
+    xml_requires = """
+        <stack module="module.driver.ctsu_on_ctsu.%(rand)d" requires="module.driver.ctsu_sensor.requires.ctsu"/>
     """
     
     def __init__(self, sensors, pclk, en, itr=None, tx=None, rx=None):
@@ -273,6 +297,8 @@ ctsu_instance_t const %(name)s =
         self.sensor = []
         self.output = None
         self.sensordata = sensors
+        self.rand  = random.randint(100000000,9999999999999)
+        self.xml_requires = CTSU.xml_requires % {'rand' :self.rand,}
 
         en.sort();
         if mode==1:
@@ -323,7 +349,6 @@ ctsu_instance_t const %(name)s =
                                                                                                                                                                                                                         'rx':rx[rx_itr]}
                 self.sensordata[itr].rx = rx[rx_itr]
                 self.sensordata[itr].tx = tx[tx_itr]
-                self.sensordata[itr].write()
                 tx_itr += 1
                 if tx_itr >= len(tx):
                     tx_itr = 0
@@ -340,7 +365,6 @@ ctsu_instance_t const %(name)s =
                 sensor_setting = "{ .ctsussc = CTSUSSC_TS%(ch)02d,  .ctsuso0 = CTSUSO0_TS%(ch)02d,  .ctsuso1 = CTSUSO1_TS%(ch)02d, }," % {'ch':ch}
                 self.sensordata[en.index(ch)].rx = ch
                 self.sensordata[en.index(ch)].tx = None
-                self.sensordata[en.index(ch)].write()
                 self.sensor.append(sensor_setting)
                 if ch < 8:
                     self.CHAC0 += "|(SELF%s_ENABLE_TS%02d<<%d)" % (str(itr) if (itr!=None) else "", ch, ch%8)
@@ -356,6 +380,7 @@ ctsu_instance_t const %(name)s =
                     logging.error("Cannot use TS%02d" % ch)
             self.num_sensors = len(en)
         
+        logging.info(self.xml_requires)
         logging.info(self.name)
         logging.info(self.CR0)
         logging.info(self.CR1)
@@ -401,7 +426,7 @@ ctsu_instance_t const %(name)s =
                                 'generate':"1" if generate == True else "0",
                                 'id': "SELF" if self.mode==0 else ("MUTUAL%d" % self.itr)
                                 }
-        logging.info("Output shown below:\n" + self.output)
+        logging.debug("Output shown below:\n" + self.output)
         if(output!=None):
             try:
                 ## Open file for writing ##
@@ -422,8 +447,8 @@ ctsu_instance_t const %(name)s =
             ctsusdpa = get_ctsusdpa(self.pclk, 500000, pclkbdiv)
             if ctsusdpa < 32:
                 break
-        
-        self.xml = template % { 'name':self.name,
+        self.xml = []
+        output = template % { 'name':self.name,
                                'pclk':self.pclk,
                                'id': "self" if self.mode==0 else ("mutual%d" % self.itr),
                                'pclkdiv': (1 << pclkbdiv),
@@ -463,7 +488,23 @@ ctsu_instance_t const %(name)s =
                                'ts33':"receive" if (33 in self.rx) else "transmit" if ((self.tx!=None) and(33 in self.tx)) else "unused",
                                'ts34':"receive" if (34 in self.rx) else "transmit" if ((self.tx!=None) and(34 in self.tx)) else "unused",
                                'ts35':"receive" if (35 in self.rx) else "transmit" if ((self.tx!=None) and(35 in self.tx)) else "unused",
+                               'rand':self.rand,
+                               'context_ctsu' : self.xml_requires,
+                               'crand':random.randint(10000000,99999999),
                                }
+        
+        self.xml.append(output)
+        
+        for itr in range(0, self.num_sensors):
+            self.sensordata[itr].write()
+            self.xml.append(self.sensordata[itr].xml)
+            
+        for itr in range(0, self.num_sensors):
+            self.sensordata[itr].write_requires(self.xml_requires)
+            self.xml.append(self.sensordata[itr].xml_requires)
+            
+        self.xml = '\n'.join(self.xml)
+        
         logging.info("XML output shown below:\n" + self.xml)
         return
     
@@ -569,14 +610,14 @@ def read(infile, tx=None, rx=None):
         
         ctsu_sensors = []
         
-        for index in range(0, len(tx_channels)*len(rx_channels)):
-            ctsu_sensor = SENSOR(255, 255, index, 0, 0, 0, 0, 0, 0, 1000, 100)
-            search_pattern_ssdiv = r"(#define\s*CTSUSSDIV_MUTUAL"+str(itr)+"_KEY%(key_idx)02d\s*\((0[xX][0-9a-fA-F]+)\))" % {'key_idx' : index}      ##00
-            search_pattern_so    = r"(#define\s*CTSUSO_MUTUAL"+str(itr)+"_KEY%(key_idx)02d\s*\((0[xX][0-9a-fA-F]+)\))"    % {'key_idx' : index}      ##01
-            search_pattern_snum  = r"(#define\s*CTSUSNUM_MUTUAL"+str(itr)+"_KEY%(key_idx)02d\s*\((\d{1})\))"    % {'key_idx' : index}                ##02
-            search_pattern_sdpa  = r"(#define\s*CTSUSDPA_MUTUAL"+str(itr)+"_KEY%(key_idx)02d\s*\((\d{1,2}|0[xX][0-9a-fA-F]+)\))"  % {'key_idx' : index}      ##03
-            search_pattern_ricoa = r"(#define\s*(CTSURICOA_MUTUAL"+str(itr)+"|CTSURICOA_MUTUAL"+str(itr)+"_KEY%(key_idx)02d)\s*\((0[xX][0-9a-fA-F]+)\))" % {'key_idx' : index}      ##04
-            search_pattern_icog  = r"(#define\s*CTSUICOG_MUTUAL"+str(itr)+"_KEY%(key_idx)02d\s*\((\d{1})\))"    % {'key_idx' : index}                ##05
+        for ch in range(0, len(tx_channels)*len(rx_channels)):
+            ctsu_sensor = SENSOR(255, 255, ch, 0, 0, 0, 0, 0, 0, 1000, 100)
+            search_pattern_ssdiv = r"(#define\s*CTSUSSDIV_MUTUAL"+str(itr)+"_KEY%(key_idx)02d\s*\((0[xX][0-9a-fA-F]+)\))" % {'key_idx' : ch}      ##00
+            search_pattern_so    = r"(#define\s*CTSUSO_MUTUAL"+str(itr)+"_KEY%(key_idx)02d\s*\((0[xX][0-9a-fA-F]+)\))"    % {'key_idx' : ch}      ##01
+            search_pattern_snum  = r"(#define\s*CTSUSNUM_MUTUAL"+str(itr)+"_KEY%(key_idx)02d\s*\((\d{1})\))"    % {'key_idx' : ch}                ##02
+            search_pattern_sdpa  = r"(#define\s*CTSUSDPA_MUTUAL"+str(itr)+"_KEY%(key_idx)02d\s*\((\d{1,2}|0[xX][0-9a-fA-F]+)\))"  % {'key_idx' : ch}      ##03
+            search_pattern_ricoa = r"(#define\s*(CTSURICOA_MUTUAL"+str(itr)+"|CTSURICOA_MUTUAL"+str(itr)+"_KEY%(key_idx)02d)\s*\((0[xX][0-9a-fA-F]+)\))" % {'key_idx' : ch}      ##04
+            search_pattern_icog  = r"(#define\s*CTSUICOG_MUTUAL"+str(itr)+"_KEY%(key_idx)02d\s*\((\d{1})\))"    % {'key_idx' : ch}                ##05
             
             mutual_search_patterns = []
             mutual_search_patterns.append(search_pattern_ssdiv)    ##00
@@ -650,14 +691,14 @@ def read(infile, tx=None, rx=None):
             
         ctsu_sensors = []
             
-        for index in enabled_channels_rx:
-            ctsu_sensor = SENSOR(255, 255, index, 0, 0, 0, 0, 0, 0, 1000, 100)
-            search_pattern_ssdiv = r"(#define\s*CTSUSSDIV_TS%(key_idx)02d\s*\((0[xX][0-9a-fA-F]+)\))" % {'key_idx' : index}      ##00
-            search_pattern_so    = r"(#define\s*CTSUSO_TS%(key_idx)02d\s*\((0[xX][0-9a-fA-F]+)\))"    % {'key_idx' : index}      ##01
-            search_pattern_snum  = r"(#define\s*CTSUSNUM_TS%(key_idx)02d\s*\((\d{1})\))"    % {'key_idx' : index}                ##02
-            search_pattern_sdpa  = r"(#define\s*CTSUSDPA_TS%(key_idx)02d\s*\((\d{1,2}|0[xX][0-9a-fA-F]+)\))"  % {'key_idx' : index}      ##03
-            search_pattern_ricoa = r"(#define\s*(CTSURICOA_TS|CTSURICOA_TS%(key_idx)02d)\s*\((0[xX][0-9a-fA-F]+)\))" % {'key_idx' : index}      ##04
-            search_pattern_icog  = r"(#define\s*CTSUICOG_TS%(key_idx)02d\s*\((\d{1})\))"    % {'key_idx' : index}
+        for ch in enabled_channels_rx:
+            ctsu_sensor = SENSOR(255, 255, ch, 0, 0, 0, 0, 0, 0, 1000, 100)
+            search_pattern_ssdiv = r"(#define\s*CTSUSSDIV_TS%(key_idx)02d\s*\((0[xX][0-9a-fA-F]+)\))" % {'key_idx' : ch}      ##00
+            search_pattern_so    = r"(#define\s*CTSUSO_TS%(key_idx)02d\s*\((0[xX][0-9a-fA-F]+)\))"    % {'key_idx' : ch}      ##01
+            search_pattern_snum  = r"(#define\s*CTSUSNUM_TS%(key_idx)02d\s*\((\d{1})\))"    % {'key_idx' : ch}                ##02
+            search_pattern_sdpa  = r"(#define\s*CTSUSDPA_TS%(key_idx)02d\s*\((\d{1,2}|0[xX][0-9a-fA-F]+)\))"  % {'key_idx' : ch}      ##03
+            search_pattern_ricoa = r"(#define\s*(CTSURICOA_TS|CTSURICOA_TS%(key_idx)02d)\s*\((0[xX][0-9a-fA-F]+)\))" % {'key_idx' : ch}      ##04
+            search_pattern_icog  = r"(#define\s*CTSUICOG_TS%(key_idx)02d\s*\((\d{1})\))"    % {'key_idx' : ch}
             
             mutual_search_patterns = []
             mutual_search_patterns.append(search_pattern_ssdiv)    ##00
