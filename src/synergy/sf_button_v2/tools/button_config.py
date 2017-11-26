@@ -101,6 +101,16 @@ touch_button_instance_t const %(name)s =
     .p_api  = &g_touch_button_on_g_touch_button,
 };
 """
+
+    xml_template = """
+    <module id="module.framework.sf_touch_button_v2.%(rand)d">
+      <property id="module.framework.sf_touch_button.name" value="$(name)s"/>
+      <property id="module.framework.sf_touch_button.press_enable" value="module.framework.sf_touch_button.press_enable.enabled"/>
+      <property id="module.framework.sf_touch_button.release_enable" value="module.framework.sf_touch_button.release_enable.enabled"/>
+      <property id="module.framework.sf_touch_button.debounce" value="1"/>
+      <property id="module.framework.sf_touch_button.p_callback" value="NULL"/>
+    </module>
+    """
     configs = set()
     
     def __init__(self, name, rx, tx, callback, identifier, debounce, press_enable, release_enable, short_enable, long_enable, touch_cfg):

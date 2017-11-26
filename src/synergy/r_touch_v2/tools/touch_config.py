@@ -157,10 +157,28 @@ touch_instance_t const %(name)s =
 #endif
     """
     
+    xml_template = """
+    <module id=\"module.driver.touch_on_touch.%(rand)d\">
+      <property id=\"module.driver.touch.name\" value=\"%(name)s\"/>
+      <property id=\"module.driver.touch.p_binary_result\" value=\"%(name)s_binary\"/>
+      <property id=\"module.driver.touch.drift_hold_limit\" value=\"0\"/>
+      <property id=\"module.driver.touch.on_limit\" value=\"65535\"/>
+      <property id=\"module.driver.touch.max_touched_sensors\" value=\"1\"/>
+      <property id=\"module.driver.touch.p_callback\" value=\"NULL\"/>
+    </module>
+    """
+    
+    xml_requires = """
+    <stack module=\"module.driver.touch_on_touch.%(rand)d\" requires=\"module.framework.sf_touch_button.requires.touch\">
+        %(requires_ctsu)s
+    </stack>
+    """
+    
     configs = [] 
     def __init__(self, ctsu_cfg):
         """ Initialize an object of class TOUCH."""
         assert True == isinstance(ctsu_cfg, ctsu_config.CTSU)
+        self.rand  = random.randint(100000000,9999999999999)
         self.ctsu_cfg = ctsu_cfg
         self.ctsu_cfg_name = "%s" % ctsu_cfg.name
         self.name = "g_touch%(itr)s_on_%(ctsu_cfg)s"  % {"ctsu_cfg" : self.ctsu_cfg_name,
@@ -216,6 +234,13 @@ touch_instance_t const %(name)s =
                 logging.error("Failed to write output to file:%s" % outfile)
                 raise;
         return
+    
+    def write_xml(self, template = xml_template, output=None, generate=True):
+        self.xml = template % {'rand' :self.rand,
+                               'requires_ctsu':self.ctsu_cfg.xml_requires
+                               }
+        
+        return
 
 def read(infile, list_ctsu_cfgs):
     """ Read the r_touch.h file and figure out which channels are buttons v/s slider/wheels."""
@@ -237,7 +262,9 @@ def read(infile, list_ctsu_cfgs):
             touch_config = TOUCH(ctsu_cfg)
             self_search_patterns = [r"(#define\s*SELF_KEY_USE_(%(ts)02d)\s*\((\d{1})\))",
                                     r"(#define\s*SLIDER(\d{1,2})_(\d{1,2})\s*\((%(ts)d)\))",
-                                    r"(#define\s*WHEEL(\d{1,2})_(\d{1,2})\s*\((%(ts)d)\))"]
+                                    r"(#define\s*WHEEL(\d{1,2})_(\d{1,2})\s*\((%(ts)d)\))",
+                                    r"(#define\s*SELF_TS%(ts)02d_THR\s*\((\d{1,5})\))",
+                                    r"(#define\s*SELF_TS%(ts)02d_HYS\s*\((\d{1,5})\))"]
             for ts in ctsu_cfg.en:
                 for self_search_pattern in self_search_patterns:
                     search_pattern = re.compile(self_search_pattern % {'ts':ts})
@@ -268,6 +295,11 @@ def read(infile, list_ctsu_cfgs):
                                                              None,
                                                              "WHEEL%s_%s_NORM/4" % (match.group(2), match.group(3)),
                                                              "WHEEL%s_%s_NOISE" % (match.group(2), match.group(3)))
+                            if 3 == self_search_patterns.index(self_search_pattern):
+                                touch_config.ctsu_cfg.sensordata[ctsu_cfg.en.index(ts)].threshold = int(match.group(2))
+                            if 4 == self_search_patterns.index(self_search_pattern):
+                                touch_config.ctsu_cfg.sensordata[ctsu_cfg.en.index(ts)].hysteresis = int(match.group(2))
+                                
         elif ctsu_cfg.mode == 1:
             ## Mutual Capacitance ##
             touch_config = TOUCH(ctsu_cfg)
