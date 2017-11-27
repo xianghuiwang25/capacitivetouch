@@ -674,11 +674,11 @@ if __name__ == '__main__':
     button_config.read(touch_config.TOUCH.configs)
 #     slider_config.read(touch_config.TOUCH.configs)
     
-    """ Write out all information """
-    write(mcu, args.install, args.outdir)
-    
     if args.xmlgen == True:
+        """ Generate the Information so user can import stacks into ISDE """
         write_xml(args.outdir + "/CtsuConfig.xml")
-
+    else:
+        """ Write out all information """
+        write(mcu, args.install, args.outdir)
     
     sys.exit(0)

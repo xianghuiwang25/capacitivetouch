@@ -705,7 +705,7 @@ def read(infile, tx=None, rx=None):
         ctsu_sensors = []
             
         for ch in enabled_channels_rx:
-            ctsu_sensor = SENSOR(255, 255, ch, 0, 0, 0, 0, 0, 0, 1000, 100)
+            ctsu_sensor = SENSOR(255, 255, enabled_channels_rx.index(ch), 0, 0, 0, 0, 0, 0, 1000, 100)
             search_pattern_ssdiv = r"(#define\s*CTSUSSDIV_TS%(key_idx)02d\s*\((0[xX][0-9a-fA-F]+)\))" % {'key_idx' : ch}      ##00
             search_pattern_so    = r"(#define\s*CTSUSO_TS%(key_idx)02d\s*\((0[xX][0-9a-fA-F]+)\))"    % {'key_idx' : ch}      ##01
             search_pattern_snum  = r"(#define\s*CTSUSNUM_TS%(key_idx)02d\s*\((\d{1})\))"    % {'key_idx' : ch}                ##02
