@@ -595,6 +595,43 @@ const uint8_t g_num_ctsu_configs = %(count)s;
     
     return
 
+def write_xml(outfile=None):
+    
+    for ctsu_cfg in ctsu_config.CTSU.configs:
+        ctsu_cfg.write_xml()
+        
+    for touch_cfg in touch_config.TOUCH.configs:
+        touch_cfg.write_xml()
+        
+    for button in button_config.BUTTON.configs:
+        button.write_xml()
+    
+    if(outfile!=None):
+        try:
+            ## Open file for writing ##
+            outfile = open(outfile, 'w');
+            ## Write out all the information gathered ##
+            outfile.write("""<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>
+            <synergyConfiguration version=\"3\">
+                <synergyModuleConfiguration>
+            """)
+            for ctsu_cfg in ctsu_config.CTSU.configs:
+                outfile.write(ctsu_cfg.xml);
+            for touch_cfg in touch_config.TOUCH.configs:
+                outfile.write(touch_cfg.xml);
+            for button in button_config.BUTTON.configs:
+                outfile.write(button.xml)
+            outfile.write("""    
+                </synergyModuleConfiguration>
+            </synergyConfiguration>
+            """)
+            ## Close the file ##
+            outfile.close();    
+        except IOError:
+            logging.error("Failed to write output to file:%s" % outfile)
+            raise;
+    return
+
 def unzip(src, dest):
     """ Unzip the base project to the target location"""
     with zipfile.ZipFile(src, "r") as z:
@@ -612,6 +649,7 @@ if __name__ == '__main__':
     parser.add_argument('-c', '--ctsu', dest='ctsu', action='store_true', help='Only Configuration parameters related to the CTSU are generated')
     parser.add_argument('-t', '--tx', dest='tx', nargs='+', type=int, default=None, help='TS pin numbers to use as Transmit Pins for the CTSU.')
     parser.add_argument('-r', '--rx', dest='rx', nargs='+', type=int, default=None, help='TS pin numbers to use as Receive Pins for the CTSU.')
+    parser.add_argument('-x', '--xml', dest='xmlgen', action='store_true', default=False, help='Generate XML for importing to ISDE')
     
     required = parser.add_argument_group('required named arguments')
     required.add_argument('-i', '--input', dest='install', required=True, help='Specify full path to Workbench6 install.')
@@ -639,6 +677,8 @@ if __name__ == '__main__':
     """ Write out all information """
     write(mcu, args.install, args.outdir)
     
+    if args.xmlgen == True:
+        write_xml(args.outdir + "/CtsuConfig.xml")
 
     
     sys.exit(0)

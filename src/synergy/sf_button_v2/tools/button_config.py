@@ -5,6 +5,7 @@ import re
 
 import logging
 import argparse
+import random 
 import touch_config
 import ctsu_config
 
@@ -103,19 +104,30 @@ touch_button_instance_t const %(name)s =
 """
 
     xml_template = """
-    <module id="module.framework.sf_touch_button_v2.%(rand)d">
-      <property id="module.framework.sf_touch_button.name" value="$(name)s"/>
-      <property id="module.framework.sf_touch_button.press_enable" value="module.framework.sf_touch_button.press_enable.enabled"/>
-      <property id="module.framework.sf_touch_button.release_enable" value="module.framework.sf_touch_button.release_enable.enabled"/>
-      <property id="module.framework.sf_touch_button.debounce" value="1"/>
-      <property id="module.framework.sf_touch_button.p_callback" value="NULL"/>
+    <module id=\"module.framework.sf_touch_button_v2.%(rand)d\">
+      <property id=\"module.framework.sf_touch_button.name\" value=\"%(name)s\"/>
+      <property id=\"module.framework.sf_touch_button.press_enable\" value=\"module.framework.sf_touch_button.press_enable.enabled\"/>
+      <property id=\"module.framework.sf_touch_button.release_enable\" value=\"module.framework.sf_touch_button.release_enable.enabled\"/>
+      <property id=\"module.framework.sf_touch_button.debounce\" value=\"1\"/>
+      <property id=\"module.framework.sf_touch_button.p_callback\" value=\"NULL\"/>
     </module>
+    <context id=\"_context.%(crand)d\">
+      <stack module=\"module.framework.sf_touch_button_v2.%(rand)d\">
+        <stack module=\"module.driver.touch_on_touch.%(touch_rand)d\" requires=\"module.framework.sf_touch_button.requires.touch\">
+          <stack module=\"module.driver.ctsu_on_ctsu.%(ctsu_rand)d\" requires=\"module.driver.touch.requires.ctsu\"/>
+        </stack>
+        <stack module=\"module.driver.ctsu_sensor_on_ctsu.%(sensor_rand)d\" requires=\"module.framework.sf_touch_button.requires.ctsu_sensor\">
+          <stack module=\"module.driver.ctsu_on_ctsu.%(ctsu_rand)d\" requires=\"module.driver.ctsu_sensor.requires.ctsu\"/>
+        </stack>
+      </stack>
+    </context>
     """
     configs = set()
     
     def __init__(self, name, rx, tx, callback, identifier, debounce, press_enable, release_enable, short_enable, long_enable, touch_cfg):
         self.name = name
-        self.tx = int(tx)
+        self.rand  = random.randint(100000000,9999999999999)
+        self.tx = tx
         self.rx = int(rx)
         self.cb_name = callback
         self.debounce = debounce
@@ -131,7 +143,7 @@ touch_button_instance_t const %(name)s =
         self.output = self.output + template % {
                                             'name': self.name,
                                             'rx':self.rx,
-                                            'tx':self.tx,
+                                            'tx':0xFF if self.tx==None else int(self.tx),
                                             'debounce':self.debounce,
                                             'cb_name':self.cb_name,
                                             'press_enable':self.press_enable,
@@ -139,9 +151,58 @@ touch_button_instance_t const %(name)s =
                                             'short_enable':self.short_enable,
                                             'long_enable':self.long_enable,
                                             'identifier':self.identifier,
-                                            'touch_cfg':self.touch_cfg,                                        
+                                            'touch_cfg':self.touch_cfg.name,                                        
                                          }
         logging.info("Button Configuration:\n" + self.output)
+        return
+    
+    def write_xml(self, template=xml_template, outfile=None, generate=True):
+        self.xml = []
+        
+        if outfile!=None:
+            self.touch_cfg.ctsu_cfg.write_xml()
+            self.xml.append(self.touch_cfg.ctsu_cfg.xml)
+            
+        if outfile!=None:
+            self.touch_cfg.write_xml()
+            self.xml.append(self.touch_cfg.xml)
+        
+        index = len(self.touch_cfg.ctsu_cfg.sensordata)
+        for sensor in self.touch_cfg.ctsu_cfg.sensordata:
+            if self.rx == sensor.rx and self.tx == sensor.tx:
+                index = self.touch_cfg.ctsu_cfg.sensordata.index(sensor)
+        
+        output = template % {'name':self.name,
+                             'rand' :self.rand,
+                             'crand':random.randint(10000000,99999999),
+                             'touch_rand': self.touch_cfg.rand,
+                             'ctsu_rand':self.touch_cfg.ctsu_cfg.rand,
+                             'sensor_rand':self.touch_cfg.ctsu_cfg.sensordata[index].rand,
+                             }
+        
+        self.xml.append(output)
+        
+        self.xml = '\n'.join(self.xml)
+        
+        if(outfile!=None):
+            try:
+                ## Open file for writing ##
+                outfile = open(outfile, 'w');
+                ## Write out all the information gathered ##
+                outfile.write("""<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>
+                <synergyConfiguration version=\"3\">
+                  <synergyModuleConfiguration>
+                """)
+                outfile.write(self.xml);
+                outfile.write("""
+                  </synergyModuleConfiguration>
+                </synergyConfiguration>
+                """)
+                ## Close the file ##
+                outfile.close();    
+            except IOError:
+                logging.error("Failed to write output to file:%s" % outfile)
+                raise;
         return
 
     
@@ -160,7 +221,7 @@ def read(list_touch_configs):
                         ## Button sensor found in self-cap mode ##
                         button_config = BUTTON( "Button_RX" + match.group(2) + "_on_" + touch_config.name,
                                                             sensor.rx, 
-                                                            0xFF, 
+                                                            None, 
                                                             "App_TOUCH_Button_Notification", 
                                                             touch_config.sensors.index(sensor),
                                                             20, 
@@ -168,7 +229,7 @@ def read(list_touch_configs):
                                                             'true', 
                                                             'false', 
                                                             'false', 
-                                                            touch_config.name)
+                                                            touch_config)
                         BUTTON.configs.add(button_config)
                     
                     if 1 == search_patterns.index(search_pattern):
@@ -183,7 +244,7 @@ def read(list_touch_configs):
                                                             'true', 
                                                             'false', 
                                                             'false', 
-                                                            touch_config.name)
+                                                            touch_config)
                         BUTTON.configs.add(button_config)
     
     return
@@ -229,6 +290,7 @@ if __name__ == '__main__':
     parser.add_argument('-l', '--log', dest='logfile', help='Specify where logger information should be output.')
     parser.add_argument('-t', '--tx', dest='tx', nargs='+', type=int, default=None, help='TS pin numbers to use as Transmit Pins for the CTSU.')
     parser.add_argument('-r', '--rx', dest='rx', nargs='+', type=int, default=None, help='TS pin numbers to use as Receive Pins for the CTSU.')
+    parser.add_argument('-x', '--xml', dest='xmlgen', action='store_true', default=False, help='Generate XML for importing to ISDE')
     
     required = parser.add_argument_group('required named arguments')
     required.add_argument('-i', '--input', dest='inPath', required=True, help='Specify full path to TouchApi_YYYYMMDDHHMMSS project.')
@@ -256,6 +318,7 @@ if __name__ == '__main__':
     read(touch_config.TOUCH.configs)
     
     for button in BUTTON.configs:
-            button.write(BUTTON.template)
-            
+        button.write(BUTTON.template)
+        if args.xmlgen==True:
+            button.write_xml(BUTTON.xml_template, "./out"+ str(list(BUTTON.configs).index(button)) +".xml")
     write(args.outfile)

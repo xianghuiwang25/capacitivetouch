@@ -238,9 +238,10 @@ touch_instance_t const %(name)s =
     def write_xml(self, template = xml_template, outfile=None, generate=True):
         self.xml = []
         
-        self.ctsu_cfg.write_xml()
+        if outfile!=None:
+            self.ctsu_cfg.write_xml()
+            self.xml.append(self.ctsu_cfg.xml)
         
-        self.xml.append(self.ctsu_cfg.xml)
         
         output = template % {'rand' :self.rand,
                                'requires_ctsu':self.ctsu_cfg.rand,
@@ -455,4 +456,4 @@ if __name__ == '__main__':
     for touch_cfg in TOUCH.configs:
         touch_cfg.write(TOUCH.template, filename + str(TOUCH.configs.index(touch_cfg)) + file_extension, generate)
         if args.xmlgen==True:
-            touch_cfg.write_xml(TOUCH.xml_template, "./out.xml")
+            touch_cfg.write_xml(TOUCH.xml_template, "./out"+ str(TOUCH.configs.index(touch_cfg)) +".xml")

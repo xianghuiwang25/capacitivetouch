@@ -342,8 +342,8 @@ ctsu_instance_t const %(name)s =
                                                                                                                                                                                                                         'ch':ch,
                                                                                                                                                                                                                         'tx': tx[tx_itr],
                                                                                                                                                                                                                         'rx':rx[rx_itr]}
-                self.sensordata[itr].rx = rx[rx_itr]
-                self.sensordata[itr].tx = tx[tx_itr]
+                self.sensordata[ch].rx = rx[rx_itr]
+                self.sensordata[ch].tx = tx[tx_itr]
                 tx_itr += 1
                 if tx_itr >= len(tx):
                     tx_itr = 0
