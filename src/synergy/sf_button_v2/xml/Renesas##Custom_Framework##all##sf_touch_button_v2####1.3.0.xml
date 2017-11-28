@@ -7,7 +7,7 @@
             <option display="Disabled" id="config.framework.sf_touch_button_v2.param_checking_enable.disabled" value="0"/>
         </property>
         <property default="1" display="Max. Open Button Count" id="config.framework.sf_touch_button_v2.max_count">
-            <constraint display="Value must be in range (1-36)">testInteger("${config.framework.sf_touch_button_v2.max_count}")  &amp;&amp; ("${config.framework.sf_touch_button_v2.max_count}" &gt;= 0) &amp;&amp; ("${module.framework.sf_touch_button_v2.max_count}" &lt; 36)</constraint>
+            <constraint display="Value must be in range (1-36)">testInteger("${config.framework.sf_touch_button_v2.max_count}")  &amp;&amp; ("${config.framework.sf_touch_button_v2.max_count}" &gt;= 0) &amp;&amp; ("${config.framework.sf_touch_button_v2.max_count}" &lt; 36)</constraint>
 		</property>
     <content>
         /**
