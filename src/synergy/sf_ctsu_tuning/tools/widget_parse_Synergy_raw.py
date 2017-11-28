@@ -595,9 +595,31 @@ const uint8_t g_num_ctsu_configs = %(count)s;
     
     return
 
-def write_xml(outfile=None):
+def write_xml(mcu, outfile=None):
+    
+    """ Calculate PCLKB frequency """
+    if mcu.family == "113" or mcu.family == "130":
+        hoco_freq = 32000000
+    elif mcu.family == "231" or mcu.family == "230":
+        hoco_freq = 32000000 if int(mcu.hoco_freq) == 0 else 54000000
+     
+    if int(mcu.clk_src) == 1:
+        """ Running using HOCO """
+        frequency = hoco_freq
+    elif int(mcu.clk_src) == 3:
+        """ Running using Main Oscillator (no PLL)"""
+        frequency = int(mcu.xtal_freq)
+    elif int(mcu.clk_src) == 4:
+        """ Running using PLL """
+        frequency = (int(mcu.xtal_freq) * int(mcu.pll_m))/int(mcu.pll_d)
+    else:
+        logging.error("Invalid Clock Selection.")
+        sys.exit(2)
+        
+    pclkb_freq = frequency/int(mcu.pclk_b)
     
     for ctsu_cfg in ctsu_config.CTSU.configs:
+        ctsu_cfg.pclk = pclkb_freq
         ctsu_cfg.write_xml()
         
     for touch_cfg in touch_config.TOUCH.configs:
@@ -676,9 +698,9 @@ if __name__ == '__main__':
     
     if args.xmlgen == True:
         """ Generate the Information so user can import stacks into ISDE """
-        write_xml(args.outdir + "/CtsuConfig.xml")
+        write_xml(mcu, args.outdir + "/CtsuConfig.xml")
     else:
         """ Write out all information """
-        write(mcu, args.install, args.outdir)
+        write(mcu, args.install, args.outdir) 
     
     sys.exit(0)

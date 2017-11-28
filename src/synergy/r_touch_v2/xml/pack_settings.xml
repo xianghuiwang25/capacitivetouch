@@ -22,13 +22,24 @@
 				<item value="" key="CONDITON_PARENT_PACK"/>
 				<item value="" key="select"/>
 				<item value="" key="src"/>
+				<item value="synergy/r_touch_v2/tools/touch_config.py" key="name"/>
+				<item value="other" key="category"/>
+				<item value="" key="attr"/>
+				<item value="1.0.0" key="version"/>
+				<item value="C:/Users/onkar.raut/Documents/2017H2/Firmware/capacitivetouch/src/synergy/r_touch_v2/tools/touch_config.py" key="ORIGINAL_FILE_SOURCE"/>
+			</section>
+			<section name="componentfile3">
+				<item value="" key="condition"/>
+				<item value="" key="CONDITON_PARENT_PACK"/>
+				<item value="" key="select"/>
+				<item value="" key="src"/>
 				<item value="synergy/r_touch_v2/src/driver/r_touch/r_touch_synergy.c" key="name"/>
 				<item value="source" key="category"/>
 				<item value="" key="attr"/>
 				<item value="1.0.0" key="version"/>
-				<item value="C:/Users/onkar.raut/Documents/2017H1/Firmware/whirlpool-synergy-safety-touch/dev_ctsu_sspv1p3p0/synergy/r_touch_v2/src/driver/r_touch/r_touch_synergy.c" key="ORIGINAL_FILE_SOURCE"/>
+				<item value="C:/Users/onkar.raut/Documents/2017H2/Firmware/capacitivetouch/src/synergy/r_touch_v2/src/driver/r_touch/r_touch_synergy.c" key="ORIGINAL_FILE_SOURCE"/>
 			</section>
-			<section name="componentfile3">
+			<section name="componentfile2">
 				<item value="" key="condition"/>
 				<item value="" key="CONDITON_PARENT_PACK"/>
 				<item value="" key="select"/>
@@ -37,9 +48,9 @@
 				<item value="source" key="category"/>
 				<item value="" key="attr"/>
 				<item value="1.0.0" key="version"/>
-				<item value="C:/Users/onkar.raut/Documents/2017H1/Firmware/whirlpool-synergy-safety-touch/dev_ctsu_sspv1p3p0/synergy/r_touch_v2/src/driver/r_touch/r_touch_private.h" key="ORIGINAL_FILE_SOURCE"/>
+				<item value="C:/Users/onkar.raut/Documents/2017H2/Firmware/capacitivetouch/src/synergy/r_touch_v2/src/driver/r_touch/r_touch_private.h" key="ORIGINAL_FILE_SOURCE"/>
 			</section>
-			<section name="componentfile2">
+			<section name="componentfile1">
 				<item value="" key="condition"/>
 				<item value="" key="CONDITON_PARENT_PACK"/>
 				<item value="" key="select"/>
@@ -48,18 +59,7 @@
 				<item value="source" key="category"/>
 				<item value="" key="attr"/>
 				<item value="1.0.0" key="version"/>
-				<item value="C:/Users/onkar.raut/Documents/2017H1/Firmware/whirlpool-synergy-safety-touch/dev_ctsu_sspv1p3p0/synergy/r_touch_v2/inc/driver/instances/r_touch.h" key="ORIGINAL_FILE_SOURCE"/>
-			</section>
-			<section name="componentfile1">
-				<item value="" key="condition"/>
-				<item value="" key="CONDITON_PARENT_PACK"/>
-				<item value="" key="select"/>
-				<item value="" key="src"/>
-				<item value="synergy/r_touch_v2/inc/driver/api/r_touch_api.h" key="name"/>
-				<item value="source" key="category"/>
-				<item value="" key="attr"/>
-				<item value="1.0.0" key="version"/>
-				<item value="C:/Users/onkar.raut/Documents/2017H1/Firmware/whirlpool-synergy-safety-touch/dev_ctsu_sspv1p3p0/synergy/r_touch_v2/inc/driver/api/r_touch_api.h" key="ORIGINAL_FILE_SOURCE"/>
+				<item value="C:/Users/onkar.raut/Documents/2017H2/Firmware/capacitivetouch/src/synergy/r_touch_v2/inc/driver/instances/r_touch.h" key="ORIGINAL_FILE_SOURCE"/>
 			</section>
 			<section name="componentfile6">
 				<item value="" key="condition"/>
@@ -86,11 +86,11 @@
 				<item value="" key="CONDITON_PARENT_PACK"/>
 				<item value="" key="select"/>
 				<item value="" key="src"/>
-				<item value="synergy/r_touch_v2/doc/TOUCH_User_Manual.html" key="name"/>
-				<item value="other" key="category"/>
+				<item value="synergy/r_touch_v2/inc/driver/api/r_touch_api.h" key="name"/>
+				<item value="source" key="category"/>
 				<item value="" key="attr"/>
 				<item value="1.0.0" key="version"/>
-				<item value="C:/Users/onkar.raut/Documents/2017H1/Firmware/whirlpool-synergy-safety-touch/dev_ctsu_sspv1p3p0/synergy/r_touch_v2/doc/TOUCH_User_Manual.html" key="ORIGINAL_FILE_SOURCE"/>
+				<item value="C:/Users/onkar.raut/Documents/2017H2/Firmware/capacitivetouch/src/synergy/r_touch_v2/inc/driver/api/r_touch_api.h" key="ORIGINAL_FILE_SOURCE"/>
 			</section>
 		</section>
 	</section>

@@ -1445,12 +1445,12 @@
         <property default="1000" display="Drift Compensation Interval" id="module.driver.ctsu_sensor.drift">
             <constraint display="Value must be in range (0-55536)">testInteger("${module.driver.ctsu_sensor.drift}")  &amp;&amp; ("${module.driver.ctsu_sensor.drift}" &gt;= 0) &amp;&amp; ("${module.driver.ctsu_sensor.drift}" &lt; 55536)</constraint>
         </property>
-        <property default="0" display="Drift Compensation Acceleration" id="module.driver.ctsu_sensor.dr_accel">
+        <!--<property default="0" display="Drift Compensation Acceleration" id="module.driver.ctsu_sensor.dr_accel">
             <constraint display="Value must be in range (0-255)">testInteger("${module.driver.ctsu_sensor.dr_accel}")  &amp;&amp; ("${module.driver.ctsu_sensor.dr_accel}" &gt;= 0) &amp;&amp; ("${module.driver.ctsu_sensor.dr_accel}" &lt; 256)</constraint>
-        </property>
-        <property default="0" display="Drift Compensation Deceleration" id="module.driver.ctsu_sensor.dr_decel">
+        </property>-->
+        <!--<property default="0" display="Drift Compensation Deceleration" id="module.driver.ctsu_sensor.dr_decel">
             <constraint display="Value must be in range (0-255)">testInteger("${module.driver.ctsu_sensor.dr_decel}")  &amp;&amp; ("${module.driver.ctsu_sensor.dr_decel}" &gt;= 0) &amp;&amp; ("${module.driver.ctsu_sensor.dr_decel}" &lt; 256)</constraint>
-        </property>
+        </property>-->
         
         <property default="module.driver.ctsu_sensor.sep3.none" display="RUN-TIME OFFSET CURRENT ADJUSTMENT PARAMETERS" id="module.driver.ctsu_sensor.sep3">
             <option display="---------------------------------" id="module.driver.ctsu_sensor.sep3.none" value="0"/>
@@ -1487,8 +1487,8 @@
         #define ${module.driver.ctsu_sensor.name}_DELAY_2_R     (${module.driver.ctsu_sensor.drelease})
         
         #define ${module.driver.ctsu_sensor.name}_DRIFT_RATE    (${module.driver.ctsu_sensor.drift})
-        #define ${module.driver.ctsu_sensor.name}_RATE_PLUS     (${module.driver.ctsu_sensor.dr_accel})
-        #define ${module.driver.ctsu_sensor.name}_RATE_MINUS    (${module.driver.ctsu_sensor.dr_decel})
+        #define ${module.driver.ctsu_sensor.name}_RATE_PLUS     (0) /* (${module.driver.ctsu_sensor.dr_accel}) */
+        #define ${module.driver.ctsu_sensor.name}_RATE_MINUS    (0) /* (${module.driver.ctsu_sensor.dr_decel}) */
         
         #define ${module.driver.ctsu_sensor.name}_ADJ_INTERVAL  (${module.driver.ctsu_sensor.offset_interval})
         #define ${module.driver.ctsu_sensor.name}_ADJ_THRESHOLD (${module.driver.ctsu_sensor.offset_thresh})

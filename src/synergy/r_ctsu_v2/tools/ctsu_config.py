@@ -437,11 +437,14 @@ ctsu_instance_t const %(name)s =
     
     def write_xml(self, template=xml_template, outfile=None, generate=True):
         
-        for pclkbdiv in range(0, 3):
-            ctsusdpa = get_ctsusdpa(self.pclk, 500000, pclkbdiv)
-            if ctsusdpa < 32:
-                break
+#         for pclkbdiv in range(0, 3):
+#             ctsusdpa = get_ctsusdpa(self.pclk, 500000, pclkbdiv)
+#             if ctsusdpa < 32:
+#                 break
+
+        pclkbdiv = 0;
         self.xml = []
+        
         output = template % { 'name':self.name,
                                'pclk':self.pclk,
                                'id': "self" if self.mode==0 else ("mutual%d" % self.itr),
