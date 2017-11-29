@@ -122,7 +122,7 @@
             <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.ctsu.name}")</constraint>
         </property>
         
-        <property default="module.driver.ctsu.pclkb_div.div_1" display="PCLKB Divisor" id="module.driver.ctsu.pclkb_div">
+        <property default="module.driver.ctsu.pclkb_div.div_1" display="PCLKB Divisor (CTSUCLK[1:0])" id="module.driver.ctsu.pclkb_div">
             <option display="Divide by 1" id="module.driver.ctsu.pclkb_div.div_1" value="0"/>
             <option display="Divide by 2" id="module.driver.ctsu.pclkb_div.div_2" value="1"/>
             <option display="Divide by 4" id="module.driver.ctsu.pclkb_div.div_4" value="2"/>
