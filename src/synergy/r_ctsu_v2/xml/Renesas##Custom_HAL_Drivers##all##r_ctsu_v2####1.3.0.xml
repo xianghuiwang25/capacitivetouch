@@ -91,7 +91,7 @@
         #define CTSU_CFG_ENABLE_CORRECTION              (${config.driver.ctsu_v2.correction})
         </content>
     </config>
-    <module config="config.driver.ctsu_v2" display="Driver|Input|${module.driver.ctsu.name} CTSU V2 HAL Driver on r_ctsu" id="module.driver.ctsu_on_ctsu" common="100" version="1">
+    <module config="config.driver.ctsu_v2" display="Driver|Input|${module.driver.ctsu.name} CTSU V2 HAL Driver on r_ctsu_v2" id="module.driver.ctsu_on_ctsu" common="100" version="1">
         <constraint display="Unique name required for each instance">
             "${interface.driver.ctsu_v2.${module.driver.ctsu.name}}" === "1"
         </constraint>

@@ -7,7 +7,13 @@
             <option display="Disabled" id="config.framework.sf_ctsu_tuning.param_check.false" value="0"/>
             <option display="Enabled" id="config.framework.sf_ctsu_tuning.param_check.true" value="1"/>
         </property>
-        <property default="config.framework.sf_ctsu_tuning.connection.usb" display="Tuning Interface" id="config.framework.sf_ctsu_tuning.connection">
+		
+		<property default="config.framework.sf_ctsu_tuning.mode.tuning" display="Mode" id="config.framework.sf_ctsu_tuning.mode">
+            <option display="Tuning" id="config.framework.sf_ctsu_tuning.mode.tuning" value="1"/>
+			<option display="Monitor" id="config.framework.sf_ctsu_tuning.mode.monitor" value="2"/>
+        </property>
+		
+        <property default="config.framework.sf_ctsu_tuning.connection.usb" display="PC Connection Interface" id="config.framework.sf_ctsu_tuning.connection">
             <option display="Using Communication Frameworks" id="config.framework.sf_ctsu_tuning.connection.usb" value="1"/>
 			<option display="Using SCI UART Driver" id="config.framework.sf_ctsu_tuning.connection.sci" value="2"/>
             <!--<option display="Debugger" id="config.framework.sf_ctsu_tuning.connection.debugger" value="0"/>-->
@@ -29,6 +35,11 @@
         <content>
         
         #define SF_CTSU_TUNING_CFG_PARAM_CHECK      (${config.framework.sf_ctsu_tuning.param_check})
+		
+		#define SF_CTSU_TUNING_CFG_MODE_TUNING		(${config.framework.sf_ctsu_tuning.mode.tuning})
+		#define SF_CTSU_TUNING_CFG_MODE_MONITOR		(${config.framework.sf_ctsu_tuning.mode.monitor})
+		
+		#define SF_CTSU_TUNING_CFG_MODE      		(${config.framework.sf_ctsu_tuning.mode})
         
         #define SF_CTSU_TUNING_CFG_CONNECTION       (${config.framework.sf_ctsu_tuning.connection})
         
