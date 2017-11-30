@@ -41,6 +41,9 @@
 #include "sf_ctsu_tuning_cfg.h"
 #include "sf_ctsu_tuning.h"
 
+#include "../../../../r_ctsu_v2/src/driver/r_ctsu/r_ctsu_private.h"
+#include "../../../../r_touch_v2/src/driver/r_touch/r_touch_private.h"
+
 #if (2 == BSP_CFG_ASSERT)
 /** @note Use assertion on the Renesas Virtual Console.
  * Instructions: (Alt+Shift+Q, C) >
@@ -795,7 +798,7 @@ const uint8_t g_matrix_index[] = {
 };
 
 //touch_system_t          g_touch_system;
-//touch_func_flag_t       g_touch_function[METHOD_NUM];
+touch_func_flag_t       g_touch_function[METHOD_NUM];
 touch_func_param_t      g_touch_paramter[METHOD_NUM];
 key_info_t              g_key_info[METHOD_NUM];
 //touch_tuning_t          g_touch_tuning_info[METHOD_NUM];
@@ -808,8 +811,10 @@ volatile ctsu_status_t           g_ctsu_status[METHOD_NUM];                  	/*
 uint8_t comm_command = 0;
 
 ctsu_ctrl_t* ctsu_handle_id[METHOD_NUM];
+touch_ctrl_t* touch_handle_id[METHOD_NUM];
 
 ctsu_cfg_t* all_ctsu_configs[METHOD_NUM];
+touch_cfg_t* all_touch_configs[METHOD_NUM];
 
 static uint8_t g_burst_mode = 0;
 
@@ -844,9 +849,34 @@ static void InitKeyIndexTable(void);
 * Return Value : none
 ***********************************************************************************************************************/
 uint8_t g_key_sensor_index[METHOD_NUM][(MAX_MUTUAL_SENSOR_ID > SELFCAP_SENSOR_MAX) ? MAX_MUTUAL_SENSOR_ID : SELFCAP_SENSOR_MAX];
+touch_sensor_t g_sensors[METHOD_NUM][(MAX_MUTUAL_SENSOR_ID > SELFCAP_SENSOR_MAX) ? MAX_MUTUAL_SENSOR_ID : SELFCAP_SENSOR_MAX];
+
+int SerialCommandInitialTouch(touch_instance_t * p_touch, const uint8_t itr)
+{
+#if (SF_CTSU_TUNING_CFG_PARAM_CHECK==true)
+    ASSERT(itr < METHOD_NUM);
+    ASSERT(p_touch != NULL);
+    ASSERT(p_touch->p_cfg != NULL);
+#endif
+    int err = SerialCommandInitial((ctsu_instance_t *)p_touch->p_cfg->p_ctsu, itr);
+
+    if(!err)
+    {
+        return err;
+    }
+
+    g_key_info[itr].touch_result = (uint16_t*)all_touch_configs[itr]->p_binary_result;
+
+    return 1;
+}
 
 int SerialCommandInitial(ctsu_instance_t * p_ctsu, const uint8_t itr)
 {
+#if (SF_CTSU_TUNING_CFG_PARAM_CHECK==true)
+    ASSERT(itr < METHOD_NUM);
+    ASSERT(p_ctsu!=NULL);
+    ASSERT(p_ctsu->p_cfg != NULL);
+#endif
     ctsu_cfg_t const * const p_cfg = p_ctsu->p_cfg;
 #ifdef WORKBENCH_COMMAND_USE
     serial_transmit_ready = FALSE;
@@ -856,6 +886,8 @@ int SerialCommandInitial(ctsu_instance_t * p_ctsu, const uint8_t itr)
 
     uint8_t ch_num;
     uint16_t index;
+    uint8_t arr_rx[MAX_TS];
+    uint8_t arr_tx[MAX_TS];
     extern const fmi_instance_t g_fmi;
     (void)index;
 
@@ -926,10 +958,14 @@ int SerialCommandInitial(ctsu_instance_t * p_ctsu, const uint8_t itr)
         for( ch_num = 0; ch_num < SELFCAP_SENSOR_MAX; ch_num++)
         {
             g_key_info[itr].sensor_index[ch_num] = 0xff;
+            g_sensors[itr][ch_num].rx = 0xff;
+            g_sensors[itr][ch_num].tx = 0xff;
             if((ch_en & ((uint64_t)1<<ch_num))==((uint64_t)1<<ch_num))
             {
                 g_key_info[itr].ena_num += 1;
                 g_key_info[itr].sensor_index[ch_num] = rx_count;
+                g_sensors[itr][ch_num].rx = ch_num;
+                g_sensors[itr][ch_num].tx = 0xFF;
                 rx_count += 1;
             }
         }
@@ -945,15 +981,19 @@ int SerialCommandInitial(ctsu_instance_t * p_ctsu, const uint8_t itr)
         }
         for( ch_num = 0, rx_count = 0; ch_num < MAX_TS; ch_num++)
         {
+            arr_rx[rx_count] = 0xFF;
             if(((ch_en & ((uint64_t)1<<ch_num))==((uint64_t)1<<ch_num)) && ((ch_tx & ((uint64_t)1<<ch_num))==0))
             {
+                arr_rx[rx_count] = ch_num;
                 rx_count += 1;
             }
         }
         for( ch_num = 0, tx_count = 0; ch_num < MAX_TS; ch_num++)
         {
+            arr_tx[tx_count] = 0xFF;
             if((ch_tx & ((uint64_t)1<<ch_num))==((uint64_t)1<<ch_num))
             {
+                arr_tx[tx_count] = ch_num;
                 tx_count += 1;
             }
         }
@@ -968,6 +1008,8 @@ int SerialCommandInitial(ctsu_instance_t * p_ctsu, const uint8_t itr)
             {
                 g_key_info[itr].sensor_index[index_rx*tx_count+index_tx] = index_rx*tx_count+index_tx;
                 g_key_info[itr].key_num += 1;
+                g_sensors[itr][index_rx*tx_count+index_tx].rx = arr_rx[index_rx];
+                g_sensors[itr][index_rx*tx_count+index_tx].tx = arr_tx[index_tx];
             }
         }
     }
@@ -1077,6 +1119,7 @@ uint8_t    GetReplayMessage(uint8_t * value, uint16_t * length)
 ***********************************************************************************************************************/
 static uint8_t GetMeasureSensorCounter(uint16_t channel, uint16_t * value)
 {
+#if (SF_CTSU_TUNING_CFG_MODE==SF_CTSU_TUNING_CFG_MODE_TUNING)
     uint8_t result;
     uint8_t index;
 
@@ -1104,6 +1147,36 @@ static uint8_t GetMeasureSensorCounter(uint16_t channel, uint16_t * value)
         }
         result = CMD_RESULT_SUCCESS;
     }
+#endif
+
+#if (SF_CTSU_TUNING_CFG_MODE==SF_CTSU_TUNING_CFG_MODE_MONITOR)
+    uint8_t result;
+
+    touch_err_t touch_err;
+    touch_read_t read_arg =
+    {
+        .read_cmd = TOUCH_DATA_FILTERED_COUNT,
+        .sensor = &g_sensors[g_access_method][channel],
+        .sensor_count = 1,
+        .p_dest = value,
+        .size = sizeof(uint16_t),
+    };
+
+    *value = 0xffff;
+    result = CMD_RESULT_FAILURE;
+    if (channel < g_method_info[g_access_method].enable)
+    {
+        if (0xff != g_key_info[g_access_method].sensor_index[channel])
+        {
+            touch_err = R_TOUCH_Read(touch_handle_id[g_access_method], &read_arg);
+            if (TOUCH_SUCCESS == touch_err)
+            {
+                result = CMD_RESULT_SUCCESS;
+            }
+        }
+        result = CMD_RESULT_SUCCESS;
+    }
+#endif
     return result;
 }
 
@@ -1117,6 +1190,7 @@ static uint8_t GetMeasureSensorCounter(uint16_t channel, uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t GetMeasureReferenceValue(uint16_t channel, uint16_t * value)
 {
+#if (SF_CTSU_TUNING_CFG_MODE==SF_CTSU_TUNING_CFG_MODE_TUNING)
     uint8_t result;
     uint8_t index;
     (void)index;
@@ -1153,9 +1227,40 @@ static uint8_t GetMeasureReferenceValue(uint16_t channel, uint16_t * value)
             }
         }
     }
-    /* XXX Dummy ReferenceValue provided by this layer. */
     result = CMD_RESULT_SUCCESS;
     ASSERT(result!=CMD_RESULT_FAILURE);
+#endif
+
+#if (SF_CTSU_TUNING_CFG_MODE==SF_CTSU_TUNING_CFG_MODE_MONITOR)
+    uint8_t result;
+    touch_err_t touch_err;
+    touch_read_t read_arg =
+    {
+            .read_cmd = TOUCH_DATA_BASELINE_COUNT,
+            .sensor = &g_sensors[g_access_method][channel],
+            .sensor_count = 1,
+            .p_dest = value,
+            .size = sizeof(uint16_t),
+    };
+
+    *value = 0xffff;
+    result = CMD_RESULT_FAILURE;
+
+    if (channel < g_method_info[g_access_method].enable)
+    {
+        if (0xff != g_key_info[g_access_method].sensor_index[channel])
+        {
+            touch_err = R_TOUCH_Read(touch_handle_id[g_access_method], &read_arg);
+            if (TOUCH_SUCCESS == touch_err)
+            {
+                result = CMD_RESULT_SUCCESS;
+            }
+        }
+        result = CMD_RESULT_SUCCESS;
+    }
+    ASSERT(result!=CMD_RESULT_FAILURE);
+#endif
+
     return result;
 }
 
@@ -1206,6 +1311,7 @@ static uint8_t GetMeasureReferenceCounter(uint16_t channel, uint16_t * value)
         }
         result = CMD_RESULT_SUCCESS;
     }
+
     return result;
 }
 
@@ -1269,14 +1375,75 @@ static uint8_t GetMeasureWheelPosition(uint16_t channel, uint16_t * value)
 ***********************************************************************************************************************/
 static uint8_t GetMeasureTouchResult(uint16_t channel, uint16_t * value)
 {
+#if (SF_CTSU_TUNING_CFG_MODE==SF_CTSU_TUNING_CFG_MODE_TUNING)
     uint8_t result;
     uint8_t ch_num, index;
     (void) index;			//Compiler warning disable
     (void) ch_num;			//Compiler warning disable
     *value = 0;
-    /* XXX Touch Result Available in Touch layer driver. */
     result = CMD_RESULT_SUCCESS;
     ASSERT(result!=CMD_RESULT_FAILURE);
+#endif
+
+#if (SF_CTSU_TUNING_CFG_MODE==SF_CTSU_TUNING_CFG_MODE_MONITOR)
+    uint8_t result;
+    uint8_t index;
+    uint32_t itr = 0;
+    uint32_t sensor_count = 0;
+
+    uint64_t binary_read = 0;
+    typedef union {
+        struct
+        {
+            uint8_t uint8[sizeof(uint64_t)];
+        };
+        struct
+        {
+            uint16_t uint16[sizeof(uint64_t)/sizeof(uint16_t)];
+        };
+        uint64_t uint64;
+    }result_t ;
+    result_t binary_out;
+    result_t binary_result;
+    binary_out.uint64 = 0;
+    binary_result.uint64 = 0;
+
+    ctsu_control_arg_t ctsu_ctrl_arg;
+    ctsu_ctrl_arg.cmd = CTSU_CMD_GET_SENSOR_COUNT;
+    ctsu_ctrl_arg.p_context = &sensor_count;
+
+    R_CTSU_Control( ctsu_handle_id[g_access_method], &ctsu_ctrl_arg);
+
+    for(itr = 0; itr < (sensor_count + (sensor_count & 0x7)); itr+=8)
+    {
+        binary_read = all_touch_configs[g_access_method]->p_binary_result[itr >> 3];
+        binary_result.uint64 |= binary_read << itr;
+    }
+    if (METHOD_TYPE_SLFCP == g_method_info[g_access_method].type)
+    {
+        for(itr = 0; (itr < SELFCAP_SENSOR_MAX); itr++)
+        {
+            index = g_key_info[g_access_method].sensor_index[itr];
+            if( ((uint64_t)1U<<index) == (((uint64_t)1U<<index) & binary_result.uint64)  )
+            {   /* */
+                binary_out.uint64 |= (uint64_t)1U << itr;
+            }
+        }
+
+        binary_result.uint64 = binary_out.uint64;
+    }
+
+    *value = 0;
+    if (g_key_info[g_access_method].key_num > 0)
+    {
+        if (g_key_info[g_access_method].key_max_group > channel)
+        {
+            *value = binary_result.uint16[channel];
+        }
+    }
+    result = CMD_RESULT_SUCCESS;
+    return result;
+#endif
     return result;
 }
 
@@ -1407,6 +1574,16 @@ static uint8_t GetMeasureSecondaryReferenceCounter(uint16_t channel, uint16_t * 
 static uint8_t GetParameterTouchFuncMode(uint16_t * value)
 {
 	uint8_t result = CMD_RESULT_FAILURE;
+#if (SF_CTSU_TUNING_CFG_MODE==SF_CTSU_TUNING_CFG_MODE_MONITOR)
+    *value = (uint16_t)(((g_touch_function[g_access_method].flag.drift & 0x01) << 0) +
+                        ((g_touch_function[g_access_method].flag.msa   & 0x01) << 1) +
+                        ((g_touch_function[g_access_method].flag.acd0  & 0x01) << 2) +
+                        ((g_touch_function[g_access_method].flag.acd1  & 0x01) << 3) +
+                        ((g_touch_function[g_access_method].flag.mtc & 0x01) << 4));
+    result = CMD_RESULT_SUCCESS;
+    ASSERT(result!=CMD_RESULT_FAILURE);
+#endif
+
 	ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
 }
@@ -1422,6 +1599,14 @@ static uint8_t SetParameterTouchFuncMode(uint16_t value)
 {
 	/* Drift correction      */
 	uint8_t result = CMD_RESULT_FAILURE;
+#if (SF_CTSU_TUNING_CFG_MODE==SF_CTSU_TUNING_CFG_MODE_MONITOR)
+    g_touch_function[g_access_method].flag.drift = (uint8_t)((value >> 0) & 0x01); /* Drift correction      */
+    g_touch_function[g_access_method].flag.msa   = (uint8_t)((value >> 1) & 0x01); /* - */
+    g_touch_function[g_access_method].flag.acd0  = (uint8_t)((value >> 2) & 0x01); /* - */
+    g_touch_function[g_access_method].flag.acd1  = (uint8_t)((value >> 3) & 0x01); /* - */
+    g_touch_function[g_access_method].flag.mtc = (uint8_t)((value >> 4) & 0x01); /* - */
+    result = CMD_RESULT_SUCCESS;
+#endif
 	ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
 }
@@ -1436,6 +1621,10 @@ static uint8_t SetParameterTouchFuncMode(uint16_t value)
 static uint8_t GetParameterDriftInterval(uint16_t * value)
 {
 	uint8_t result = CMD_RESULT_FAILURE;
+#if (SF_CTSU_TUNING_CFG_MODE==SF_CTSU_TUNING_CFG_MODE_MONITOR)
+    *value = g_touch_paramter[g_access_method].drift_freq = all_touch_configs[g_access_method]->p_sensor[0].drift_rate;
+    result = CMD_RESULT_SUCCESS;
+#endif
 	ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
 }
@@ -1450,6 +1639,28 @@ static uint8_t GetParameterDriftInterval(uint16_t * value)
 static uint8_t SetParameterDriftInterval(uint16_t value)
 {
 	uint8_t result = CMD_RESULT_FAILURE;
+#if (SF_CTSU_TUNING_CFG_MODE==SF_CTSU_TUNING_CFG_MODE_MONITOR)
+    uint16_t sensor_count = 0;
+    ctsu_err_t ctsu_err;
+    uint16_t itr = 0;
+
+    g_touch_paramter[g_access_method].drift_freq = value;
+
+    ctsu_control_arg_t control_args =
+    {
+            .cmd = CTSU_CMD_GET_SENSOR_COUNT,
+            .p_context = &sensor_count,
+    };
+
+    ctsu_err = R_CTSU_Control(ctsu_handle_id[g_access_method], &control_args);
+    ASSERT(CTSU_SUCCESS==ctsu_err);
+    for(itr = 0; itr < sensor_count; itr++)
+    {
+        memcpy((void*)&all_touch_configs[g_access_method]->p_sensor[itr].drift_rate, &value, sizeof(uint16_t));
+    }
+
+    result = CMD_RESULT_SUCCESS;
+#endif
 	ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
 }
@@ -1464,6 +1675,10 @@ static uint8_t SetParameterDriftInterval(uint16_t value)
 static uint8_t GetParameterMsa(uint16_t * value)
 {
 	uint8_t result = CMD_RESULT_FAILURE;
+#if (SF_CTSU_TUNING_CFG_MODE==SF_CTSU_TUNING_CFG_MODE_MONITOR)
+    *value = g_touch_paramter[g_access_method].msa_freq = all_touch_configs[g_access_method]->p_common->on_limit;
+    result = CMD_RESULT_SUCCESS;
+#endif
 	ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
 }
@@ -1478,6 +1693,11 @@ static uint8_t GetParameterMsa(uint16_t * value)
 static uint8_t SetParameterMsa(uint16_t value)
 {
 	uint8_t result = CMD_RESULT_FAILURE;
+#if (SF_CTSU_TUNING_CFG_MODE==SF_CTSU_TUNING_CFG_MODE_MONITOR)
+    memcpy((void*)&all_touch_configs[g_access_method]->p_common->on_limit, &value, sizeof(uint16_t));
+    g_touch_paramter[g_access_method].msa_freq = value;
+    result = CMD_RESULT_SUCCESS;
+#endif
 	ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
 }
@@ -1492,6 +1712,10 @@ static uint8_t SetParameterMsa(uint16_t value)
 static uint8_t GetParameterAcdToTouch(uint16_t * value)
 {
 	uint8_t result = CMD_RESULT_FAILURE;
+#if (SF_CTSU_TUNING_CFG_MODE==SF_CTSU_TUNING_CFG_MODE_MONITOR)
+    *value = g_touch_paramter[g_access_method].touch_freq = all_touch_configs[g_access_method]->p_sensor[0].dt_limit;
+    result = CMD_RESULT_SUCCESS;
+#endif
 	ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
 }
@@ -1506,6 +1730,28 @@ static uint8_t GetParameterAcdToTouch(uint16_t * value)
 static uint8_t SetParameterAcdToTouch(uint16_t value)
 {
 	uint8_t result = CMD_RESULT_FAILURE;
+#if (SF_CTSU_TUNING_CFG_MODE==SF_CTSU_TUNING_CFG_MODE_MONITOR)
+    uint16_t sensor_count = 0;
+    ctsu_err_t ctsu_err;
+    uint16_t itr = 0;
+
+    g_touch_paramter[g_access_method].touch_freq = value;
+
+    ctsu_control_arg_t control_args =
+    {
+            .cmd = CTSU_CMD_GET_SENSOR_COUNT,
+            .p_context = &sensor_count,
+    };
+
+    ctsu_err = R_CTSU_Control(ctsu_handle_id[g_access_method], &control_args);
+    ASSERT(CTSU_SUCCESS==ctsu_err);
+    for(itr = 0; itr < sensor_count; itr++)
+    {
+        memcpy((void*)&all_touch_configs[g_access_method]->p_sensor[itr].dt_limit, &value, sizeof(uint16_t));
+    }
+
+    result = CMD_RESULT_SUCCESS;
+#endif
 	ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
 }
@@ -1520,6 +1766,10 @@ static uint8_t SetParameterAcdToTouch(uint16_t value)
 static uint8_t GetParameterAcdToNoTouch(uint16_t * value)
 {
 	uint8_t result = CMD_RESULT_FAILURE;
+#if (SF_CTSU_TUNING_CFG_MODE==SF_CTSU_TUNING_CFG_MODE_MONITOR)
+    *value = g_touch_paramter[g_access_method].not_touch_freq = all_touch_configs[g_access_method]->p_sensor[0].dr_limit;
+    result = CMD_RESULT_SUCCESS;
+#endif
 	ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
 }
@@ -1534,6 +1784,28 @@ static uint8_t GetParameterAcdToNoTouch(uint16_t * value)
 static uint8_t SetParameterAcdToNoTouch(uint16_t value)
 {
 	uint8_t result = CMD_RESULT_FAILURE;
+#if (SF_CTSU_TUNING_CFG_MODE==SF_CTSU_TUNING_CFG_MODE_MONITOR)
+    uint16_t sensor_count = 0;
+    ctsu_err_t ctsu_err;
+    uint16_t itr = 0;
+
+    g_touch_paramter[g_access_method].not_touch_freq = value;
+
+    ctsu_control_arg_t control_args =
+    {
+            .cmd = CTSU_CMD_GET_SENSOR_COUNT,
+            .p_context = &sensor_count,
+    };
+
+    ctsu_err = R_CTSU_Control(ctsu_handle_id[g_access_method], &control_args);
+    ASSERT(CTSU_SUCCESS==ctsu_err);
+    for(itr = 0; itr < sensor_count; itr++)
+    {
+        memcpy((void*)&all_touch_configs[g_access_method]->p_sensor[itr].dr_limit, &value, sizeof(uint16_t));
+    }
+
+    result = CMD_RESULT_SUCCESS;
+#endif
 	ASSERT(result!=CMD_RESULT_FAILURE);
     return result;
 }
@@ -1551,11 +1823,18 @@ static uint8_t GetParameterThreshold(uint16_t channel, uint16_t * value)
     uint8_t result;
     uint8_t index;
     (void) index;			//Compiler warning disable
-    *value = 0;
+    *value = 0xffff;
     result = CMD_RESULT_FAILURE;
     if (channel < g_method_info[g_access_method].enable)
     {
-    	/* XXX Threshold Available in Touch layer driver. */
+#if (SF_CTSU_TUNING_CFG_MODE==SF_CTSU_TUNING_CFG_MODE_MONITOR)
+        index = g_key_info[g_access_method].sensor_index[channel];
+        if (0xff != index)
+        {
+            *value = all_touch_configs[g_access_method]->p_sensor[index].threshold;
+        }
+        result = CMD_RESULT_SUCCESS;
+#endif
     }
     result = CMD_RESULT_SUCCESS;
 	ASSERT(result!=CMD_RESULT_FAILURE);
@@ -1578,7 +1857,14 @@ static uint8_t SetParameterThreshold(uint16_t channel, uint16_t value)
     result = CMD_RESULT_FAILURE;
     if (channel < g_method_info[g_access_method].enable)
     {
-    	/* XXX Threshold Available in Touch layer driver. */
+#if (SF_CTSU_TUNING_CFG_MODE==SF_CTSU_TUNING_CFG_MODE_MONITOR)
+        index = g_key_info[g_access_method].sensor_index[channel];
+        if (0xff != index)
+        {
+            memcpy((void*)&all_touch_configs[g_access_method]->p_sensor[index].threshold, &value, sizeof(uint16_t));
+        }
+        result = CMD_RESULT_SUCCESS;
+#endif
     }
     result = CMD_RESULT_SUCCESS;
 	ASSERT(result!=CMD_RESULT_FAILURE);
@@ -1600,7 +1886,14 @@ static uint8_t GetParameterHysteresis(uint16_t channel, uint16_t * value)
     result = CMD_RESULT_FAILURE;
     if (channel < g_method_info[g_access_method].enable)
     {
-    	/* XXX Hysteresis Available in Touch layer driver. */
+#if (SF_CTSU_TUNING_CFG_MODE==SF_CTSU_TUNING_CFG_MODE_MONITOR)
+        uint8_t index = g_key_info[g_access_method].sensor_index[channel];
+        if (0xff != index)
+        {
+            *value = all_touch_configs[g_access_method]->p_sensor[index].hysteresis;
+        }
+        result = CMD_RESULT_SUCCESS;
+#endif
     }
     result = CMD_RESULT_SUCCESS;
 	ASSERT(result!=CMD_RESULT_FAILURE);
@@ -1621,7 +1914,14 @@ static uint8_t SetParameterHysteresis(uint16_t channel, uint16_t value)
     result = CMD_RESULT_FAILURE;
     if (channel < g_method_info[g_access_method].enable)
     {
-        /* XXX Hysteresis Available in Touch layer driver. */
+#if (SF_CTSU_TUNING_CFG_MODE==SF_CTSU_TUNING_CFG_MODE_MONITOR)
+        uint8_t index = g_key_info[g_access_method].sensor_index[channel];
+        if (0xff != index)
+        {
+            memcpy((void*)&all_touch_configs[g_access_method]->p_sensor[index].hysteresis, &value, sizeof(uint16_t));
+        }
+        result = CMD_RESULT_SUCCESS;
+#endif
     }
     result = CMD_RESULT_SUCCESS;
 	ASSERT(result!=CMD_RESULT_FAILURE);
@@ -3919,7 +4219,13 @@ static void SensorUtilityWriteResponse(com_data_tx_t *pcmd, uint16_t channel)
             {
             	/* Measurement Re-start */
             	R_CTSU_Close(ctsu_handle_id[g_access_method]);
-            	err = R_CTSU_Open(ctsu_handle_id[g_access_method], all_ctsu_configs[g_access_method]);
+            	ctsu_cfg_t temp_cfg;
+
+            	memcpy(&temp_cfg, all_ctsu_configs[g_access_method], sizeof(ctsu_cfg_t));
+
+            	memcpy(&temp_cfg.p_callback, serial_control_callback, sizeof(ctsu_callback_t));
+
+            	err = R_CTSU_Open(ctsu_handle_id[g_access_method], &temp_cfg);
             	ASSERT(err==CTSU_SUCCESS);
             	control_arg.cmd = CTSU_CMD_SET_CALLBACK;
             	control_arg.p_context = serial_control_callback;

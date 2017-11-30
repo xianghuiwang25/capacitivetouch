@@ -30,6 +30,7 @@
 #define SF_CTSU_TUNING_H_
 
 #include "r_ctsu_api.h"
+#include "r_touch_api.h"
 #include "sf_ctsu_tuning_api.h"
 
 /***********************************************************************************************************************
@@ -44,6 +45,7 @@ typedef struct
     uint32_t index;
     void const * p_comms;
     ctsu_instance_t const * p_ctsu;
+    touch_instance_t const * p_touch;
 }sf_ctsu_tuning_instance_ctrl_t;
 
 /***********************************************************************************************************************

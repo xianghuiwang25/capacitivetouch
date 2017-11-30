@@ -60,8 +60,7 @@
             "${interface.framework.sf_ctsu_tuning.${module.framework.sf_ctsu_tuning.name}}" === "1"
         </constraint>
         <requires id="module.framework.sf_ctsu_tuning.requires.ctsu" interface="interface.driver.ctsu_v2" display="Needs CTSU V2 HAL Driver">
-                <override property="module.driver.ctsu.data" value="module.driver.data.generated"/>
-                <override property="module.driver.ctsu.p_callback" value="serial_control_callback"/>
+            <override property="module.driver.ctsu.data" value="module.driver.data.generated"/>
         </requires>
         <provides interface="interface.framework.sf_ctsu_tuning" />
         <provides interface="interface.framework.sf_ctsu_tuning.${module.framework.sf_ctsu_tuning.name}" />
