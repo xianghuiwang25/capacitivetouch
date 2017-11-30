@@ -866,6 +866,8 @@ int SerialCommandInitialTouch(touch_instance_t * p_touch, const uint8_t itr)
     }
 
     g_key_info[itr].touch_result = (uint16_t*)all_touch_configs[itr]->p_binary_result;
+    all_touch_configs[itr] = (touch_ctrl_t*)p_touch->p_cfg;
+    touch_handle_id[itr]   = p_touch->p_ctrl;
 
     return 1;
 }
