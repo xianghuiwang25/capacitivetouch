@@ -820,7 +820,44 @@ static uint8_t g_burst_mode = 0;
 
 uint8_t g_access_method  = 0;
 
-static method_info_t g_method_info[METHOD_NUM];
+static method_info_t g_method_info[] = {
+/* --[Self capacitance]----------------- */
+#if ( SELF_METHOD_NUM > 0 )
+    { METHOD_TYPE_SLFCP,    SELFCAP_SENSOR_MAX },
+#endif  // ( SELF_METHOD_NUM > 0 )
+/* --[Mutual capacitance 0]------------- */
+#if ( MUTUAL_METHOD_NUM > 0 )
+    { METHOD_TYPE_MTLCP,    MUTUAL0_NUM },
+#endif  // ( MUTUAL_METHOD_NUM > 0 )
+/* --[Mutual capacitance 1]------------- */
+#if ( MUTUAL_METHOD_NUM > 1 )
+    { METHOD_TYPE_MTLCP,   MUTUAL1_NUM },
+#endif  // ( MUTUAL_METHOD_NUM > 1 )
+/* --[Mutual capacitance 2]------------- */
+#if ( MUTUAL_METHOD_NUM > 2 )
+    { METHOD_TYPE_MTLCP,   MUTUAL2_NUM },
+#endif  // ( MUTUAL_METHOD_NUM > 2 )
+/* --[Mutual capacitance 3]------------- */
+#if ( MUTUAL_METHOD_NUM > 3 )
+    { METHOD_TYPE_MTLCP,   MUTUAL3_NUM },
+#endif  // ( MUTUAL_METHOD_NUM > 3 )
+/* --[Mutual capacitance 4]------------- */
+#if ( MUTUAL_METHOD_NUM > 4 )
+    { METHOD_TYPE_MTLCP,   MUTUAL4_NUM },
+#endif  // ( MUTUAL_METHOD_NUM > 4 )
+/* --[Mutual capacitance 5]------------- */
+#if ( MUTUAL_METHOD_NUM > 5 )
+    { METHOD_TYPE_MTLCP,   MUTUAL5_NUM },
+#endif  // ( MUTUAL_METHOD_NUM > 5 )
+/* --[Mutual capacitance 6]------------- */
+#if ( MUTUAL_METHOD_NUM > 6 )
+    { METHOD_TYPE_MTLCP,   MUTUAL6_NUM },
+#endif  // ( MUTUAL_METHOD_NUM > 6 )
+/* --[Mutual capacitance 7]------------- */
+#if ( MUTUAL_METHOD_NUM > 7 )
+    { METHOD_TYPE_MTLCP,   MUTUAL7_NUM },
+#endif  // ( MUTUAL_METHOD_NUM > 7 )
+};
 
 
 static void CreateResponceCommand(com_data_tx_t * pcmd);
@@ -849,6 +886,7 @@ static void InitKeyIndexTable(void);
 * Return Value : none
 ***********************************************************************************************************************/
 uint8_t g_key_sensor_index[METHOD_NUM][(MAX_MUTUAL_SENSOR_ID > SELFCAP_SENSOR_MAX) ? MAX_MUTUAL_SENSOR_ID : SELFCAP_SENSOR_MAX];
+uint16_t g_touch_key_group_group[METHOD_NUM][(MAX_MUTUAL_SENSOR_ID > SELFCAP_SENSOR_MAX) ? ((MAX_MUTUAL_SENSOR_ID >> 4) + 1) : ((SELFCAP_SENSOR_MAX >> 4) + 1)];
 touch_sensor_t g_sensors[METHOD_NUM][(MAX_MUTUAL_SENSOR_ID > SELFCAP_SENSOR_MAX) ? MAX_MUTUAL_SENSOR_ID : SELFCAP_SENSOR_MAX];
 
 int SerialCommandInitialTouch(touch_instance_t * p_touch, const uint8_t itr)
@@ -868,6 +906,17 @@ int SerialCommandInitialTouch(touch_instance_t * p_touch, const uint8_t itr)
     g_key_info[itr].touch_result = (uint16_t*)all_touch_configs[itr]->p_binary_result;
     all_touch_configs[itr] = (touch_ctrl_t*)p_touch->p_cfg;
     touch_handle_id[itr]   = p_touch->p_ctrl;
+
+    /* Global information */
+    g_touch_paramter[itr].drift_freq = all_touch_configs[itr]->p_sensor[0].drift_rate;
+    g_touch_paramter[itr].msa_freq = all_touch_configs[itr]->p_common->on_limit;
+    g_touch_paramter[itr].touch_freq = all_touch_configs[itr]->p_sensor[0].dt_limit;
+    g_touch_paramter[itr].not_touch_freq = all_touch_configs[itr]->p_sensor[0].dr_limit;
+
+    g_touch_function[itr].flag.drift = (g_touch_paramter[itr].drift_freq < UINT16_MAX) ? (true):(false);
+    g_touch_function[itr].flag.msa = (g_touch_paramter[itr].msa_freq < UINT16_MAX) ? (true):(false);
+    g_touch_function[itr].flag.acd0 = (g_touch_paramter[itr].touch_freq < UINT8_MAX) ? (true):(false);
+    g_touch_function[itr].flag.acd1 = (g_touch_paramter[itr].not_touch_freq < UINT8_MAX) ? (true):(false);
 
     return 1;
 }
@@ -895,7 +944,7 @@ int SerialCommandInitial(ctsu_instance_t * p_ctsu, const uint8_t itr)
 
     fmi_product_info_t * p_product_info;
     g_fmi.p_api->productInfoGet(&p_product_info);
-    g_mcu_model_name = p_product_info->product_name;
+    g_mcu_model_name = "R5F51305AxFN    ";
 
     ctsu_mode_t mode = ((p_cfg->p_ctsu_settings->ctsucr1.byte & 0xC0) >> 6);
 
@@ -959,7 +1008,7 @@ int SerialCommandInitial(ctsu_instance_t * p_ctsu, const uint8_t itr)
     {
         for( ch_num = 0; ch_num < SELFCAP_SENSOR_MAX; ch_num++)
         {
-            g_key_info[itr].sensor_index[ch_num] = 0xff;
+            g_key_info[itr].sensor_index[ch_num] = 0x0;
             g_sensors[itr][ch_num].rx = 0xff;
             g_sensors[itr][ch_num].tx = 0xff;
             if((ch_en & ((uint64_t)1<<ch_num))==((uint64_t)1<<ch_num))
@@ -971,49 +1020,52 @@ int SerialCommandInitial(ctsu_instance_t * p_ctsu, const uint8_t itr)
                 rx_count += 1;
             }
         }
-
+        g_touch_key_group[itr].group = g_touch_key_group_group[itr];
+        g_key_info[itr].touch_result = (uint16_t*)all_touch_configs[itr]->p_binary_result;
         g_key_info[itr].key_max_group = (SELFCAP_SENSOR_MAX >> 4) + 1;
-        g_method_info[itr].enable = SELFCAP_SENSOR_MAX;
     }
     else if(g_method_info[itr].type==METHOD_TYPE_MTLCP)
     {
-        if(0 == ch_tx)
-        {
-            return 0;
-        }
         for( ch_num = 0, rx_count = 0; ch_num < MAX_TS; ch_num++)
-        {
-            arr_rx[rx_count] = 0xFF;
-            if(((ch_en & ((uint64_t)1<<ch_num))==((uint64_t)1<<ch_num)) && ((ch_tx & ((uint64_t)1<<ch_num))==0))
-            {
-                arr_rx[rx_count] = ch_num;
-                rx_count += 1;
-            }
-        }
-        for( ch_num = 0, tx_count = 0; ch_num < MAX_TS; ch_num++)
-        {
-            arr_tx[tx_count] = 0xFF;
-            if((ch_tx & ((uint64_t)1<<ch_num))==((uint64_t)1<<ch_num))
-            {
-                arr_tx[tx_count] = ch_num;
-                tx_count += 1;
-            }
-        }
+                    {
+                        arr_rx[rx_count] = 0xFF;
+                        if(((ch_en & ((uint64_t)1<<ch_num))==((uint64_t)1<<ch_num)) && ((ch_tx & ((uint64_t)1<<ch_num))==0))
+                        {
+                            arr_rx[rx_count] = ch_num;
+                            rx_count += 1;
+                        }
+                    }
+                    for( ch_num = 0, tx_count = 0; ch_num < MAX_TS; ch_num++)
+                    {
+                        arr_tx[tx_count] = 0xFF;
+                        if((ch_tx & ((uint64_t)1<<ch_num))==((uint64_t)1<<ch_num))
+                        {
+                            arr_tx[tx_count] = ch_num;
+                            tx_count += 1;
+                        }
+                    }
+                    g_touch_key_group[itr].group = g_touch_key_group_group[itr];
+                    g_key_info[itr].sensor_index = g_key_sensor_index[itr];
+                    g_key_info[itr].ena_num = rx_count*tx_count;
+                    g_key_info[itr].key_num = 0;
 
-        g_key_info[itr].ena_num = rx_count*tx_count;
-        g_key_info[itr].key_num = 0;
-        g_method_info[itr].enable = g_key_info[itr].ena_num;
+                    if(g_key_info[itr].ena_num > 0)
+                    {/* Save the number of channels enabled. */
+                        g_key_info[itr].touch_result = (uint16_t*)all_touch_configs[itr]->p_binary_result;
+                        g_key_info[itr].key_max_group = (g_key_info[itr].ena_num >> 4) + 1;
+                    }
 
-        for(index_rx = 0; index_rx < rx_count; index_rx++)
-        {
-            for(index_tx = 0; index_tx < tx_count; index_tx++)
-            {
-                g_key_info[itr].sensor_index[index_rx*tx_count+index_tx] = index_rx*tx_count+index_tx;
-                g_key_info[itr].key_num += 1;
-                g_sensors[itr][index_rx*tx_count+index_tx].rx = arr_rx[index_rx];
-                g_sensors[itr][index_rx*tx_count+index_tx].tx = arr_tx[index_tx];
-            }
-        }
+                    for(index_rx = 0; index_rx < rx_count; index_rx++)
+                    {
+                        for(index_tx = 0; index_tx < tx_count; index_tx++)
+                        {
+                            g_key_info[itr].sensor_index[index_rx*tx_count+index_tx] = index_rx*tx_count+index_tx;
+                            g_key_info[itr].key_num += 1;
+                            g_touch_key_group_group[itr][(index_rx*tx_count+index_tx) >> 4] |= (1<<((index_rx*tx_count+index_tx)%16));        //Right shift by 4 because group is a uint16_t.
+                            g_sensors[itr][index_rx*tx_count+index_tx].rx = arr_rx[index_rx];
+                            g_sensors[itr][index_rx*tx_count+index_tx].tx = arr_tx[index_tx];
+                        }
+                    }
     }
 
     all_ctsu_configs[itr] = p_cfg;
