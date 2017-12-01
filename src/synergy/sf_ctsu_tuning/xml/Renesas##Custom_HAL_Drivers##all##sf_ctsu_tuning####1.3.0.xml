@@ -7,25 +7,25 @@
             <option display="Disabled" id="config.framework.sf_ctsu_tuning.param_check.false" value="0"/>
             <option display="Enabled" id="config.framework.sf_ctsu_tuning.param_check.true" value="1"/>
         </property>
-		
-		<property default="config.framework.sf_ctsu_tuning.mode.tuning" display="Mode" id="config.framework.sf_ctsu_tuning.mode">
+        
+        <property default="config.framework.sf_ctsu_tuning.mode.tuning" display="Mode" id="config.framework.sf_ctsu_tuning.mode">
             <option display="Tuning" id="config.framework.sf_ctsu_tuning.mode.tuning" value="1"/>
-			<option display="Monitor" id="config.framework.sf_ctsu_tuning.mode.monitor" value="2"/>
+            <option display="Monitor" id="config.framework.sf_ctsu_tuning.mode.monitor" value="2"/>
         </property>
-		
+        
         <property default="config.framework.sf_ctsu_tuning.connection.usb" display="PC Connection Interface" id="config.framework.sf_ctsu_tuning.connection">
             <option display="Using Communication Frameworks" id="config.framework.sf_ctsu_tuning.connection.usb" value="1"/>
-			<option display="Using SCI UART Driver" id="config.framework.sf_ctsu_tuning.connection.sci" value="2"/>
+            <option display="Using SCI UART Driver" id="config.framework.sf_ctsu_tuning.connection.sci" value="2"/>
             <!--<option display="Debugger" id="config.framework.sf_ctsu_tuning.connection.debugger" value="0"/>-->
         </property>
-		<property default="2" display="Command Size Check count (Do Not Modify)" id="config.framework.sf_ctsu_tuning.check_size">
+        <property default="2" display="Command Size Check count (Do Not Modify)" id="config.framework.sf_ctsu_tuning.check_size">
             <constraint display="Value must be a non-negative integer">testInteger("${config.framework.sf_ctsu_tuning.check_size}")  &amp;&amp; ("${config.framework.sf_ctsu_tuning.check_size}" &gt; 0)</constraint>
         </property>
-		<property default="3" display="Command Header Size (Do Not Modify)" id="config.framework.sf_ctsu_tuning.header_size">
+        <property default="3" display="Command Header Size (Do Not Modify)" id="config.framework.sf_ctsu_tuning.header_size">
             <constraint display="Value must be a non-negative integer">testInteger("${config.framework.sf_ctsu_tuning.header_size}")  &amp;&amp; ("${config.framework.sf_ctsu_tuning.header_size}" &gt; 0)</constraint>
         </property>
-		
-		
+        
+        
         <property default="1" display="Thread Priority" id="config.framework.sf_ctsu_tuning.priority">
             <constraint display="Value must be a non-negative integer">testInteger("${config.framework.sf_ctsu_tuning.priority}")  &amp;&amp; ("${config.framework.sf_ctsu_tuning.priority}" &gt;= 0)</constraint>
         </property>
@@ -35,23 +35,23 @@
         <content>
         
         #define SF_CTSU_TUNING_CFG_PARAM_CHECK      (${config.framework.sf_ctsu_tuning.param_check})
-		
-		#define SF_CTSU_TUNING_CFG_MODE_TUNING		(${config.framework.sf_ctsu_tuning.mode.tuning})
-		#define SF_CTSU_TUNING_CFG_MODE_MONITOR		(${config.framework.sf_ctsu_tuning.mode.monitor})
-		
-		#define SF_CTSU_TUNING_CFG_MODE      		(${config.framework.sf_ctsu_tuning.mode})
+        
+        #define SF_CTSU_TUNING_CFG_MODE_TUNING      (1)
+        #define SF_CTSU_TUNING_CFG_MODE_MONITOR     (2)
+        
+        #define SF_CTSU_TUNING_CFG_MODE             (${config.framework.sf_ctsu_tuning.mode})
         
         #define SF_CTSU_TUNING_CFG_CONNECTION       (${config.framework.sf_ctsu_tuning.connection})
         
         #define SF_CTSU_TUNING_CFG_THREAD_PRIORITY  (${config.framework.sf_ctsu_tuning.priority})
         
         #define SF_CTSU_TUNING_CFG_THREAD_STACK_SIZE    (${config.framework.sf_ctsu_tuning.stack})
-		
-		#define SF_CTSU_TUNING_CFG_SCI_SIZE_CHECK_COUNT            (${config.framework.sf_ctsu_tuning.check_size})
-		
-		#define SF_CTSU_TUNING_CFG_SCI_BASE_DATA_SIZE              (${config.framework.sf_ctsu_tuning.header_size})
-		
-		#define WORKBENCH_COMMAND_USE			(1)
+        
+        #define SF_CTSU_TUNING_CFG_SCI_SIZE_CHECK_COUNT            (${config.framework.sf_ctsu_tuning.check_size})
+        
+        #define SF_CTSU_TUNING_CFG_SCI_BASE_DATA_SIZE              (${config.framework.sf_ctsu_tuning.header_size})
+        
+        #define WORKBENCH_COMMAND_USE           (1)
         </content>
     </config>
     
@@ -59,9 +59,12 @@
         <constraint display="Unique name required for each instance">
             "${interface.framework.sf_ctsu_tuning.${module.framework.sf_ctsu_tuning.name}}" === "1"
         </constraint>
+        
         <requires id="module.framework.sf_ctsu_tuning.requires.ctsu" interface="interface.driver.ctsu_v2" display="Needs CTSU V2 HAL Driver">
             <override property="module.driver.ctsu.data" value="module.driver.data.generated"/>
         </requires>
+        <requires id="module.framework.sf_ctsu_tuning.requires.touch" interface="interface.driver.touch" display="Needs TOUCH V2 Driver"/>
+        
         <provides interface="interface.framework.sf_ctsu_tuning" />
         <provides interface="interface.framework.sf_ctsu_tuning.${module.framework.sf_ctsu_tuning.name}" />
         <property default="g_sf_ctsu_tuning${_instance}" display="Name" id="module.framework.sf_ctsu_tuning.name">
@@ -70,10 +73,10 @@
         <property default="${_instance}" display="Index (Do Not Modify)" id="module.framework.sf_ctsu_tuning.count"> 
             <constraint display="Value must be a non-negative integer">testInteger("${module.framework.sf_ctsu_tuning.count}")  &amp;&amp; ("${module.framework.sf_ctsu_tuning.count}" &gt;= 0) &amp;&amp; ("${module.framework.sf_ctsu_tuning.count}" &lt; 8)</constraint>
         </property>
-		<property default="g_comms" display="Communication Interface" id="module.framework.sf_ctsu_tuning.comms">
+        <property default="g_comms" display="Communication Interface" id="module.framework.sf_ctsu_tuning.comms">
             <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_ctsu_tuning.comms}")</constraint>
         </property>
-		
+        
         
         <header>
         
@@ -82,31 +85,36 @@
         <includes>
         #include &quot;sf_ctsu_tuning_cfg.h&quot;
         #include &quot;sf_ctsu_tuning.h&quot;
-		#if (SF_CTSU_TUNING_CFG_CONNECTION==2)
-		#include &quot;r_uart_api.h&quot;
-		#elif (SF_CTSU_TUNING_CFG_CONNECTION==1)
-		#include &quot;sf_comms_api.h&quot;
-		#endif
+        #if (SF_CTSU_TUNING_CFG_CONNECTION==2)
+        #include &quot;r_uart_api.h&quot;
+        #elif (SF_CTSU_TUNING_CFG_CONNECTION==1)
+        #include &quot;sf_comms_api.h&quot;
+        #endif
         </includes>
         <declarations>
-		
-		#if (SF_CTSU_TUNING_CFG_CONNECTION==2)
-		extern uart_instance_t const ${module.framework.sf_ctsu_tuning.comms};
-		#else
-		extern sf_comms_instance_t const ${module.framework.sf_ctsu_tuning.comms};
-		#endif
         
-        sf_ctsu_tuning_instance_ctrl_t const ${module.framework.sf_ctsu_tuning.name}_ctrl;
+        #if (SF_CTSU_TUNING_CFG_CONNECTION==2)
+        extern uart_instance_t const ${module.framework.sf_ctsu_tuning.comms};
+        #else
+        extern sf_comms_instance_t const ${module.framework.sf_ctsu_tuning.comms};
+        #endif
+        
+        sf_ctsu_tuning_instance_ctrl_t ${module.framework.sf_ctsu_tuning.name}_ctrl;
         
         sf_ctsu_tuning_cfg_t ${module.framework.sf_ctsu_tuning.name}_cfg =
         {
             .index = ${module.framework.sf_ctsu_tuning.count},
-		#if (SF_CTSU_TUNING_CFG_CONNECTION > 0)
+        #if (SF_CTSU_TUNING_CFG_CONNECTION > 0)
             .p_comms = &amp;${module.framework.sf_ctsu_tuning.comms},
-		#else
-			.p_comms = NULL,
-		#endif
+        #else
+            .p_comms = NULL,
+        #endif
             .p_ctsu = &amp;${module.framework.sf_ctsu_tuning.requires.ctsu::module.driver.ctsu.name},
+        #if (SF_CTSU_TUNING_CFG_MODE==SF_CTSU_TUNING_CFG_MODE_MONITOR)
+            .p_touch = &amp;${module.framework.sf_ctsu_tuning.requires.touch::module.driver.touch.name},
+        #elif(SF_CTSU_TUNING_CFG_MODE==SF_CTSU_TUNING_CFG_MODE_TUNING)
+            .p_touch = NULL,
+        #endif
         };
         
         sf_ctsu_tuning_instance_t const ${module.framework.sf_ctsu_tuning.name} = 
