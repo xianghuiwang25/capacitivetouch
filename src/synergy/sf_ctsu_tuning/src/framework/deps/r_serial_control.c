@@ -1011,7 +1011,7 @@ int SerialCommandInitial(ctsu_instance_t * p_ctsu, const uint8_t itr)
 
     if(g_method_info[itr].type==METHOD_TYPE_SLFCP)
     {
-        for( ch_num = 0; ch_num < SELFCAP_SENSOR_MAX; ch_num++)
+        for( ch_num = 0; ch_num < g_method_info[itr].enable; ch_num++)
         {
             g_key_info[itr].sensor_index[ch_num] = 0x0;
             g_sensors[itr][ch_num].rx = 0xff;
@@ -1492,7 +1492,7 @@ static uint8_t GetMeasureTouchResult(uint16_t channel, uint16_t * value)
     }
     if(g_method_info[g_access_method].type==METHOD_TYPE_SLFCP)
     {
-        for(itr = 0; (itr < SELFCAP_SENSOR_MAX); itr++)
+        for(itr = 0; (itr < g_method_info[g_access_method].enable); itr++)
         {
             index = g_key_info[g_access_method].sensor_index[itr];
             if( ((uint64_t)1U<<index) == (((uint64_t)1U<<index) & binary_result.uint64)  )
