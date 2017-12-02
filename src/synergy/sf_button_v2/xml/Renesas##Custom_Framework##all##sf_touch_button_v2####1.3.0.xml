@@ -8,7 +8,7 @@
         </property>
         <property default="1" display="Max. Open Button Count" id="config.framework.sf_touch_button_v2.max_count">
             <constraint display="Value must be in range (1-36)">testInteger("${config.framework.sf_touch_button_v2.max_count}")  &amp;&amp; ("${config.framework.sf_touch_button_v2.max_count}" &gt;= 0) &amp;&amp; ("${config.framework.sf_touch_button_v2.max_count}" &lt; 36)</constraint>
-		</property>
+        </property>
     <content>
         /**
          * Specify whether to include code for API parameter checking. Valid settings include:
@@ -16,26 +16,26 @@
          *    - 0 : Compiles out parameter checking
          */
          #define BUTTON_CFG_PARAM_CHECKING_ENABLE         (${config.framework.sf_touch_button_v2.param_checking_enable})
-		
-		/**
-		 * Specify the maximum number of buttons which will be ready to run at a given time.
-		 */
+        
+        /**
+         * Specify the maximum number of buttons which will be ready to run at a given time.
+         */
          #define BUTTON_CFG_MAX_CONTROL_BLOCK_COUNT     (${config.framework.sf_touch_button_v2.max_count})
-		 
+         
     </content>
-	</config>
+    </config>
     <module config="config.framework.sf_touch_button_v2" display="Framework|Input|${module.framework.sf_touch_button.name} Capacitive Touch Button on sf_touch_button_v2" id="module.framework.sf_touch_button_v2" common="100" version="1">
         <constraint display="Unique name required for each instance">
             "${interface.framework.sf_touch_button.${module.framework.sf_touch_button.name}}" === "1"
         </constraint>
         
-		<requires id="module.framework.sf_touch_button.requires.touch" interface="interface.driver.touch" display="Add TOUCH V2 Driver"/>
+        <requires id="module.framework.sf_touch_button.requires.touch" interface="interface.driver.touch" display="Add TOUCH V2 Driver"/>
         <requires id="module.framework.sf_touch_button.requires.ctsu_sensor" interface="interface.driver.ctsu_sensor" display="Add Capacitive Touch Sensor"/>
-		
-		<provides interface="interface.framework.sf_touch_button" />
+        
+        <provides interface="interface.framework.sf_touch_button" />
         <provides interface="interface.framework.sf_touch_button" />
         <provides interface="interface.framework.sf_touch_button.${module.framework.sf_touch_button.name}" />
-		
+        
         <property default="g_touch_button${_instance}" display="Name" id="module.framework.sf_touch_button.name">
             <constraint display="Name must be a valid C symbol">testSymbol("${module.framework.sf_touch_button.name}")</constraint>
         </property>
@@ -65,7 +65,7 @@
          /** SF Touch Button instance */
         extern touch_button_instance_t ${module.framework.sf_touch_button.name};
         #ifndef ${module.framework.sf_touch_button.p_callback}_defined
-		#define ${module.framework.sf_touch_button.p_callback}_defined
+        #define ${module.framework.sf_touch_button.p_callback}_defined
         /** Declaration of user callback function. This function MUST be defined in the user application.*/
         void ${module.framework.sf_touch_button.p_callback}(touch_button_callback_arg_t * p_args);
         #endif
@@ -84,7 +84,7 @@
             .enable.bit.reserved    = 0,
             .enable.bit.hold            = false,
             .enable.bit.press           = ${module.framework.sf_touch_button.press_enable},
-			.enable.bit.release         = ${module.framework.sf_touch_button.release_enable},
+            .enable.bit.release         = ${module.framework.sf_touch_button.release_enable},
             .debounce               = ${module.framework.sf_touch_button.debounce},
             .hold_max               = 65535,
             .p_callback             = ${module.framework.sf_touch_button.p_callback},
@@ -95,17 +95,17 @@
             .p_cfg  = &amp;${module.framework.sf_touch_button.name}_cfg,
             .p_api  = &amp;g_touch_button_on_touch_button,
         };
-		#endif /* (DATA_SOURCE == DATA_SOURCE_SSPCONFIG) */
+        #endif /* (DATA_SOURCE == DATA_SOURCE_SSPCONFIG) */
 
         </declarations>
         <init>
-		{
-			/* Open the ${module.framework.sf_touch_button.name} button Instance */
-			touch_button_err_t err = ${module.framework.sf_touch_button.name}.p_api->open(${module.framework.sf_touch_button.name}.p_ctrl, ${module.framework.sf_touch_button.name}.p_cfg);
-			
-			/* Wait here if open fails */
-			while(TOUCH_BUTTON_SUCCESS!=err);
-		}
+        {
+            /* Open the ${module.framework.sf_touch_button.name} button Instance */
+            touch_button_err_t err = ${module.framework.sf_touch_button.name}.p_api->open(${module.framework.sf_touch_button.name}.p_ctrl, ${module.framework.sf_touch_button.name}.p_cfg);
+            
+            /* Wait here if open fails */
+            while(TOUCH_BUTTON_SUCCESS!=err);
+        }
         </init>
     </module>
     <!-- Touch Button XML END here-->

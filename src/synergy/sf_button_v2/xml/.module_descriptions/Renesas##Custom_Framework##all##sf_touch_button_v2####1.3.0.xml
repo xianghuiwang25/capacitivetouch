@@ -99,7 +99,13 @@
 
         </declarations>
         <init>
- 
+		{
+			/* Open the ${module.framework.sf_touch_button.name} button Instance */
+			touch_button_err_t err = ${module.framework.sf_touch_button.name}.p_api->open(${module.framework.sf_touch_button.name}.p_ctrl, ${module.framework.sf_touch_button.name}.p_cfg);
+			
+			/* Wait here if open fails */
+			while(TOUCH_BUTTON_SUCCESS!=err);
+		}
         </init>
     </module>
     <!-- Touch Button XML END here-->

@@ -91,7 +91,7 @@
         #define CTSU_CFG_ENABLE_CORRECTION              (${config.driver.ctsu_v2.correction})
         </content>
     </config>
-    <module config="config.driver.ctsu_v2" display="Driver|Input|${module.driver.ctsu.name} CTSU V2 HAL Driver on r_ctsu" id="module.driver.ctsu_on_ctsu" common="100" version="1">
+    <module config="config.driver.ctsu_v2" display="Driver|Input|${module.driver.ctsu.name} CTSU V2 HAL Driver on r_ctsu_v2" id="module.driver.ctsu_on_ctsu" common="100" version="1">
         <constraint display="Unique name required for each instance">
             "${interface.driver.ctsu_v2.${module.driver.ctsu.name}}" === "1"
         </constraint>
@@ -122,7 +122,7 @@
             <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.ctsu.name}")</constraint>
         </property>
         
-        <property default="module.driver.ctsu.pclkb_div.div_1" display="PCLKB Divisor" id="module.driver.ctsu.pclkb_div">
+        <property default="module.driver.ctsu.pclkb_div.div_1" display="PCLKB Divisor (CTSUCLK[1:0])" id="module.driver.ctsu.pclkb_div">
             <option display="Divide by 1" id="module.driver.ctsu.pclkb_div.div_1" value="0"/>
             <option display="Divide by 2" id="module.driver.ctsu.pclkb_div.div_2" value="1"/>
             <option display="Divide by 4" id="module.driver.ctsu.pclkb_div.div_4" value="2"/>
