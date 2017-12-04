@@ -173,7 +173,7 @@
 		<item value="1.3.0" key="packversion"/>
 		<item value="0" key="packtype"/>
 		<item value="HAL Driver to operate Capacitive Touch Sensing Unit" key="packdescription"/>
-		<item value="onkar.raut@renesas.com" key="packcontact"/>
+		<item value="https://www.renesas.com/support/contact.html" key="packcontact"/>
 		<item value="Renesas" key="packvendor"/>
 		<item value="C:\Users\onkar.raut\Documents\2017H2\Firmware\capacitivetouch\deploy" key="packlocation"/>
 	</section>

@@ -44,6 +44,7 @@ typedef struct st_sf_ctsu_tuning_cfg
     uint32_t index;
     void const * const p_comms;
     ctsu_instance_t const * const p_ctsu;
+    touch_instance_t const * const p_touch;
 }sf_ctsu_tuning_cfg_t;
 
 /** Framework communications API structure.  Implementations will use the following API. */

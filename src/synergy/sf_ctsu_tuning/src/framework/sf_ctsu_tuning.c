@@ -31,7 +31,9 @@ Includes   <System Includes> , "Project Includes"
 ***********************************************************************************************************************/
 #include "bsp_api.h"
 #include "sf_ctsu_tuning_cfg.h"
-#if (BSP_CFG_RTOS==true)
+
+#define COMM_FRAMEWORK_CONDITION ((BSP_CFG_RTOS==true) && (SF_CTSU_TUNING_CFG_CONNECTION==1))
+#if (COMM_FRAMEWORK_CONDITION==true)
 #include "sf_comms_api.h"
 #else
 #include "r_uart_api.h"
@@ -42,6 +44,7 @@ Includes   <System Includes> , "Project Includes"
 #include "deps/r_serial_control.h"
 
 #define MAX_CTSU_CFG_COUNT  (8)
+#define MAX_TOUCH_CFG_COUNT (8)
 
 /***********************************************************************************************************************
 Macro definitions
@@ -64,7 +67,7 @@ Exported global variables (to be accessed by other files)
 static uint8_t receive_data[36] = {0xFF, 0xFF, 0xFF, 0xFF};
 static uint8_t transmit_data[270 + SF_CTSU_TUNING_CFG_SCI_BASE_DATA_SIZE];
 
-#if (BSP_CFG_RTOS==true)
+#if (COMM_FRAMEWORK_CONDITION==true)
 static uint8_t host_comm_thread_stack[SF_CTSU_TUNING_CFG_THREAD_STACK_SIZE];
 static TX_THREAD host_comm_thread;
 static void host_communication_thread(ULONG input);
@@ -92,6 +95,10 @@ Private global variables and functions
 ***********************************************************************************************************************/
 static ctsu_ctrl_t * ctsu_ctrls[MAX_CTSU_CFG_COUNT];
 
+#if (SF_CTSU_TUNING_CFG_MODE==SF_CTSU_TUNING_CFG_MODE_MONITOR)
+static touch_ctrl_t * touch_ctrls[MAX_TOUCH_CFG_COUNT];
+#endif
+
 
 ssp_err_t SF_CTSU_TuneOpen(sf_ctsu_tuning_ctrl_t * const p_vctrl, sf_ctsu_tuning_cfg_t const * const p_cfg)
 {
@@ -105,10 +112,19 @@ ssp_err_t SF_CTSU_TuneOpen(sf_ctsu_tuning_ctrl_t * const p_vctrl, sf_ctsu_tuning
     sf_ctsu_tuning_instance_ctrl_t * p_ctrl = p_vctrl;
 
     /** Initialize Serial Communication Structures */
+#if (SF_CTSU_TUNING_CFG_MODE==SF_CTSU_TUNING_CFG_MODE_MONITOR)
+
+    if(!SerialCommandInitialTouch((touch_instance_t *)p_cfg->p_touch, (uint8_t)p_cfg->index))
+    {
+        err = SSP_ERR_INVALID_ARGUMENT;
+    }
+
+#elif (SF_CTSU_TUNING_CFG_MODE==SF_CTSU_TUNING_CFG_MODE_TUNING)
     if(!SerialCommandInitial((ctsu_instance_t *)p_cfg->p_ctsu, (uint8_t)p_cfg->index))
     {
         err = SSP_ERR_INVALID_ARGUMENT;
     }
+#endif
 
     if (SSP_SUCCESS == err)
     {
@@ -116,6 +132,7 @@ ssp_err_t SF_CTSU_TuneOpen(sf_ctsu_tuning_ctrl_t * const p_vctrl, sf_ctsu_tuning
         p_ctrl->index   = p_cfg->index;
         p_ctrl->p_comms = p_cfg->p_comms;
         p_ctrl->p_ctsu  = p_cfg->p_ctsu;
+        p_ctrl->p_touch = p_cfg->p_touch;
 
         uint32_t itr = 0;
         for(itr = 0; itr < ((sizeof(ctsu_ctrls))/(sizeof(ctsu_ctrls[0]))); itr++)
@@ -132,6 +149,9 @@ ssp_err_t SF_CTSU_TuneOpen(sf_ctsu_tuning_ctrl_t * const p_vctrl, sf_ctsu_tuning
         }
 
         ctsu_ctrls[itr] = p_cfg->p_ctsu->p_ctrl;
+#if (SF_CTSU_TUNING_CFG_MODE==SF_CTSU_TUNING_CFG_MODE_MONITOR)
+        touch_ctrls[itr] = p_cfg->p_touch->p_ctrl;
+#endif
 
 #if (SF_CTSU_TUNING_CFG_CONNECTION==2)
         uart_instance_t const * const p_uart = p_cfg->p_comms;
@@ -143,7 +163,7 @@ ssp_err_t SF_CTSU_TuneOpen(sf_ctsu_tuning_ctrl_t * const p_vctrl, sf_ctsu_tuning
 #endif
 
     }
-#if (BSP_CFG_RTOS == 1)
+#if (COMM_FRAMEWORK_CONDITION == true)
     if (0 == host_comm_thread.tx_thread_name)
     {
         /** Kick off Communication thread to be able to get data from Host */
@@ -166,8 +186,6 @@ ssp_err_t SF_CTSU_TuneRun(sf_ctsu_tuning_ctrl_t * const p_vctrl)
 {
     sf_ctsu_tuning_instance_ctrl_t * const p_ctrl = p_vctrl;
     ssp_err_t err = SSP_SUCCESS;
-    extern uint8_t g_access_method;
-    extern volatile uint8_t       g_ctsu_soft_mode;
 
 #if (SF_CTSU_TUNING_CFG_CONNECTION==0)
     PrepareReplayMessage();
@@ -175,6 +193,9 @@ ssp_err_t SF_CTSU_TuneRun(sf_ctsu_tuning_ctrl_t * const p_vctrl)
 
     if (NULL != p_ctrl->p_comms)
     {
+#if (SF_CTSU_TUNING_CFG_MODE==SF_CTSU_TUNING_CFG_MODE_TUNING)
+        extern uint8_t g_access_method;
+        extern volatile uint8_t       g_ctsu_soft_mode;
         if (0 != g_ctsu_soft_mode)
         {
             const uint32_t sensor_count = 0;
@@ -201,6 +222,7 @@ ssp_err_t SF_CTSU_TuneRun(sf_ctsu_tuning_ctrl_t * const p_vctrl)
             }
 
         }
+#endif
 
 #if (SF_CTSU_TUNING_CFG_CONNECTION==2)
         if (1 == receive_flag)
@@ -224,7 +246,7 @@ ssp_err_t SF_CTSU_TuneRun(sf_ctsu_tuning_ctrl_t * const p_vctrl)
 }
 
 
-#if (BSP_CFG_RTOS==true)
+#if (COMM_FRAMEWORK_CONDITION==true)
 static void host_communication_thread(ULONG p_arg)
 {
     ssp_err_t err = 0;

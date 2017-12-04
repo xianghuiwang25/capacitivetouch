@@ -614,12 +614,15 @@ touch_err_t R_TOUCH_Read(touch_ctrl_t * const p_ctrl, touch_read_t const * const
 #if (TOUCH_CFG_PARAM_CHECKING_ENABLE==true)
     ASSERT(OPEN == pctrl->open);
 #endif
+
+#if 0
     /** a. Check resource lock */
     if( SSP_SUCCESS !=R_BSP_SoftwareLock(&pctrl->lock) )
     {
         /* Other API is busy with this handle. */
         return TOUCH_ERR_LOCKED;
     }
+#endif
 
     /** b. Read from control block into user specified destination. */
     if(TOUCH_DATA_BINARY==p_arg->read_cmd)
@@ -720,10 +723,10 @@ touch_err_t R_TOUCH_Read(touch_ctrl_t * const p_ctrl, touch_read_t const * const
                 break;
         }
     }
-
+#if 0
     /* Unlock the block */
     R_BSP_SoftwareUnlock(&pctrl->lock);
-
+#endif
     return touch_err;
 }
 /***********************************************************************************************************************

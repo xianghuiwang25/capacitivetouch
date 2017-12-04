@@ -288,7 +288,7 @@ touch_button_err_t R_TOUCH_ButtonControl(touch_button_ctrl_t * p_ctrl, touch_but
     ASSERT(NULL != p_ctrl);
     ASSERT(TOUCH_BUTTON_CMD_LAST > p_arg->cmd);
     ASSERT(NULL != p_arg->p_dest);
-    ASSERT(0 < p_arg->size)
+    ASSERT(0 < p_arg->size);
 #endif
     touch_button_instance_ctrl_t * pctrl = p_ctrl;
 #if (BUTTON_CFG_PARAM_CHECKING_ENABLE == true)

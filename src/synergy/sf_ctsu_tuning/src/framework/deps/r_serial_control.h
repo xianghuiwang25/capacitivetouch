@@ -47,6 +47,7 @@ Exported global variables
 Exported global functions (to be accessed by other files);
 ***********************************************************************************************************************/
 int SerialCommandInitial(ctsu_instance_t * p_ctsu, const uint8_t itr);    // serial communication initialization
+int SerialCommandInitialTouch(touch_instance_t * p_touch, const uint8_t itr);
 uint8_t SerialCommandReceive(uint8_t * value, uint16_t length);
 uint8_t GetReplayMessage(uint8_t * value, uint16_t * length);
 void PrepareReplayMessage(void);    // Replay message for IDE communication preparing

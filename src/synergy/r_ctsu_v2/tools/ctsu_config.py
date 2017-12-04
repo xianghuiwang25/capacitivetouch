@@ -3,6 +3,7 @@ import os
 import re
 import logging
 import argparse
+import random
 
 license = """
 Copyright (c) 2017 Onkar Raut (onkar.raut.at.renesas.com).
@@ -57,6 +58,79 @@ output_header = """
 
 """
 
+class SENSOR(object):
+    xml_template = """
+    <module id=\"module.driver.ctsu_sensor_on_ctsu.%(rand)d\">
+      <property id=\"module.driver.ctsu_sensor.name\" value=\"CTSU_SENSOR_%(idx)d\"/>
+      <property id=\"module.driver.ctsu_sensor.index\" value=\"%(idx)d\"/>
+      <property id=\"module.driver.ctsu_sensor.rx\" value=\"module.driver.ctsu_sensor.rx.%(rx)s\"/>
+      <property id=\"module.driver.ctsu_sensor.tx\" value=\"module.driver.ctsu_sensor.tx.%(tx)s\"/>
+      <property id=\"module.driver.ctsu_sensor.ctsussdiv\" value=\"%(ssdiv)d\"/>
+      <property id=\"module.driver.ctsu_sensor.ctsusnum\" value=\"%(snum)d\"/>
+      <property id=\"module.driver.ctsu_sensor.ctsuicog\" value=\"%(icog)d\"/>
+      <property id=\"module.driver.ctsu_sensor.ctsusdpa\" value=\"%(sdpa)d\"/>
+      <property id=\"module.driver.ctsu_sensor.ctsuricoa\" value=\"%(ricoa)d\"/>
+      <property id=\"module.driver.ctsu_sensor.ctsuso\" value=\"%(so)d\"/>
+      <property id=\"module.driver.ctsu_sensor.sep1\" value=\"module.driver.ctsu_sensor.sep1.none\"/>
+      <property id=\"module.driver.ctsu_sensor.threshold\" value=\"%(thr)d\"/>
+      <property id=\"module.driver.ctsu_sensor.hysteresis\" value=\"%(hys)d\"/>
+      <property id=\"module.driver.ctsu_sensor.dtouch\" value=\"3\"/>
+      <property id=\"module.driver.ctsu_sensor.drelease\" value=\"3\"/>
+      <property id=\"module.driver.ctsu_sensor.sep2\" value=\"module.driver.ctsu_sensor.sep2.none\"/>
+      <property id=\"module.driver.ctsu_sensor.drift\" value=\"1000\"/>
+      <property id=\"module.driver.ctsu_sensor.dr_accel\" value=\"0\"/>
+      <property id=\"module.driver.ctsu_sensor.dr_decel\" value=\"0\"/>
+      <property id=\"module.driver.ctsu_sensor.sep3\" value=\"module.driver.ctsu_sensor.sep3.none\"/>
+      <property id=\"module.driver.ctsu_sensor.offset_interval\" value=\"1000\"/>
+      <property id=\"module.driver.ctsu_sensor.offset_thresh\" value=\"100\"/>
+    </module>
+    """
+    
+    xml_stack = """
+    <context id=\"_context.%(crand)d\">
+        <stack module=\"module.driver.ctsu_sensor_on_ctsu.%(rand)d\">
+            <stack module=\"module.driver.ctsu_on_ctsu.%(requires_ctsu)d\" requires=\"module.driver.ctsu_sensor.requires.ctsu\"/>
+        </stack>
+    </context>
+    """
+    
+    def __init__(self, rx, tx, idx, ssdiv, so, snum, sdpa, ricoa, icog, thr, hys):
+        self.rand  = random.randint(100000000,9999999999999)
+        self.rx    = rx
+        self.tx    = tx
+        self.idx   = idx
+        self.ssdiv = ssdiv 
+        self.so    = so   
+        self.snum  = snum 
+        self.sdpa  = sdpa 
+        self.ricoa = ricoa
+        self.icog  = icog  
+        self.threshold = thr
+        self.hysteresis = hys
+    
+    def write(self, template = xml_template):
+        self.xml = template % { 'rx'   : "%02d" % (self.rx)    ,
+                                'tx'   : "none" if self.tx == None else "%02d" % (self.tx),
+                                'idx'  :self.idx  ,
+                                'ssdiv':self.ssdiv,
+                                'so'   :self.so   ,
+                                'snum' :self.snum ,
+                                'sdpa' :self.sdpa ,
+                                'ricoa':self.ricoa,
+                                'icog' :self.icog ,
+                                'thr'  :self.threshold,
+                                'hys'  :self.hysteresis,
+                                'rand' :self.rand,
+                               }
+        logging.debug(" Sensor XML output shown below:\n" + self.xml)
+        
+    def write_requires(self, requires_ctsu):
+        self.xml_stack = SENSOR.xml_stack % {'rand' :self.rand,
+                                            'requires_ctsu' : requires_ctsu,
+                                            'crand':random.randint(10000000,99999999),
+                                            }
+        logging.debug(" Sensor XML requirement below:\n" + self.xml_stack)
+        return
 
 class CTSU(object):
     """ A CTSU configuration instance."""
@@ -120,7 +194,64 @@ ctsu_instance_t const %(name)s =
 
 #endif
 	"""
-    def __init__(self, pclk, en, itr=None, tx=None, rx=None):
+    
+    xml_template = """ 
+    <module id=\"module.driver.ctsu_on_ctsu.%(rand)d\">
+      <property id=\"module.driver.ctsu.name\" value=\"%(name)s\"/>
+      <property id=\"module.driver.ctsu.pclkb_div\" value=\"module.driver.ctsu.pclkb_div.div_%(pclkdiv)d\"/>
+      <property id=\"module.driver.ctsu.mode\" value=\"module.driver.ctsu.mode.%(id)s\"/>
+      <property id=\"module.driver.ctsu.txvsel\" value=\"module.driver.ctsu.txvsel.vcc\"/>
+      <property id=\"module.driver.ctsu.ctsusoff\" value=\"module.driver.ctsu.ctsusoff.enabled\"/>
+      <property id=\"module.driver.ctsu.data\" value=\"module.driver.data.workbench\"/>
+      <property id=\"module.driver.ctsu.p_ctsu_settings\" value=\"%(name)s_common_sfrs\"/>
+      <property id=\"module.driver.ctsu.p_sensor_settings\" value=\"%(name)s_sensor_settings\"/>
+      <property id=\"module.driver.ctsu.p_sensor_data\" value=\"%(name)s_data_buffer\"/>
+      <property id=\"module.driver.ctsu.pclkb_hz\" value=\"%(pclk)d\"/>
+      <property id=\"module.driver.ctsu.p_callback\" value=\"NULL\"/>
+      <property id=\"module.driver.ctsu.ts00\" value=\"module.driver.ctsu.ts00.%(ts00)s\"/>
+      <property id=\"module.driver.ctsu.ts01\" value=\"module.driver.ctsu.ts01.%(ts01)s\"/>
+      <property id=\"module.driver.ctsu.ts02\" value=\"module.driver.ctsu.ts02.%(ts02)s\"/>
+      <property id=\"module.driver.ctsu.ts03\" value=\"module.driver.ctsu.ts03.%(ts03)s\"/>
+      <property id=\"module.driver.ctsu.ts04\" value=\"module.driver.ctsu.ts04.%(ts04)s\"/>
+      <property id=\"module.driver.ctsu.ts05\" value=\"module.driver.ctsu.ts05.%(ts05)s\"/>
+      <property id=\"module.driver.ctsu.ts06\" value=\"module.driver.ctsu.ts06.%(ts06)s\"/>
+      <property id=\"module.driver.ctsu.ts07\" value=\"module.driver.ctsu.ts07.%(ts07)s\"/>
+      <property id=\"module.driver.ctsu.ts08\" value=\"module.driver.ctsu.ts08.%(ts08)s\"/>
+      <property id=\"module.driver.ctsu.ts09\" value=\"module.driver.ctsu.ts09.%(ts09)s\"/>
+      <property id=\"module.driver.ctsu.ts10\" value=\"module.driver.ctsu.ts10.%(ts10)s\"/>
+      <property id=\"module.driver.ctsu.ts11\" value=\"module.driver.ctsu.ts11.%(ts11)s\"/>
+      <property id=\"module.driver.ctsu.ts12\" value=\"module.driver.ctsu.ts12.%(ts12)s\"/>
+      <property id=\"module.driver.ctsu.ts13\" value=\"module.driver.ctsu.ts13.%(ts13)s\"/>
+      <property id=\"module.driver.ctsu.ts14\" value=\"module.driver.ctsu.ts14.%(ts14)s\"/>
+      <property id=\"module.driver.ctsu.ts15\" value=\"module.driver.ctsu.ts15.%(ts15)s\"/>
+      <property id=\"module.driver.ctsu.ts16\" value=\"module.driver.ctsu.ts16.%(ts16)s\"/>
+      <property id=\"module.driver.ctsu.ts17\" value=\"module.driver.ctsu.ts17.%(ts17)s\"/>
+      <property id=\"module.driver.ctsu.ts18\" value=\"module.driver.ctsu.ts18.%(ts18)s\"/>
+      <property id=\"module.driver.ctsu.ts19\" value=\"module.driver.ctsu.ts19.%(ts19)s\"/>
+      <property id=\"module.driver.ctsu.ts20\" value=\"module.driver.ctsu.ts20.%(ts20)s\"/>
+      <property id=\"module.driver.ctsu.ts21\" value=\"module.driver.ctsu.ts21.%(ts21)s\"/>
+      <property id=\"module.driver.ctsu.ts22\" value=\"module.driver.ctsu.ts22.%(ts22)s\"/>
+      <property id=\"module.driver.ctsu.ts23\" value=\"module.driver.ctsu.ts23.%(ts23)s\"/>
+      <property id=\"module.driver.ctsu.ts24\" value=\"module.driver.ctsu.ts24.%(ts24)s\"/>
+      <property id=\"module.driver.ctsu.ts25\" value=\"module.driver.ctsu.ts25.%(ts25)s\"/>
+      <property id=\"module.driver.ctsu.ts26\" value=\"module.driver.ctsu.ts26.%(ts26)s\"/>
+      <property id=\"module.driver.ctsu.ts27\" value=\"module.driver.ctsu.ts27.%(ts27)s\"/>
+      <property id=\"module.driver.ctsu.ts28\" value=\"module.driver.ctsu.ts28.%(ts28)s\"/>
+      <property id=\"module.driver.ctsu.ts29\" value=\"module.driver.ctsu.ts29.%(ts29)s\"/>
+      <property id=\"module.driver.ctsu.ts30\" value=\"module.driver.ctsu.ts30.%(ts30)s\"/>
+      <property id=\"module.driver.ctsu.ts31\" value=\"module.driver.ctsu.ts31.%(ts31)s\"/>
+      <property id=\"module.driver.ctsu.ts32\" value=\"module.driver.ctsu.ts32.%(ts32)s\"/>
+      <property id=\"module.driver.ctsu.ts33\" value=\"module.driver.ctsu.ts33.%(ts33)s\"/>
+      <property id=\"module.driver.ctsu.ts34\" value=\"module.driver.ctsu.ts34.%(ts34)s\"/>
+      <property id=\"module.driver.ctsu.ts35\" value=\"module.driver.ctsu.ts35.%(ts35)s\"/>
+      <property id=\"module.driver.ctsu.sep1\" value=\"module.driver.ctsu.sep1.none\"/>
+    </module>
+    <context id=\"_context.%(crand)d\">
+        <stack module=\"module.driver.ctsu_on_ctsu.%(rand)d\"/>
+    </context>
+    """
+    
+    def __init__(self, sensors, pclk, en, itr=None, tx=None, rx=None):
         """ Create a CTSU Configuration with a given mode and channels"""
         mode = 0
 
@@ -161,6 +292,8 @@ ctsu_instance_t const %(name)s =
         self.corr_del = 0
         self.sensor = []
         self.output = None
+        self.sensordata = sensors
+        self.rand  = random.randint(100000000,9999999999999)
 
         en.sort();
         if mode==1:
@@ -209,6 +342,8 @@ ctsu_instance_t const %(name)s =
                                                                                                                                                                                                                         'ch':ch,
                                                                                                                                                                                                                         'tx': tx[tx_itr],
                                                                                                                                                                                                                         'rx':rx[rx_itr]}
+                self.sensordata[ch].rx = rx[rx_itr]
+                self.sensordata[ch].tx = tx[tx_itr]
                 tx_itr += 1
                 if tx_itr >= len(tx):
                     tx_itr = 0
@@ -223,6 +358,8 @@ ctsu_instance_t const %(name)s =
 
             for ch in en:
                 sensor_setting = "{ .ctsussc = CTSUSSC_TS%(ch)02d,  .ctsuso0 = CTSUSO0_TS%(ch)02d,  .ctsuso1 = CTSUSO1_TS%(ch)02d, }," % {'ch':ch}
+                self.sensordata[en.index(ch)].rx = ch
+                self.sensordata[en.index(ch)].tx = None
                 self.sensor.append(sensor_setting)
                 if ch < 8:
                     self.CHAC0 += "|(SELF%s_ENABLE_TS%02d<<%d)" % (str(itr) if (itr!=None) else "", ch, ch%8)
@@ -283,7 +420,7 @@ ctsu_instance_t const %(name)s =
                                 'generate':"1" if generate == True else "0",
                                 'id': "SELF" if self.mode==0 else ("MUTUAL%d" % self.itr)
                                 }
-        logging.info("Output shown below:\n" + self.output)
+        logging.debug("Output shown below:\n" + self.output)
         if(output!=None):
             try:
                 ## Open file for writing ##
@@ -291,6 +428,95 @@ ctsu_instance_t const %(name)s =
                 ## Write out all the information gathered ##
                 outfile.write(output_header);
                 outfile.write(self.output);
+                ## Close the file ##
+                outfile.close();    
+            except IOError:
+                logging.error("Failed to write output to file:%s" % outfile)
+                raise;
+        return
+    
+    def write_xml(self, template=xml_template, outfile=None, generate=True):
+        
+#         for pclkbdiv in range(0, 3):
+#             ctsusdpa = get_ctsusdpa(self.pclk, 500000, pclkbdiv)
+#             if ctsusdpa < 32:
+#                 break
+
+        pclkbdiv = 0;
+        self.xml = []
+        
+        output = template % { 'name':self.name,
+                               'pclk':self.pclk,
+                               'id': "self" if self.mode==0 else ("mutual%d" % self.itr),
+                               'pclkdiv': (1 << pclkbdiv),
+                               'ts00':"receive" if ( 0 in self.rx) else "transmit" if ((self.tx!=None) and( 0 in self.tx)) else "unused",
+                               'ts01':"receive" if ( 1 in self.rx) else "transmit" if ((self.tx!=None) and( 1 in self.tx)) else "unused",
+                               'ts02':"receive" if ( 2 in self.rx) else "transmit" if ((self.tx!=None) and( 2 in self.tx)) else "unused",
+                               'ts03':"receive" if ( 3 in self.rx) else "transmit" if ((self.tx!=None) and( 3 in self.tx)) else "unused",
+                               'ts04':"receive" if ( 4 in self.rx) else "transmit" if ((self.tx!=None) and( 4 in self.tx)) else "unused",
+                               'ts05':"receive" if ( 5 in self.rx) else "transmit" if ((self.tx!=None) and( 5 in self.tx)) else "unused",
+                               'ts06':"receive" if ( 6 in self.rx) else "transmit" if ((self.tx!=None) and( 6 in self.tx)) else "unused",
+                               'ts07':"receive" if ( 7 in self.rx) else "transmit" if ((self.tx!=None) and( 7 in self.tx)) else "unused",
+                               'ts08':"receive" if ( 8 in self.rx) else "transmit" if ((self.tx!=None) and( 8 in self.tx)) else "unused",
+                               'ts09':"receive" if ( 9 in self.rx) else "transmit" if ((self.tx!=None) and( 9 in self.tx)) else "unused",
+                               'ts10':"receive" if (10 in self.rx) else "transmit" if ((self.tx!=None) and(10 in self.tx)) else "unused",
+                               'ts11':"receive" if (11 in self.rx) else "transmit" if ((self.tx!=None) and(11 in self.tx)) else "unused",
+                               'ts12':"receive" if (12 in self.rx) else "transmit" if ((self.tx!=None) and(12 in self.tx)) else "unused",
+                               'ts13':"receive" if (13 in self.rx) else "transmit" if ((self.tx!=None) and(13 in self.tx)) else "unused",
+                               'ts14':"receive" if (14 in self.rx) else "transmit" if ((self.tx!=None) and(14 in self.tx)) else "unused",
+                               'ts15':"receive" if (15 in self.rx) else "transmit" if ((self.tx!=None) and(15 in self.tx)) else "unused",
+                               'ts16':"receive" if (16 in self.rx) else "transmit" if ((self.tx!=None) and(16 in self.tx)) else "unused",
+                               'ts17':"receive" if (17 in self.rx) else "transmit" if ((self.tx!=None) and(17 in self.tx)) else "unused",
+                               'ts18':"receive" if (18 in self.rx) else "transmit" if ((self.tx!=None) and(18 in self.tx)) else "unused",
+                               'ts19':"receive" if (19 in self.rx) else "transmit" if ((self.tx!=None) and(19 in self.tx)) else "unused",
+                               'ts20':"receive" if (20 in self.rx) else "transmit" if ((self.tx!=None) and(20 in self.tx)) else "unused",
+                               'ts21':"receive" if (21 in self.rx) else "transmit" if ((self.tx!=None) and(21 in self.tx)) else "unused",
+                               'ts22':"receive" if (22 in self.rx) else "transmit" if ((self.tx!=None) and(22 in self.tx)) else "unused",
+                               'ts23':"receive" if (23 in self.rx) else "transmit" if ((self.tx!=None) and(23 in self.tx)) else "unused",
+                               'ts24':"receive" if (24 in self.rx) else "transmit" if ((self.tx!=None) and(24 in self.tx)) else "unused",
+                               'ts25':"receive" if (25 in self.rx) else "transmit" if ((self.tx!=None) and(25 in self.tx)) else "unused",
+                               'ts26':"receive" if (26 in self.rx) else "transmit" if ((self.tx!=None) and(26 in self.tx)) else "unused",
+                               'ts27':"receive" if (27 in self.rx) else "transmit" if ((self.tx!=None) and(27 in self.tx)) else "unused",
+                               'ts28':"receive" if (28 in self.rx) else "transmit" if ((self.tx!=None) and(28 in self.tx)) else "unused",
+                               'ts29':"receive" if (29 in self.rx) else "transmit" if ((self.tx!=None) and(29 in self.tx)) else "unused",
+                               'ts30':"receive" if (30 in self.rx) else "transmit" if ((self.tx!=None) and(30 in self.tx)) else "unused",
+                               'ts31':"receive" if (31 in self.rx) else "transmit" if ((self.tx!=None) and(31 in self.tx)) else "unused",
+                               'ts32':"receive" if (32 in self.rx) else "transmit" if ((self.tx!=None) and(32 in self.tx)) else "unused",
+                               'ts33':"receive" if (33 in self.rx) else "transmit" if ((self.tx!=None) and(33 in self.tx)) else "unused",
+                               'ts34':"receive" if (34 in self.rx) else "transmit" if ((self.tx!=None) and(34 in self.tx)) else "unused",
+                               'ts35':"receive" if (35 in self.rx) else "transmit" if ((self.tx!=None) and(35 in self.tx)) else "unused",
+                               'rand':self.rand,
+                               'crand':random.randint(10000000,99999999),
+                               }
+        
+        self.xml.append(output)
+        
+        for itr in range(0, self.num_sensors):
+            self.sensordata[itr].write()
+            self.xml.append(self.sensordata[itr].xml)
+            
+        for itr in range(0, self.num_sensors):
+            self.sensordata[itr].write_requires(self.rand)
+            self.xml.append(self.sensordata[itr].xml_stack)
+            
+        self.xml = '\n'.join(self.xml)
+        
+        logging.info("XML output shown below:\n" + self.xml)
+        
+        if(outfile!=None):
+            try:
+                ## Open file for writing ##
+                outfile = open(outfile, 'w');
+                ## Write out all the information gathered ##
+                outfile.write("""<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>
+                <synergyConfiguration version=\"3\">
+                  <synergyModuleConfiguration>
+                """)
+                outfile.write(self.xml);
+                outfile.write("""
+                  </synergyModuleConfiguration>
+                </synergyConfiguration>
+                """)
                 ## Close the file ##
                 outfile.close();    
             except IOError:
@@ -398,7 +624,46 @@ def read(infile, tx=None, rx=None):
         logging.info(enabled_channels_en)
         logging.info(enabled_channels_tx)
         
-        ctsu = CTSU(0, enabled_channels_en, itr, enabled_channels_tx, enabled_channels_rx)
+        ctsu_sensors = []
+        
+        for ch in range(0, len(tx_channels)*len(rx_channels)):
+            ctsu_sensor = SENSOR(255, 255, ch, 0, 0, 0, 0, 0, 0, 1000, 100)
+            search_pattern_ssdiv = r"(#define\s*CTSUSSDIV_MUTUAL"+str(itr)+"_KEY%(key_idx)02d\s*\((0[xX][0-9a-fA-F]+)\))" % {'key_idx' : ch}      ##00
+            search_pattern_so    = r"(#define\s*CTSUSO_MUTUAL"+str(itr)+"_KEY%(key_idx)02d\s*\((0[xX][0-9a-fA-F]+)\))"    % {'key_idx' : ch}      ##01
+            search_pattern_snum  = r"(#define\s*CTSUSNUM_MUTUAL"+str(itr)+"_KEY%(key_idx)02d\s*\((\d{1})\))"    % {'key_idx' : ch}                ##02
+            search_pattern_sdpa  = r"(#define\s*CTSUSDPA_MUTUAL"+str(itr)+"_KEY%(key_idx)02d\s*\((\d{1,2}|0[xX][0-9a-fA-F]+)\))"  % {'key_idx' : ch}      ##03
+            search_pattern_ricoa = r"(#define\s*(CTSURICOA_MUTUAL"+str(itr)+"|CTSURICOA_MUTUAL"+str(itr)+"_KEY%(key_idx)02d)\s*\((0[xX][0-9a-fA-F]+)\))" % {'key_idx' : ch}      ##04
+            search_pattern_icog  = r"(#define\s*CTSUICOG_MUTUAL"+str(itr)+"_KEY%(key_idx)02d\s*\((\d{1})\))"    % {'key_idx' : ch}                ##05
+            
+            mutual_search_patterns = []
+            mutual_search_patterns.append(search_pattern_ssdiv)    ##00
+            mutual_search_patterns.append(search_pattern_so)       ##01
+            mutual_search_patterns.append(search_pattern_snum)     ##02
+            mutual_search_patterns.append(search_pattern_sdpa)     ##03
+            mutual_search_patterns.append(search_pattern_ricoa)    ##04
+            mutual_search_patterns.append(search_pattern_icog)     ##05
+            
+            for mutual_search_pattern in mutual_search_patterns:
+                search_pattern = re.compile(mutual_search_pattern)
+                for line in file_lines_ctsu:
+                    match = re.search(search_pattern,line)
+                    if match:
+                        if 0 == mutual_search_patterns.index(mutual_search_pattern):
+                            ctsu_sensor.ssdiv = int(match.group(2),16)
+                        if 1 == mutual_search_patterns.index(mutual_search_pattern):
+                            ctsu_sensor.so    = int(match.group(2),16)
+                        if 2 == mutual_search_patterns.index(mutual_search_pattern):
+                            ctsu_sensor.snum  = int(match.group(2))
+                        if 3 == mutual_search_patterns.index(mutual_search_pattern):
+                            ctsu_sensor.sdpa  = int(match.group(2),16)
+                        if 4 == mutual_search_patterns.index(mutual_search_pattern):
+                            ctsu_sensor.ricoa = int(match.group(3),16)
+                        if 5 == mutual_search_patterns.index(mutual_search_pattern):
+                            ctsu_sensor.icog  = int(match.group(2),16)
+            
+            ctsu_sensors.append(ctsu_sensor)
+        
+        ctsu = CTSU(ctsu_sensors, 0, enabled_channels_en, itr, enabled_channels_tx, enabled_channels_rx)
         CTSU.configs.append(ctsu)
 
     enabled_channels_rx = []
@@ -439,10 +704,49 @@ def read(infile, tx=None, rx=None):
                     logging.error("TS%02d was not enabled" % channel)
                     return;
             enabled_channels_rx = keep_channels_rx;
-
+            
+        ctsu_sensors = []
+            
+        for ch in enabled_channels_rx:
+            ctsu_sensor = SENSOR(255, 255, enabled_channels_rx.index(ch), 0, 0, 0, 0, 0, 0, 1000, 100)
+            search_pattern_ssdiv = r"(#define\s*CTSUSSDIV_TS%(key_idx)02d\s*\((0[xX][0-9a-fA-F]+)\))" % {'key_idx' : ch}      ##00
+            search_pattern_so    = r"(#define\s*CTSUSO_TS%(key_idx)02d\s*\((0[xX][0-9a-fA-F]+)\))"    % {'key_idx' : ch}      ##01
+            search_pattern_snum  = r"(#define\s*CTSUSNUM_TS%(key_idx)02d\s*\((\d{1})\))"    % {'key_idx' : ch}                ##02
+            search_pattern_sdpa  = r"(#define\s*CTSUSDPA_TS%(key_idx)02d\s*\((\d{1,2}|0[xX][0-9a-fA-F]+)\))"  % {'key_idx' : ch}      ##03
+            search_pattern_ricoa = r"(#define\s*(CTSURICOA_TS|CTSURICOA_TS%(key_idx)02d)\s*\((0[xX][0-9a-fA-F]+)\))" % {'key_idx' : ch}      ##04
+            search_pattern_icog  = r"(#define\s*CTSUICOG_TS%(key_idx)02d\s*\((\d{1})\))"    % {'key_idx' : ch}
+            
+            mutual_search_patterns = []
+            mutual_search_patterns.append(search_pattern_ssdiv)    ##00
+            mutual_search_patterns.append(search_pattern_so)       ##01
+            mutual_search_patterns.append(search_pattern_snum)     ##02
+            mutual_search_patterns.append(search_pattern_sdpa)     ##03
+            mutual_search_patterns.append(search_pattern_ricoa)    ##04
+            mutual_search_patterns.append(search_pattern_icog)     ##05
+            
+            for mutual_search_pattern in mutual_search_patterns:
+                search_pattern = re.compile(mutual_search_pattern)
+                for line in file_lines_ctsu:
+                    match = re.search(search_pattern,line)
+                    if match:
+                        if 0 == mutual_search_patterns.index(mutual_search_pattern):
+                            ctsu_sensor.ssdiv = int(match.group(2),16)
+                        if 1 == mutual_search_patterns.index(mutual_search_pattern):
+                            ctsu_sensor.so    = int(match.group(2),16)
+                        if 2 == mutual_search_patterns.index(mutual_search_pattern):
+                            ctsu_sensor.snum  = int(match.group(2))
+                        if 3 == mutual_search_patterns.index(mutual_search_pattern):
+                            ctsu_sensor.sdpa  = int(match.group(2),16)
+                        if 4 == mutual_search_patterns.index(mutual_search_pattern):
+                            ctsu_sensor.ricoa = int(match.group(3),16)
+                        if 5 == mutual_search_patterns.index(mutual_search_pattern):
+                            ctsu_sensor.icog  = int(match.group(2),16)
+                            
+            ctsu_sensors.append(ctsu_sensor)
+                           
 #         ctsu = CTSU(0, enabled_channels_rx, num_mutual)
         
-        ctsu = CTSU(0, enabled_channels_rx)
+        ctsu = CTSU(ctsu_sensors, 0, enabled_channels_rx)
         CTSU.configs.append(ctsu)
 
 def copy_clean_header(infile, outfile):
@@ -572,7 +876,8 @@ if __name__ == '__main__':
     parser.add_argument('-r', '--rx', dest='rx', nargs='+', type=int, help='(optional)Specify TS pin numbers to use as Receive Pins for the CTSU.')
     parser.add_argument('-o', '--output', dest='outfile', default="./output.c", help='Specify full path and file name for C output. E.g.: ./r_ctsu_rx_config_self01.c')
     parser.add_argument('-l', '--log', dest='logfile', help='Specify where logger information should be output.')
-    parser.add_argument('-i', '--input', dest='infile', help='Specify full path to r_ctsu.h. E.g.: ./TouchAPI_XXXX/CTSU/r_ctsu.h')    
+    parser.add_argument('-i', '--input', dest='infile', help='Specify full path to r_ctsu.h. E.g.: ./TouchAPI_XXXX/CTSU/r_ctsu.h')
+    parser.add_argument('-x', '--xml', dest='xmlgen', action='store_true', default=False, help='Generate XML for importing to ISDE')    
 
     parser.add_argument('-g', '--generate', dest='generate', action='store_true', help='Generate Preprocessor values. --input value is ignored.')
     parser.add_argument('-f', '--frequency', dest='freq', nargs='+', type=int, help='Target drive frequency. Provide a common setting or setting for each sensor.')
@@ -609,4 +914,6 @@ if __name__ == '__main__':
     itr = 0;
     for ctsu in CTSU.configs:
         ctsu.write(CTSU.template, filename+ str(itr)+file_extension)
+        if args.xmlgen==True:
+            ctsu.write_xml(CTSU.xml_template, "./out.xml")
         itr+=1

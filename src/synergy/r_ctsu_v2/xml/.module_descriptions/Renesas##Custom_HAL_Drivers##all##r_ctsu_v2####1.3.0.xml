@@ -91,7 +91,7 @@
         #define CTSU_CFG_ENABLE_CORRECTION              (${config.driver.ctsu_v2.correction})
         </content>
     </config>
-    <module config="config.driver.ctsu_v2" display="Driver|Input|${module.driver.ctsu.name} CTSU V2 HAL Driver on r_ctsu" id="module.driver.ctsu_on_ctsu" common="100" version="1">
+    <module config="config.driver.ctsu_v2" display="Driver|Input|${module.driver.ctsu.name} CTSU V2 HAL Driver on r_ctsu_v2" id="module.driver.ctsu_on_ctsu" common="100" version="1">
         <constraint display="Unique name required for each instance">
             "${interface.driver.ctsu_v2.${module.driver.ctsu.name}}" === "1"
         </constraint>
@@ -122,7 +122,7 @@
             <constraint display="Name must be a valid C symbol">testSymbol("${module.driver.ctsu.name}")</constraint>
         </property>
         
-        <property default="module.driver.ctsu.pclkb_div.div_1" display="PCLKB Divisor" id="module.driver.ctsu.pclkb_div">
+        <property default="module.driver.ctsu.pclkb_div.div_1" display="PCLKB Divisor (CTSUCLK[1:0])" id="module.driver.ctsu.pclkb_div">
             <option display="Divide by 1" id="module.driver.ctsu.pclkb_div.div_1" value="0"/>
             <option display="Divide by 2" id="module.driver.ctsu.pclkb_div.div_2" value="1"/>
             <option display="Divide by 4" id="module.driver.ctsu.pclkb_div.div_4" value="2"/>
@@ -1445,12 +1445,12 @@
         <property default="1000" display="Drift Compensation Interval" id="module.driver.ctsu_sensor.drift">
             <constraint display="Value must be in range (0-55536)">testInteger("${module.driver.ctsu_sensor.drift}")  &amp;&amp; ("${module.driver.ctsu_sensor.drift}" &gt;= 0) &amp;&amp; ("${module.driver.ctsu_sensor.drift}" &lt; 55536)</constraint>
         </property>
-        <property default="0" display="Drift Compensation Acceleration" id="module.driver.ctsu_sensor.dr_accel">
+        <!--<property default="0" display="Drift Compensation Acceleration" id="module.driver.ctsu_sensor.dr_accel">
             <constraint display="Value must be in range (0-255)">testInteger("${module.driver.ctsu_sensor.dr_accel}")  &amp;&amp; ("${module.driver.ctsu_sensor.dr_accel}" &gt;= 0) &amp;&amp; ("${module.driver.ctsu_sensor.dr_accel}" &lt; 256)</constraint>
-        </property>
-        <property default="0" display="Drift Compensation Deceleration" id="module.driver.ctsu_sensor.dr_decel">
+        </property>-->
+        <!--<property default="0" display="Drift Compensation Deceleration" id="module.driver.ctsu_sensor.dr_decel">
             <constraint display="Value must be in range (0-255)">testInteger("${module.driver.ctsu_sensor.dr_decel}")  &amp;&amp; ("${module.driver.ctsu_sensor.dr_decel}" &gt;= 0) &amp;&amp; ("${module.driver.ctsu_sensor.dr_decel}" &lt; 256)</constraint>
-        </property>
+        </property>-->
         
         <property default="module.driver.ctsu_sensor.sep3.none" display="RUN-TIME OFFSET CURRENT ADJUSTMENT PARAMETERS" id="module.driver.ctsu_sensor.sep3">
             <option display="---------------------------------" id="module.driver.ctsu_sensor.sep3.none" value="0"/>
@@ -1487,8 +1487,8 @@
         #define ${module.driver.ctsu_sensor.name}_DELAY_2_R     (${module.driver.ctsu_sensor.drelease})
         
         #define ${module.driver.ctsu_sensor.name}_DRIFT_RATE    (${module.driver.ctsu_sensor.drift})
-        #define ${module.driver.ctsu_sensor.name}_RATE_PLUS     (${module.driver.ctsu_sensor.dr_accel})
-        #define ${module.driver.ctsu_sensor.name}_RATE_MINUS    (${module.driver.ctsu_sensor.dr_decel})
+        #define ${module.driver.ctsu_sensor.name}_RATE_PLUS     (0) /* (${module.driver.ctsu_sensor.dr_accel}) */
+        #define ${module.driver.ctsu_sensor.name}_RATE_MINUS    (0) /* (${module.driver.ctsu_sensor.dr_decel}) */
         
         #define ${module.driver.ctsu_sensor.name}_ADJ_INTERVAL  (${module.driver.ctsu_sensor.offset_interval})
         #define ${module.driver.ctsu_sensor.name}_ADJ_THRESHOLD (${module.driver.ctsu_sensor.offset_thresh})
